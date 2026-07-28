@@ -1,0 +1,159 @@
+#!/usr/bin/env bash
+set -e
+
+# Wisp setup script - manages installation of dependencies and dotfiles.
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
+DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/wisp-shell"
+BIN_DIR="${HOME}/.local/bin"
+
+c_red=$'\033[31m'; c_grn=$'\033[32m'; c_yel=$'\033[33m'
+c_dim=$'\033[2m';  c_bold=$'\033[1m'; c_rst=$'\033[0m'
+c_blu=$'\033[34m'; c_cya=$'\033[36m'
+
+print_info() { printf "%s[INFO]%s %s\n" "${c_cya}" "${c_rst}" "$1"; }
+print_succ() { printf "%s[SUCC]%s %s\n" "${c_grn}" "${c_rst}" "$1"; }
+print_warn() { printf "%s[WARN]%s %s\n" "${c_yel}" "${c_rst}" "$1"; }
+print_err()  { printf "%s[ERR]%s %s\n" "${c_red}" "${c_rst}" "$1"; }
+die()        { print_err "$1"; exit 1; }
+
+dependencies=(
+    "hyprland"
+    "quickshell" # AUR
+    "jq"
+    "upower"
+    "cliphist"
+    "wl-clipboard"
+    "grim"
+    "slurp"
+    "bc"
+    "matugen-bin" # AUR
+    "swww" # or hyprpaper
+    "libnotify"
+)
+
+install_dependencies() {
+    print_info "Checking dependencies..."
+    
+    local missing=()
+    for pkg in "${dependencies[@]}"; do
+        if ! pacman -Qi "$pkg" &>/dev/null; then
+            missing+=("$pkg")
+        fi
+    done
+
+    if [ ${#missing[@]} -eq 0 ]; then
+        print_succ "All dependencies are already installed."
+        return
+    fi
+
+    print_info "Missing dependencies: ${missing[*]}"
+    print_info "Attempting to install via yay/paru..."
+    
+    local helper=""
+    if command -v yay &>/dev/null; then
+        helper="yay"
+    elif command -v paru &>/dev/null; then
+        helper="paru"
+    else
+        die "Neither 'yay' nor 'paru' AUR helper was found. Please install one first."
+    fi
+
+    $helper -S --needed "${missing[@]}"
+    print_succ "Dependencies installed."
+}
+
+install_wisp() {
+    print_info "Installing Wisp Shell core files..."
+    
+    # 1. Install Wisp Shell core to local share
+    mkdir -p "$DATA_DIR"
+    cp -a "$REPO_ROOT"/* "$DATA_DIR/"
+    
+    # 2. Setup the wisp CLI wrapper
+    mkdir -p "$BIN_DIR"
+    ln -sf "$DATA_DIR/wisp" "$BIN_DIR/wisp"
+    
+    print_succ "Wisp core installed to $DATA_DIR"
+    print_succ "CLI wrapper created at $BIN_DIR/wisp"
+}
+
+install_dotfiles() {
+    print_info "Installing Hyprland dotfiles..."
+    
+    if [ ! -d "$REPO_ROOT/dots" ]; then
+        print_warn "No 'dots' directory found in repository yet. Skipping dotfiles."
+        return
+    fi
+    
+    # Backup existing hyprland config if exists
+    if [ -d "$CONFIG_DIR/hypr" ] && [ ! -L "$CONFIG_DIR/hypr" ]; then
+        local backup_dir="$CONFIG_DIR/hypr.bak.$(date +%Y%m%d%H%M%S)"
+        print_warn "Backing up existing Hyprland config to $backup_dir"
+        mv "$CONFIG_DIR/hypr" "$backup_dir"
+    fi
+    
+    # Copy dots
+    cp -a "$REPO_ROOT/dots/." "$CONFIG_DIR/"
+    print_succ "Dotfiles installed to $CONFIG_DIR"
+}
+
+uninstall() {
+    print_info "Uninstalling Wisp Shell..."
+    rm -rf "$DATA_DIR"
+    rm -f "$BIN_DIR/wisp"
+    print_succ "Wisp Shell core and CLI removed."
+    print_warn "Note: Configuration in $CONFIG_DIR/wisp and dotfiles in $CONFIG_DIR/hypr were NOT removed."
+}
+
+show_help() {
+    cat <<EOF
+${c_bold}Wisp Setup CLI${c_rst}
+
+Usage: ./setup <command>
+
+Commands:
+  install       Install dependencies, Wisp core, and dotfiles.
+  update        Update Wisp core and dotfiles from the repository.
+  uninstall     Remove Wisp core and CLI.
+  deps          Only install missing dependencies.
+  dots          Only install/update dotfiles.
+  help          Show this help message.
+EOF
+}
+
+command="${1:-help}"
+
+case "$command" in
+    install)
+        install_dependencies
+        install_wisp
+        install_dotfiles
+        print_succ "Installation complete! Make sure $BIN_DIR is in your PATH."
+        ;;
+    update)
+        print_info "Pulling latest changes..."
+        git pull origin main || print_warn "Git pull failed, continuing with local files..."
+        install_wisp
+        install_dotfiles
+        print_succ "Update complete!"
+        ;;
+    uninstall)
+        uninstall
+        ;;
+    deps)
+        install_dependencies
+        ;;
+    dots)
+        install_dotfiles
+        ;;
+    help|--help|-h)
+        show_help
+        ;;
+    *)
+        print_err "Unknown command: $command"
+        show_help
+        exit 1
+        ;;
+esac

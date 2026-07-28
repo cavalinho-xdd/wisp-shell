@@ -36,12 +36,19 @@ makepkg -si
 ```
 
 ### Manual Installation
-You can use the provided install script which installs Wisp Shell into your local data directory and sets up the `wisp` CLI wrapper in `~/.local/bin`.
+You can use the provided setup script which handles dependencies and installs Wisp Shell into your local data directory, setting up the `wisp` CLI wrapper in `~/.local/bin`.
 ```bash
 git clone https://github.com/cavalinho-xdd/wisp-shell.git
 cd wisp-shell
-./install.sh
+./setup install
 ```
+
+The `setup` script supports several subcommands:
+- `install`: Install dependencies, Wisp core, and dotfiles.
+- `update`: Update Wisp core and dotfiles from the repository.
+- `uninstall`: Remove Wisp core and CLI.
+- `deps`: Only install missing dependencies.
+- `dots`: Only install/update dotfiles.
 
 ## Usage
 
