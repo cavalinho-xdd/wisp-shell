@@ -1,75 +1,68 @@
 # Wisp Shell
 
-A modern floating pill-based shell for Hyprland built on [Quickshell](https://outfoxxed.me/quickshell/).
+A modern, floating pill-based desktop shell for Hyprland built on the Quickshell framework.
 
-## Features
+Wisp Shell abandons the traditional desktop bar paradigm in favor of an interactive, expanding peripheral widget. It is designed to be unobtrusive, highly functional, and visually cohesive, prioritizing clarity and rapid interaction over redundant on-screen information.
 
-- **Floating Pill Architecture**: Interactive expanding widget replacing a traditional bar.
-- **Multimonitor Support**: Seamless multi-display integration.
-- **Widgets**: Performance monitor, calendar, media controls, weather, and a system tray.
-- **First-Run Wizard**: Setup configuration intuitively on your first launch.
-- **OSD Popups**: On-screen display for volume and mic adjustments.
-- **Built-in Configuration**: Comprehensive settings app designed directly into the shell.
+## Core Features
+
+- **Floating Pill Architecture**: An interactive, multi-state widget that expands to reveal detailed system information and collapses to save screen real estate.
+- **Native Multi-Monitor Support**: Independent shell instances track focused workspaces and states on a per-display basis.
+- **Integrated Tooling**:
+  - Polkit Authentication Agent
+  - System Tray and Media Controls
+  - Hardware Control Popups (Volume/Microphone OSD)
+  - Interactive Performance Monitors
+- **First-Run Configuration**: A built-in graphical setup wizard and comprehensive settings application to manage the shell without editing text files.
 
 ## Dependencies
 
-- **Required**:
-  - `quickshell`
-  - `hyprland`
-  - `jq`
-  - `upower` (for battery widget)
-  - `cliphist` & `wl-clipboard` (for clipboard manager)
-  - `grim` & `slurp` (for screenshot support)
-  - `bc` (for system usage calculations)
-- **Optional**:
-  - `matugen` (for wallpaper-derived colors)
-  - `swww` or `hyprpaper` (for wallpaper management)
-  - `qalc` (for launcher calculator)
-  - `nvidia-utils` (for GPU monitoring in the Performance widget)
+The shell relies on modern Wayland technologies and standard Linux subsystems:
+
+- **Core Requirements**: `quickshell`, `hyprland`, `jq`, `upower`, `wl-clipboard`, `cliphist`, `grim`, `slurp`, `bc`.
+- **Recommended**: `matugen` (for dynamic wallpaper-based theming) and `swww` or `hyprpaper` (for wallpaper management).
 
 ## Installation
 
-### Arch Linux (AUR)
-Use the included `PKGBUILD` or your favorite AUR helper once published:
+### The Automated Approach (Recommended)
+The easiest way to install Wisp Shell, along with its integrated Hyprland configurations and dynamic theming engine, is to use the automated installer provided in the `wisp-dots` repository.
+
 ```bash
-makepkg -si
+git clone https://github.com/cavalinho-xdd/wisp-dots.git
+cd wisp-dots
+chmod +x install.sh
+./install.sh
 ```
+This script will safely back up existing configurations, install dependencies, and set up both the shell and the system dotfiles.
 
 ### Manual Installation
-You can use the provided setup script which handles dependencies and installs Wisp Shell into your local data directory, setting up the `wisp` CLI wrapper in `~/.local/bin`.
+If you prefer to install only the shell components without the associated dotfiles:
+
 ```bash
 git clone https://github.com/cavalinho-xdd/wisp-shell.git
 cd wisp-shell
 ./setup install
 ```
+This script copies the core QML assets to your local data directory and sets up the `wisp` CLI wrapper.
 
-The `setup` script supports several subcommands:
-- `install`: Install dependencies, Wisp core, and dotfiles.
-- `update`: Update Wisp core and dotfiles from the repository.
-- `uninstall`: Remove Wisp core and CLI.
-- `deps`: Only install missing dependencies.
-- `dots`: Only install/update dotfiles.
+## Command Line Interface
 
-## Usage
-
-Wisp includes a convenient CLI (`wisp`) for managing the shell.
+Wisp Shell includes a dedicated command-line interface for managing its lifecycle and configuration.
 
 ```bash
-# Check dependencies and fonts
-wisp doctor
-
-# Start the shell in the background
+# Start the shell daemon in the background
 wisp start
 
-# Open the settings app
+# Terminate the shell session
+wisp stop
+
+# Open the graphical settings application
 wisp settings
 
-# View shell status
+# View current daemon status
 wisp status
-
-# Stop the shell
-wisp stop
 ```
 
 ## Contributing
-Wisp is a personal project by cavalinho-xdd and is currently not accepting external pull requests for new features, but bug reports and suggestions are welcome!
+
+Wisp is developed and maintained by cavalinho-xdd. While the project is currently tailored for a specific workflow and not actively accepting feature pull requests, bug reports and architectural suggestions are highly appreciated.
