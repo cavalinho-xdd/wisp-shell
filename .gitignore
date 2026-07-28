@@ -1,0 +1,26 @@
+# Runtime state — after the XDG split these live in $XDG_STATE_HOME/wisp,
+# but older checkouts and dev runs still drop them here.
+settings.json
+colors.json
+events.json
+app_usage.json
+generated/
+
+# Editor / assistant scratch
+.impeccable
+.tokensave
+*.original.md
+.GEMINI.md
+CLAUDE.md
+DESIGN.md
+PRODUCT.md
+plan.md
+# Ignore all markdown files except README.md
+*.md
+!README.md
+
+# Throwaway API probes. These are the project's substitute for a test suite
+# (see CLAUDE.md) and are useful in-tree during development, but they are not
+# part of the shell and must never be installed.
+test.qml
+test_*.qml

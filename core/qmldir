@@ -1,0 +1,12 @@
+module Core
+singleton Theme Theme.qml
+singleton Audio Audio.qml
+singleton EventStore EventStore.qml
+singleton Settings Settings.qml
+singleton Island Island.qml
+singleton AppUsage AppUsage.qml
+singleton Notifs Notifs.qml
+singleton Battery Battery.qml
+singleton Paths Paths.qml
+singleton Osd Osd.qml
+singleton FirstRun FirstRun.qml
