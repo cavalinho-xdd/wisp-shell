@@ -135,6 +135,16 @@ ShellRoot {
     }
     Timer { id: dismissTimer; interval: 320; onTriggered: Qt.quit() }
 
+    // Lets a second `wisp launcher` invocation (SUPER + Space pressed again
+    // while this instance is already up) close it instead of doing nothing/
+    // erroring on a duplicate launch. The `wisp` CLI checks for a running
+    // instance first and calls this over `qs -p launcher.qml ipc call
+    // launcher dismiss` instead of launching a new process.
+    IpcHandler {
+        target: "launcher"
+        function dismiss(): void { root.dismiss() }
+    }
+
     PanelWindow {
         id: win
         WlrLayershell.layer: WlrLayer.Overlay

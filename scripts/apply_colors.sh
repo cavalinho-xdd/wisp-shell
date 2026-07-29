@@ -19,10 +19,14 @@
 #     pointing at generated/terminal-osc.sh; Settings' Colors page shows
 #     the exact line to add.
 #
-# Sandbox: matugen is run with a throwaway empty config so the user's own
-# ~/.config/matugen/config.toml (illogical-impulse, has sudo post_hooks) is
-# never executed. No dotfile is read for writing; the ii wallpaper state file
-# is only read as a fallback to find the current wallpaper.
+# wisp's own colors.json comes from a throwaway matugen config (this is the
+# one thing that stays sandboxed: colors.json's exact shape is baked into
+# this script's jq filter below, and a throwaway config keeps that immune to
+# whatever templates the real config.toml happens to declare). Real dotfile
+# theming (kitty, starship, btop, fastfetch, ...) is a second matugen run
+# against ~/.config/matugen/config.toml itself, see "real dots pipeline"
+# below — wisp-dots owns that file outright (no sudo post_hooks, unlike the
+# old ii config this used to have to avoid), so running it directly is safe.
 set -euo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -69,9 +73,23 @@ matugen image "$IMG" -c "$CFG" -t "scheme-$SCHEME" -m "$MODE" \
 > "$OUT.tmp" && mv "$OUT.tmp" "$OUT"
 
 if [[ ",$FANOUT," == *",kitty,"* && -f "$GEN/kitty-colors.conf" ]]; then
-    # kitty.conf on this machine includes ii's generated theme — piggyback
-    # on that include instead of touching kitty.conf itself
+    # Old ii-coexistence path: only fires if that state file still exists on
+    # this machine (it doesn't once wisp-dots' own kitty.conf is in use —
+    # see "real dots pipeline" below, which is what actually feeds kitty now).
     II_KITTY="${XDG_STATE_HOME:-$HOME/.local/state}/quickshell/user/generated/terminal/kitty-theme.conf"
     [[ -f "$II_KITTY" ]] && cp "$GEN/kitty-colors.conf" "$II_KITTY"
-    pkill -USR1 -x kitty 2>/dev/null || true
 fi
+
+# ── Real dots pipeline ──
+# wisp-dots' own ~/.config/matugen/config.toml declares the actual
+# [templates.*] fanout to kitty/starship/btop/fastfetch/discord/spotify/
+# hyprland — one real matugen run against it, same wallpaper/scheme/mode as
+# the wisp-internal run above, keeps every themed app in sync with the shell.
+# Unlike the throwaway config above, this -c points at the user's own real
+# config on purpose — it's the whole point of this second run.
+DOTS_MATUGEN="${XDG_CONFIG_HOME:-$HOME/.config}/matugen/config.toml"
+if [[ -f "$DOTS_MATUGEN" ]]; then
+    matugen image "$IMG" -c "$DOTS_MATUGEN" -t "scheme-$SCHEME" -m "$MODE" \
+        --source-color-index 0 -q || true
+fi
+pkill -USR1 -x kitty 2>/dev/null || true

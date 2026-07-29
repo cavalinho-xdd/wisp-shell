@@ -107,7 +107,7 @@ CfgPage {
     }
 
     CfgSection {
-        title: "Hyprland sandbox"
+        title: "Hyprland config"
         icon: "󰒃"
 
         RowLayout {
@@ -118,17 +118,13 @@ CfgPage {
 
             ActionButton {
                 icon: "󰑓"
-                text: "Sync from system"
+                text: "Sync sliders from system"
                 onClicked: Settings.syncFromSystem()
             }
             ActionButton {
-                icon: "󰦛"
-                text: "Restore my config"
-                danger: true
-                onClicked: {
-                    Settings.conf.hypr.overridesEnabled = false;
-                    Settings.restoreUserConfig();
-                }
+                icon: "󰜉"
+                text: "Reload Hyprland"
+                onClicked: Settings.reloadHyprland()
             }
         }
     }

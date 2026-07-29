@@ -16,7 +16,6 @@ print_info() { printf "%s[INFO]%s %s\n" "${c_cya}" "${c_rst}" "$1"; }
 print_succ() { printf "%s[SUCC]%s %s\n" "${c_grn}" "${c_rst}" "$1"; }
 print_warn() { printf "%s[WARN]%s %s\n" "${c_yel}" "${c_rst}" "$1"; }
 print_err()  { printf "%s[ERR]%s %s\n" "${c_red}" "${c_rst}" "$1"; }
-die()        { print_err "$1"; exit 1; }
 
 dependencies=(
     "hyprland"
@@ -29,13 +28,46 @@ dependencies=(
     "slurp"
     "bc"
     "matugen-bin" # AUR
-    "swww" # or hyprpaper
+    "awww" # swww's actively-maintained fork; hyprpaper also works as a fallback
     "libnotify"
+    "python"      # provides python3 -- core/Settings.qml shells out to
+                  # scripts/apply_hypr_*.py / write_custom_keybinds.py on
+                  # every Look & Feel / Keybinds change, unconditionally
+    "nodejs"      # provides node -- core/Osu.qml spawns scripts/osu_connect.js
+                  # unconditionally at shell startup, not gated on a setting
+    "xdg-user-dirs" # provides xdg-user-dir -- core/Settings.qml's wallpaper
+                    # folder default (falls back silently if missing, but
+                    # ship it so the fallback is never needed)
+    "curl"        # scripts/weather.sh (weather.enable defaults true) and
+                  # scripts/game_watch.sh (Steam cover art / achievements)
 )
+
+ensure_aur_helper() {
+    if command -v paru &>/dev/null; then echo "paru"; return; fi
+    if command -v yay &>/dev/null; then echo "yay"; return; fi
+    if ! command -v pacman &>/dev/null; then return; fi
+
+    print_warn "No AUR helper (paru/yay) found. Building paru from AUR..."
+    sudo pacman -S --needed --noconfirm base-devel git
+    local build_dir; build_dir="$(mktemp -d)"
+    if git clone --depth 1 https://aur.archlinux.org/paru-bin.git "$build_dir" >/dev/null 2>&1 \
+        && (cd "$build_dir" && makepkg -si --noconfirm); then
+        rm -rf "$build_dir"
+        echo "paru"
+    else
+        rm -rf "$build_dir"
+        print_warn "Failed to build paru automatically."
+    fi
+}
 
 install_dependencies() {
     print_info "Checking dependencies..."
-    
+
+    if ! command -v pacman &>/dev/null; then
+        print_warn "Not on Arch (no pacman). Skipping package installation — install manually: ${dependencies[*]}"
+        return
+    fi
+
     local missing=()
     for pkg in "${dependencies[@]}"; do
         if ! pacman -Qi "$pkg" &>/dev/null; then
@@ -49,54 +81,55 @@ install_dependencies() {
     fi
 
     print_info "Missing dependencies: ${missing[*]}"
-    print_info "Attempting to install via yay/paru..."
-    
-    local helper=""
-    if command -v yay &>/dev/null; then
-        helper="yay"
-    elif command -v paru &>/dev/null; then
-        helper="paru"
-    else
-        die "Neither 'yay' nor 'paru' AUR helper was found. Please install one first."
+
+    local helper; helper="$(ensure_aur_helper)"
+    if [ -z "$helper" ]; then
+        print_warn "No AUR helper available — missing packages were not installed: ${missing[*]}"
+        return
     fi
 
-    $helper -S --needed "${missing[@]}"
+    print_info "Installing via $helper..."
+    "$helper" -S --needed --noconfirm "${missing[@]}" || print_warn "Some packages failed to install."
     print_succ "Dependencies installed."
 }
 
 install_wisp() {
     print_info "Installing Wisp Shell core files..."
-    
+
     # 1. Install Wisp Shell core to local share
     mkdir -p "$DATA_DIR"
     cp -a "$REPO_ROOT"/* "$DATA_DIR/"
-    
+
     # 2. Setup the wisp CLI wrapper
     mkdir -p "$BIN_DIR"
     ln -sf "$DATA_DIR/wisp" "$BIN_DIR/wisp"
-    
+
     print_succ "Wisp core installed to $DATA_DIR"
     print_succ "CLI wrapper created at $BIN_DIR/wisp"
+
+    ensure_path
 }
 
-install_dotfiles() {
-    print_info "Installing Hyprland dotfiles..."
-    
-    if [ ! -d "$REPO_ROOT/dots" ]; then
-        print_warn "No 'dots' directory found in repository yet. Skipping dotfiles."
-        return
+# hyprland.lua's autostart line calls a bare `wisp start`. Hyprland's own exec
+# environment does not inherit an interactive shell's PATH (fish's
+# fish_add_path, .bashrc, etc never run for it) — only what systemd's user
+# manager hands it at session start, which by default has no ~/.local/bin.
+# Without this, "wisp start" silently fails to spawn and the whole shell never
+# comes up, with nothing printed anywhere a user would see.
+ensure_path() {
+    local envd="${XDG_CONFIG_HOME:-$HOME/.config}/environment.d"
+    local envfile="$envd/50-wisp-bin.conf"
+    mkdir -p "$envd"
+    if [ ! -f "$envfile" ]; then
+        printf 'PATH=%s:${PATH}\n' "$BIN_DIR" > "$envfile"
+        print_succ "Added $BIN_DIR to the systemd user PATH ($envfile)."
     fi
-    
-    # Backup existing hyprland config if exists
-    if [ -d "$CONFIG_DIR/hypr" ] && [ ! -L "$CONFIG_DIR/hypr" ]; then
-        local backup_dir="$CONFIG_DIR/hypr.bak.$(date +%Y%m%d%H%M%S)"
-        print_warn "Backing up existing Hyprland config to $backup_dir"
-        mv "$CONFIG_DIR/hypr" "$backup_dir"
+    # Also apply to the *current* graphical session's systemd user manager,
+    # so this works immediately rather than only after the next login —
+    # environment.d is only read at systemd --user startup.
+    if command -v systemctl &>/dev/null; then
+        systemctl --user set-environment PATH="$BIN_DIR:${PATH}" 2>/dev/null || true
     fi
-    
-    # Copy dots
-    cp -a "$REPO_ROOT/dots/." "$CONFIG_DIR/"
-    print_succ "Dotfiles installed to $CONFIG_DIR"
 }
 
 uninstall() {
@@ -114,12 +147,15 @@ ${c_bold}Wisp Setup CLI${c_rst}
 Usage: ./setup <command>
 
 Commands:
-  install       Install dependencies, Wisp core, and dotfiles.
-  update        Update Wisp core and dotfiles from the repository.
+  install       Install dependencies and the Wisp core (no dotfiles — see wisp-dots).
+  update        Update the Wisp core from the repository.
   uninstall     Remove Wisp core and CLI.
   deps          Only install missing dependencies.
-  dots          Only install/update dotfiles.
   help          Show this help message.
+
+Dotfiles (Hyprland/fish/fastfetch/...) are not this script's job — install
+https://github.com/cavalinho-xdd/wisp-dots instead, which pulls this repo in
+as a dependency automatically.
 EOF
 }
 
@@ -129,14 +165,12 @@ case "$command" in
     install)
         install_dependencies
         install_wisp
-        install_dotfiles
-        print_succ "Installation complete! Make sure $BIN_DIR is in your PATH."
+        print_succ "Installation complete! $BIN_DIR was added to your PATH (new terminals and next login; already applied to this graphical session)."
         ;;
     update)
         print_info "Pulling latest changes..."
         git pull origin main || print_warn "Git pull failed, continuing with local files..."
         install_wisp
-        install_dotfiles
         print_succ "Update complete!"
         ;;
     uninstall)
@@ -144,9 +178,6 @@ case "$command" in
         ;;
     deps)
         install_dependencies
-        ;;
-    dots)
-        install_dotfiles
         ;;
     help|--help|-h)
         show_help

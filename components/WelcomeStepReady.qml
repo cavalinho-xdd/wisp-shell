@@ -37,7 +37,7 @@ ColumnLayout {
         id: depProc
         command: ["bash", "-c",
             "printf '{'; " +
-            "first=1; for b in hyprctl matugen jq qalc wl-copy nvidia-smi bc swww hyprpaper kitty; do " +
+            "first=1; for b in hyprctl matugen jq qalc wl-copy nvidia-smi bc awww swww hyprpaper kitty python3 node curl; do " +
             "  if [ $first -eq 0 ]; then printf ','; fi; first=0; " +
             "  if command -v \"$b\" >/dev/null 2>&1; then printf '\"%s\":true' \"$b\"; " +
             "  else printf '\"%s\":false' \"$b\"; fi; " +
@@ -62,14 +62,20 @@ ColumnLayout {
           desc: "Everything — settings, keybinds, window rules" },
         { ok: step.iconFontOk && step.textFontOk, name: "Fonts", need: "required",
           desc: step.iconFontOk ? "Text and Nerd Font icons resolved" : "No Nerd Font found — icons will render as boxes" },
+        { ok: step.have("python3"), name: "python3", need: "required",
+          desc: "Settings > Look & Feel and Keybinds edit your real Hyprland config through this" },
         { ok: step.have("matugen") && step.have("jq"), name: "matugen + jq", need: "colors",
           desc: "Wallpaper-derived Material You palette" },
-        { ok: step.have("swww") || step.have("hyprpaper"), name: "swww / hyprpaper", need: "wallpaper",
+        { ok: step.have("awww") || step.have("swww") || step.have("hyprpaper"), name: "awww / swww / hyprpaper", need: "wallpaper",
           desc: "Setting the wallpaper from the picker" },
         { ok: step.have("nvidia-smi") && step.have("bc"), name: "nvidia-smi + bc", need: "optional",
           desc: "GPU ring on the Performance tab (Nvidia only)" },
         { ok: step.have("qalc") && step.have("wl-copy"), name: "qalc + wl-copy", need: "optional",
-          desc: "Launcher calculator and copy actions" }
+          desc: "Launcher calculator and copy actions" },
+        { ok: step.have("node"), name: "node", need: "optional",
+          desc: "Live osu! island lane (osu!lazer + tosu)" },
+        { ok: step.have("curl"), name: "curl", need: "optional",
+          desc: "Weather card, Steam cover art and achievement popups" }
     ]
 
     Text {
@@ -196,7 +202,7 @@ ColumnLayout {
             icon: "󰒓"
             text: "Open Settings"
             onClicked: {
-                Quickshell.execDetached(["/usr/bin/qs", "-p", Settings.settingsAppPath]);
+                Quickshell.execDetached(["qs", "-p", Settings.settingsAppPath]);
                 step.openSettings();
             }
         }

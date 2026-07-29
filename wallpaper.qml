@@ -106,7 +106,7 @@ ShellRoot {
                             if (isCurrent) {
                                 // Apply Wallpaper
                                 let path = String(fileUrl).replace("file://", "");
-                                let cmd = `if command -v swww &> /dev/null; then swww img "${path}" --transition-type wipe --transition-fps 60; elif command -v hyprctl &> /dev/null; then hyprctl hyprpaper wallpaper ",${path}"; fi`;
+                                let cmd = `if command -v awww &> /dev/null; then awww img "${path}"; elif command -v swww &> /dev/null; then swww img "${path}" --transition-type wipe --transition-fps 60; elif command -v hyprctl &> /dev/null; then hyprctl hyprpaper wallpaper ",${path}"; fi`;
                                 Quickshell.execDetached(["bash", "-c", cmd]);
                                 Settings.conf.colors.lastWallpaper = path;
                                 Settings.flush();

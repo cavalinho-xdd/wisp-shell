@@ -211,6 +211,13 @@ Item {
                         // System tray — native Quickshell.Services.SystemTray, no
                         // separate polling/watcher needed. Right-click opens the
                         // item's own DBus menu via QsMenuAnchor (see TrayItem.qml).
+                        //
+                        // Was disabled 2026-07-29 for crash bisection: every reported
+                        // SIGSEGV (~/.cache/quickshell/crashes/) shared one stacktrace —
+                        // QQuickItem::window() called on a freed item during a StackView
+                        // teardown cascade (dashboard collapse destroys this subtree).
+                        // Root cause found in TrayItem.qml's QsMenuAnchor usage, fixed
+                        // there — see that file's comment. Re-enabled.
                         Row {
                             spacing: 4
                             Layout.alignment: Qt.AlignVCenter
@@ -246,9 +253,21 @@ Item {
                         // a Quickshell-internal "qs:@/qs/settings.qml" pseudo-path instead of
                         // a real file:// one, so the button silently launched a nonexistent path.
                         IconButton {
+                            id: settingsBtn
                             width: 36; height: 36; text: "󰒓"
-                            isChecked: Settings.conf.hypr.overridesEnabled
-                            onClicked: Quickshell.execDetached(["/usr/bin/qs", "-p", Settings.settingsAppPath])
+                            // execDetached has no running-instance guard (unlike shell.qml/
+                            // launcher.qml, which the `wisp` CLI singleton-guards via
+                            // running_pids) — a debounce here is the cheapest thing that
+                            // stops a double-click (or a hitch mid-animation) from spawning
+                            // N stacked settings.qml processes.
+                            property bool launching: false
+                            onClicked: {
+                                if (launching) return;
+                                launching = true;
+                                Quickshell.execDetached(["qs", "-p", Settings.settingsAppPath]);
+                                launchCooldown.start();
+                            }
+                            Timer { id: launchCooldown; interval: 1000; onTriggered: settingsBtn.launching = false }
                         }
 
                         // Power button + dropdown menu
@@ -291,7 +310,7 @@ Item {
                                         model: [
                                             // Own native lock screen (lock.qml entry point), not loginctl —
                                             // nothing on this host listens for the lock-session signal
-                                            { label: "Lock", icon: "󰌾", danger: false, hold: false, cmd: ["/usr/bin/qs", "-p", Settings.lockAppPath] },
+                                            { label: "Lock", icon: "󰌾", danger: false, hold: false, cmd: ["qs", "-p", Settings.lockAppPath] },
                                             { label: "Log Out", icon: "󰍃", danger: false, hold: true, cmd: ["hyprctl", "dispatch", "hl.dsp.exit()"] },
                                             { label: "Restart", icon: "󰑐", danger: false, hold: true, cmd: ["bash", "-c", "systemctl reboot || loginctl reboot"] },
                                             { label: "Shut Down", icon: "󰐥", danger: true, hold: true, cmd: ["bash", "-c", "systemctl poweroff || loginctl poweroff"] }
@@ -497,7 +516,7 @@ Item {
                         // Wallpaper — launches the standalone fullscreen picker (wallpaper.qml)
                         // rather than pushing an in-widget browser; keeps exactly one wallpaper-
                         // apply codepath instead of two copies of the same swww/hyprpaper command.
-                        IconButton { width: 44; height: 44; text: "󰸉"; isChecked: false; onClicked: Quickshell.execDetached(["/usr/bin/qs", "-p", Settings.wallpaperAppPath]) }
+                        IconButton { width: 44; height: 44; text: "󰸉"; isChecked: false; onClicked: Quickshell.execDetached(["qs", "-p", Settings.wallpaperAppPath]) }
                     }
 
                     // Notifications — grouped by app, swipe-to-dismiss, per-notif actions.

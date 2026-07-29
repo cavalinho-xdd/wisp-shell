@@ -17,8 +17,31 @@ Singleton {
     id: island
 
     // ── Arbitration ──
+    // osu!lazer (via Osu.qml/tosu) outranks media: while it's running it's
+    // the thing the user is actively engaged with, live PP/combo is more
+    // time-sensitive than a song title.
+    // Discord voice sits at the *bottom* of the stack, below media: being in
+    // a call is a long-lived ambient fact, not a moment worth the island, so
+    // anything with actual content — a notification, a live osu score, a
+    // playing track — takes the strip back off it.
+    // A running game sits directly under notifications and above osu: it is
+    // the single longest-lived thing the user is actively inside, and unlike
+    // osu it carries its own transient (an achievement unlock swaps the game
+    // strip's own face rather than taking a lane, so it never has to win
+    // arbitration to be seen).
     readonly property string current: flashNotif ? "notif"
-        : mediaActive ? "media" : "none"
+        : Games.active ? "game"
+        : Osu.active ? "osu"
+        : mediaActive ? "media"
+        : Discord.inVoice ? "discord" : "none"
+
+    // Collapsed-pill width for whichever activity is current; shell.qml
+    // falls back to its own "none" width (320) when current === "none".
+    readonly property int activeWidth: current === "osu"
+        ? (Osu.inGameplay ? 620 : 540)
+        : current === "game" ? (Games.flashing ? 620 : 530)
+        : current === "discord" ? 460
+        : 540
 
     // ── Transient: notification flash ──
     property var flashNotif: null

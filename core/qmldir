@@ -4,6 +4,9 @@ singleton Audio Audio.qml
 singleton EventStore EventStore.qml
 singleton Settings Settings.qml
 singleton Island Island.qml
+singleton Osu Osu.qml
+singleton Discord Discord.qml
+singleton Games Games.qml
 singleton AppUsage AppUsage.qml
 singleton Notifs Notifs.qml
 singleton Battery Battery.qml

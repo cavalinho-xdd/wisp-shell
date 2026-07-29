@@ -6,43 +6,22 @@ import "../core"
 CfgPage {
     id: page
 
-    readonly property bool live: Settings.conf.hypr.overridesEnabled
-
     Timer {
         id: applyTimer
         interval: 150
         onTriggered: Settings.applyLook()
     }
     function queueApply() {
-        if (page.live) applyTimer.restart();
+        applyTimer.restart();
     }
 
     CfgNotice {
-        text: "Runtime only — your dotfiles are never touched. Toggling off (or any Hyprland reload) restores your own config exactly."
-    }
-
-    CfgSection {
-        title: "Overrides"
-        icon: ""
-
-        CfgSwitch {
-            icon: "󰒓"
-            text: "Enable Hyprland overrides"
-            checked: Settings.conf.hypr.overridesEnabled
-            onToggled: value => {
-                Settings.conf.hypr.overridesEnabled = value;
-                if (value) Settings.applyLook();
-                else Settings.restoreUserConfig();
-            }
-        }
+        text: "Writes straight to your Hyprland config (general.lua / animations.lua) and reloads it — this is your real config now, not a preview layer."
     }
 
     CfgSection {
         title: "Look & Feel"
         icon: "󰉼"
-        enabled: page.live
-        opacity: page.live ? 1.0 : 0.45
-        Behavior on opacity { NumberAnimation { duration: Theme.animSlow } }
 
         CfgSlider {
             icon: "󰁌"

@@ -53,6 +53,26 @@ run_entry() {
 
 running_pids() { pgrep -f "$SHELL_DIR/shell.qml" 2>/dev/null || true; }
 
+# SUPER+Space calls this every time (both the fresh-open and the "press
+# again to close" case) — toggle, not just launch. A second instance can't
+# just be launched over the first (two overlapping layer-shell surfaces,
+# both grabbing exclusive keyboard focus), so if one's already running this
+# asks it to dismiss itself via its own IpcHandler (graceful, same shrink-
+# back animation as Escape/outside-click) instead of a bare kill; kill is
+# only the fallback if IPC doesn't land.
+toggle_launcher() {
+    [ -n "$QS" ] || die "quickshell not found in PATH (install 'quickshell')"
+    local f; f="$(entry launcher)"
+    [ -f "$f" ] || die "missing $f — is WISP_SHELL_DIR correct?"
+    local pid; pid="$(pgrep -f "$QS -p $f" 2>/dev/null | head -1)" || true
+    if [ -n "$pid" ]; then
+        "$QS" -p "$f" ipc call launcher dismiss >/dev/null 2>&1 || kill "$pid" 2>/dev/null || true
+    else
+        bootstrap
+        exec "$QS" -p "$f"
+    fi
+}
+
 # ── doctor ─────────────────────────────────────────────────────────────────
 # Same dependency set the welcome wizard's last step checks, in headless form,
 # so the installer and the GUI agree on what "ready" means.
@@ -93,14 +113,17 @@ doctor() {
 
     chk "quickshell"  req "the shell itself"                        qs
     chk "Hyprland"    req "settings, keybinds, window rules"         hyprctl
+    chk "python3"     req "Settings > Look & Feel / Keybinds file edits" python3
     chk "matugen+jq"  opt "wallpaper-derived colours"                matugen jq
-    chk_any "wallpaper" opt "setting the wallpaper"                  swww hyprpaper
+    chk_any "wallpaper" opt "setting the wallpaper"                  awww swww hyprpaper
     chk "qalc"        opt "launcher calculator"                      qalc
     chk "wl-clipboard" opt "copy actions"                            wl-copy
     chk "nvidia-smi"  opt "GPU ring (Nvidia only)"                   nvidia-smi
     chk "bc"          opt "CPU/RAM readouts"                         bc
     chk "terminal"    opt "launching terminal apps"                  kitty
     chk "xdg-utils"   opt "opening files and folders"                xdg-open xdg-user-dir
+    chk "node"        opt "osu! island lane (osu!lazer + tosu)"      node
+    chk "curl"        opt "weather card, Steam cover art/achievements" curl
 
     # Fonts: the shell resolves these at runtime and falls back silently, which
     # is exactly why they are worth checking explicitly here.
@@ -174,7 +197,7 @@ case "${1:-}" in
     settings)   shift; run_entry settings "$@" ;;
     welcome)    shift; run_entry welcome "$@" ;;
     wallpaper)  shift; run_entry wallpaper "$@" ;;
-    launcher)   shift; run_entry launcher "$@" ;;
+    launcher)   toggle_launcher ;;
     lock)       shift; run_entry lock "$@" ;;
 
     start)

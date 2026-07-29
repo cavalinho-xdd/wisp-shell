@@ -86,6 +86,24 @@ Item {
             onExpandRequested: root.expandMedia()
         }
 
+        IslandOsuStrip {
+            Layout.alignment: Qt.AlignVCenter
+            Layout.preferredHeight: 48
+            Layout.preferredWidth: implicitWidth
+        }
+
+        IslandDiscordStrip {
+            Layout.alignment: Qt.AlignVCenter
+            Layout.preferredHeight: 48
+            Layout.preferredWidth: implicitWidth
+        }
+
+        IslandGameStrip {
+            Layout.alignment: Qt.AlignVCenter
+            Layout.preferredHeight: 48
+            Layout.preferredWidth: implicitWidth
+        }
+
         IslandNotifFlash {
             Layout.alignment: Qt.AlignVCenter
             Layout.preferredHeight: 48

@@ -54,6 +54,9 @@ Singleton {
     property color peach: "#fab387"
     property color blue: "#89b4fa"
     property color yellow: "#f9e2af"
+    // Discord brand blurple — fixed, not palette-derived, on purpose: the
+    // island's Discord lane is a brand badge, same reasoning as osu's pink.
+    property color blurple: "#5865f2"
 
     // Translucent variant of background for the floating pill / settings window,
     // driven by Settings.conf.colors.panelAlpha — kept separate from `background`

@@ -155,13 +155,13 @@ ColumnLayout {
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 onClicked: {
-                    // swww/hyprpaper one-liner — the single remaining copy of
-                    // it lives in wallpaper.qml; kept identical here rather
+                    // awww/swww/hyprpaper one-liner — the single remaining copy
+                    // of it lives in wallpaper.qml; kept identical here rather
                     // than launching the picker, so picking never interrupts
                     // the wizard's own exclusive-focus surface.
                     const p = thumb.plainPath;
                     Quickshell.execDetached(["bash", "-c",
-                        `if command -v swww &> /dev/null; then swww img "${p}" --transition-type wipe --transition-fps 60; elif command -v hyprctl &> /dev/null; then hyprctl hyprpaper wallpaper ",${p}"; fi`]);
+                        `if command -v awww &> /dev/null; then awww img "${p}"; elif command -v swww &> /dev/null; then swww img "${p}" --transition-type wipe --transition-fps 60; elif command -v hyprctl &> /dev/null; then hyprctl hyprpaper wallpaper ",${p}"; fi`]);
                     Settings.conf.colors.lastWallpaper = p;
                     if (Settings.conf.colors.dynamicEnabled) Settings.applyColors(p);
                 }

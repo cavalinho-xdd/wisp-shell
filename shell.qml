@@ -30,20 +30,15 @@ ShellRoot {
         // singleton, which then waits for Settings.ready before deciding
         // whether to launch welcome.qml (see core/FirstRun.qml).
         void FirstRun.checked
-        // Launcher keybind — runtime-only injection, same sandbox contract
-        // as the Keybinds page: any Hyprland reload wipes it. Super+Space
-        // verified free on this host (only Super+Shift+Space is bound).
-        // Quickshell.shellPath, NOT Qt.resolvedUrl — the latter cannot produce
-        // a real filesystem path for a .qml file from any context (it returns
-        // the internal "qs:@/qs/launcher.qml" module URL, and the
-        // .replace("file://","") that used to follow was a no-op on it). This
-        // keybind had therefore been injecting `qs -p qs:@/qs/launcher.qml`
-        // since it was written — a nonexistent path, launched detached, so
-        // Super+Space failed completely silently. See core/Settings.qml's path
-        // block for the full write-up.
-        const launcherPath = Quickshell.shellPath("launcher.qml");
-        Quickshell.execDetached(["hyprctl", "eval",
-            'hl.bind("SUPER + Space", hl.dsp.exec_cmd("qs -p ' + launcherPath + '"), { description = "Wisp: App launcher" })'])
+        // Super+Space is bound statically in keybinds.lua (`wisp launcher`,
+        // which toggles/dismisses via pgrep) — do NOT also inject a runtime
+        // bind here. Hyprland keeps both binds live simultaneously rather
+        // than the later one overriding the earlier (verified via
+        // `hyprctl binds -j`: two live "Space"/SUPER entries), so having
+        // both fired one blind `qs -p launcher.qml` spawn per keypress on
+        // top of keybinds.lua's toggle-aware one — two launcher windows
+        // stacked on every press. Removed; keybinds.lua's bind is the only
+        // one now.
     }
 
     // ── Polkit authentication agent ──
@@ -161,10 +156,27 @@ ShellRoot {
                         anchors.fill: parent
                         hoverEnabled: true
                         onClicked: {
-                            // Background catcher clicked -> collapse the dashboard
+                            // Background catcher clicked -> collapse the dashboard.
+                            // pop(null) and replace() are both StackView transition-
+                            // triggering ops (QQuickStackView, libQt6QuickTemplates2) —
+                            // firing both synchronously in the same tick, while a
+                            // subview is pushed, raced the first transition's own
+                            // setup against the second and reproduced a SIGSEGV in
+                            // QQuickTransitionManager::complete()/derefWindow (4/4
+                            // crash reports today, ~/.cache/quickshell/crashes/,
+                            // identical stacktrace each time). pop(null) is only
+                            // meaningful when a subview is actually pushed (depth>1);
+                            // deferring the replace to the next tick via Qt.callLater
+                            // lets that pop's transition settle before StackView is
+                            // asked to do anything else.
+                            const stack = screenRoot.pill.contentStackRef;
                             screenRoot.pill.isExpanded = false
-                            screenRoot.pill.contentStackRef.pop(null) // Pop to root
-                            screenRoot.pill.contentStackRef.replace(screenRoot.pill.collapsedViewRef)
+                            if (stack.depth > 1) {
+                                stack.pop(null) // Pop to root
+                                Qt.callLater(() => stack.replace(screenRoot.pill.collapsedViewRef))
+                            } else {
+                                stack.replace(screenRoot.pill.collapsedViewRef)
+                            }
                         }
                     }
                 }
@@ -249,10 +261,15 @@ ShellRoot {
 
                     color: "transparent"
 
-                    // Floating overlay — never reserves screen space, so tiled windows are
-                    // never pushed aside to make room for it (its animated size is purely
-                    // visual; the underlying surface is fixed at max size, see below).
-                    exclusionMode: ExclusionMode.Ignore
+                    // Reserves space for the *collapsed* bar height only (12px top margin +
+                    // 48px collapsed pill), not the fixed 750x550 surface — tiled windows
+                    // now stay clear of the bar's baseline row instead of being drawn behind
+                    // it. exclusiveZone is independent of implicitHeight/anchored-edge size
+                    // (that's what ExclusionMode.Auto would use, and it would reserve the
+                    // full 550px expanded height, which is wrong), so expand/collapse and
+                    // the media-island width bump never resize the reserved zone.
+                    exclusionMode: ExclusionMode.Normal
+                    exclusiveZone: 60
 
                     WlrLayershell.namespace: "wisp"
 
@@ -273,7 +290,7 @@ ShellRoot {
                         anchors.horizontalCenter: parent.horizontalCenter
                         // Third size tier: media island widens the collapsed pill without expanding
                         readonly property real targetWidth: contentStack.depth > 1 ? 750
-                            : (floatingPill.isExpanded ? 750 : (Island.current !== "none" ? 540 : 320))
+                            : (floatingPill.isExpanded ? 750 : (Island.current !== "none" ? Island.activeWidth : 320))
                         // Direction-aware easing needs to know grow vs shrink; compare against
                         // the previous *target*, not the animated width (which lags mid-flight)
                         property real lastTarget: 320
@@ -296,7 +313,19 @@ ShellRoot {
 
                         // Fullscreen apps take full precedence — fade out entirely rather
                         // than sit drawn-but-unclickable over the fullscreen content.
-                        opacity: floatingPill.fullscreenOverride ? 0 : 1
+                        //
+                        // One deliberate exception: an achievement unlock (core/Games.qml)
+                        // fades the collapsed pill back in for the few seconds the flash
+                        // lasts. Games are the main reason a workspace is fullscreen at
+                        // all, so a lane that hides exactly while you play would never be
+                        // seen. Only the *visual* suppression is lifted — `mask` above
+                        // stays on emptyRegion while fullscreenOverride holds, so the
+                        // surface still takes no input and clicks continue to reach the
+                        // game underneath. Collapsed only: the expanded dashboard has no
+                        // business appearing over a fullscreen window unprompted.
+                        readonly property bool achievementPeek: floatingPill.fullscreenOverride
+                            && Games.flashing && !floatingPill.isExpanded
+                        opacity: (floatingPill.fullscreenOverride && !achievementPeek) ? 0 : 1
                         Behavior on opacity { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
 
                         // Hover invite: collapsed pill swells slightly, hinting it opens

@@ -1,15 +1,19 @@
 #!/usr/bin/env bash
 # Lists the user's Hyprland lua keybinds as JSON for SettingsPageKeybinds.qml.
 # Read-only: scans ~/.config/hypr/**/*.lua for single-line hl.bind(...) calls.
-# A bind is "editable" (rebindable at runtime) only when its dispatcher is a
-# self-contained hl.dsp.* expression — lines referencing local lua variables
-# can't be re-evaluated through `hyprctl eval`, so they're shown locked.
+# A bind is marked "editable" only when its dispatcher is a plain, self-contained
+# hl.dsp.* call. scripts/apply_hypr_keybind.py only ever rewrites the key string
+# and leaves the dispatcher untouched, so binds through a named lua function
+# (e.g. a local `wisp_step_workspace(...)`) would actually rebind fine too —
+# they're locked anyway as a conservative safety margin, since this listing
+# can't tell a safe local function from one with side effects worth a second look.
 python3 - <<'EOF'
 import re, json, glob, os
 
+hypr_dir = os.path.join(os.environ.get("XDG_CONFIG_HOME") or os.path.expanduser("~/.config"), "hypr")
 files = sorted(set(
-    glob.glob(os.path.expanduser("~/.config/hypr/*.lua"))
-    + glob.glob(os.path.expanduser("~/.config/hypr/**/*.lua"), recursive=True)
+    glob.glob(os.path.join(hypr_dir, "*.lua"))
+    + glob.glob(os.path.join(hypr_dir, "**/*.lua"), recursive=True)
 ))
 
 pat = re.compile(r'^\s*hl\.bind\(\s*"([^"]+)"\s*,\s*(.*)\)\s*$')
