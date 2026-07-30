@@ -92,8 +92,13 @@ doctor() {
                 printf '  %s✓%s %-22s %s%s (%s)%s\n' "$c_grn" "$c_rst" "$name" "$c_dim" "$desc" "$b" "$c_rst"; return 0
             fi
         done
-        printf '  %s!%s %-22s %snone of: %s — %s%s\n' "$c_yel" "$c_rst" "$name" "$c_yel" "$*" "$desc" "$c_rst"
-        warn=$((warn+1))
+        if [ "$level" = req ]; then
+            printf '  %s✗%s %-22s %snone of: %s%s\n' "$c_red" "$c_rst" "$name" "$c_red" "$*" "$c_rst"
+            fail=$((fail+1))
+        else
+            printf '  %s!%s %-22s %snone of: %s — %s%s\n' "$c_yel" "$c_rst" "$name" "$c_yel" "$*" "$desc" "$c_rst"
+            warn=$((warn+1))
+        fi
     }
 
     chk() { # name, level(req|opt), what-breaks, binaries...
@@ -114,16 +119,16 @@ doctor() {
     chk "quickshell"  req "the shell itself"                        qs
     chk "Hyprland"    req "settings, keybinds, window rules"         hyprctl
     chk "python3"     req "Settings > Look & Feel / Keybinds file edits" python3
-    chk "matugen+jq"  opt "wallpaper-derived colours"                matugen jq
-    chk_any "wallpaper" opt "setting the wallpaper"                  awww swww hyprpaper
+    chk "matugen+jq"  req "wallpaper-derived colours"                matugen jq
+    chk_any "wallpaper" req "setting the wallpaper"                  awww swww hyprpaper
+    chk "wl-clipboard" req "copy actions"                            wl-copy
+    chk "bc"          req "CPU/RAM readouts"                         bc
+    chk "xdg-utils"   req "opening files and folders"                xdg-open xdg-user-dir
+    chk "node"        req "osu! island lane runtime (needs osu!lazer + tosu too)" node
+    chk "curl"        req "weather card, Steam cover art/achievements" curl
     chk "qalc"        opt "launcher calculator"                      qalc
-    chk "wl-clipboard" opt "copy actions"                            wl-copy
     chk "nvidia-smi"  opt "GPU ring (Nvidia only)"                   nvidia-smi
-    chk "bc"          opt "CPU/RAM readouts"                         bc
     chk "terminal"    opt "launching terminal apps"                  kitty
-    chk "xdg-utils"   opt "opening files and folders"                xdg-open xdg-user-dir
-    chk "node"        opt "osu! island lane (osu!lazer + tosu)"      node
-    chk "curl"        opt "weather card, Steam cover art/achievements" curl
 
     # Fonts: the shell resolves these at runtime and falls back silently, which
     # is exactly why they are worth checking explicitly here.

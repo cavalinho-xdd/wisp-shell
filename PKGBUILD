@@ -6,13 +6,12 @@ pkgdesc="A modern floating pill-based shell for Hyprland built on Quickshell"
 arch=('any')
 url="https://github.com/cavalinho-xdd/wisp-shell"
 license=('MIT')
-depends=('quickshell' 'hyprland' 'jq' 'upower' 'cliphist' 'wl-clipboard' 'grim' 'slurp' 'bc')
+depends=('quickshell' 'hyprland' 'jq' 'upower' 'cliphist' 'wl-clipboard' 'grim' 'slurp' 'bc'
+         'matugen-bin' 'awww' 'libnotify' 'python' 'nodejs' 'xdg-user-dirs' 'curl')
 optdepends=(
-    'matugen: wallpaper-derived colors'
-    'swww: wallpaper management'
-    'hyprpaper: alternative wallpaper management'
+    'hyprpaper: alternative wallpaper backend to awww'
     'qalc: launcher calculator'
-    'nvidia-utils: GPU monitoring for Performance Widget'
+    'nvidia-utils: GPU monitoring for Performance Widget (Nvidia only)'
 )
 makedepends=('git')
 provides=('wisp-shell')
