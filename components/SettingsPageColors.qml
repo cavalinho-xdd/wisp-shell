@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Dialogs
 import Quickshell
 import "../core"
 
@@ -147,7 +146,7 @@ CfgPage {
             ActionButton {
                 icon: "󰉖"
                 text: "Choose folder"
-                onClicked: folderDialog.open()
+                onClicked: folderPicker.open(Settings.wallpaperFolder)
             }
 
             ActionButton {
@@ -159,10 +158,12 @@ CfgPage {
         }
     }
 
-    FolderDialog {
-        id: folderDialog
-        currentFolder: "file://" + Settings.wallpaperFolder
-        onAccepted: Settings.conf.colors.wallpaperFolder = String(selectedFolder).replace("file://", "")
+    // Inline, inside the settings surface — a QtQuick.Dialogs FolderDialog here
+    // hung the whole session. See FolderPicker.qml.
+    FolderPicker {
+        id: folderPicker
+        Layout.fillWidth: true
+        onAccepted: path => Settings.conf.colors.wallpaperFolder = path
     }
 
     // ── Live palette preview ──

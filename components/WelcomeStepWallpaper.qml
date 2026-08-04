@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Dialogs
 import Qt.labs.folderlistmodel
 import Quickshell
 import "../core"
@@ -51,15 +50,21 @@ ColumnLayout {
             ActionButton {
                 icon: "󰉖"
                 text: "Choose"
-                onClicked: folderDialog.open()
+                onClicked: folderPicker.open(Settings.wallpaperFolder)
             }
         }
     }
 
-    FolderDialog {
-        id: folderDialog
-        currentFolder: "file://" + Settings.wallpaperFolder
-        onAccepted: Settings.conf.colors.wallpaperFolder = String(selectedFolder).replace("file://", "")
+    // Inline, inside the wizard's own surface. A QtQuick.Dialogs FolderDialog
+    // here used to hang the entire session — see FolderPicker.qml for why, and
+    // note the thumbnail delegate below already avoids the same trap
+    // deliberately.
+    FolderPicker {
+        id: folderPicker
+        Layout.fillWidth: true
+        Layout.leftMargin: 12
+        Layout.rightMargin: 12
+        onAccepted: path => Settings.conf.colors.wallpaperFolder = path
     }
 
     // ── What's in there ──
@@ -70,10 +75,14 @@ ColumnLayout {
         showDirs: false
     }
 
+    // The browser and the "what's in there" readout swap rather than stack:
+    // this step is sized to the wizard card (Layout.preferredHeight above), so
+    // showing both at once would overflow it.
     RowLayout {
         Layout.fillWidth: true
         Layout.leftMargin: 12
         Layout.rightMargin: 12
+        visible: !folderPicker.visible
         Text {
             Layout.fillWidth: true
             font.family: Theme.fontFamily
@@ -98,7 +107,7 @@ ColumnLayout {
         orientation: ListView.Horizontal
         spacing: 10
         clip: true
-        visible: wallModel.count > 0
+        visible: wallModel.count > 0 && !folderPicker.visible
         model: wallModel
 
         delegate: Rectangle {
@@ -170,7 +179,7 @@ ColumnLayout {
     }
 
     CfgNotice {
-        visible: wallModel.count === 0
+        visible: wallModel.count === 0 && !folderPicker.visible
         icon: "󰋽"
         text: "Point this at a folder with images, or drop some into the path above. You can always browse the full picker later from the dashboard's wallpaper button."
     }
