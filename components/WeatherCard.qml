@@ -58,7 +58,7 @@ Rectangle {
 
     Process {
         id: wxProc
-        command: ["bash", String(Qt.resolvedUrl("../scripts/weather.sh")).replace("file://", ""), "--json"]
+        command: ["bash", Quickshell.shellPath("scripts/weather.sh"), "--json"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -106,7 +106,7 @@ Rectangle {
                     anchors.fill: parent; anchors.margins: -8
                     hoverEnabled: true; cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        wxProc.command = ["bash", String(Qt.resolvedUrl("../scripts/weather.sh")).replace("file://", ""), "--refresh"];
+                        wxProc.command = ["bash", Quickshell.shellPath("scripts/weather.sh"), "--refresh"];
                         wxProc.running = true;
                     }
                 }
@@ -170,6 +170,7 @@ Rectangle {
             Repeater {
                 model: root.wx && root.wx.days ? root.wx.days : []
                 delegate: Rectangle {
+                    required property var modelData
                     readonly property bool active: index === root.selectedDay
                     Layout.fillWidth: true
                     Layout.preferredHeight: 50
@@ -236,6 +237,7 @@ Rectangle {
                 Repeater {
                     model: root.dayData ? root.dayData.hourly : []
                     delegate: Rectangle {
+                        required property var modelData
                         // On today, highlight the slot nearest the current hour
                         readonly property bool nowSlot: root.shownDay === 0
                             && index === Math.min(7, Math.round(new Date().getHours() / 3))

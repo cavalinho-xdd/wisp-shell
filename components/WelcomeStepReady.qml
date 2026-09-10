@@ -202,7 +202,7 @@ ColumnLayout {
             icon: "󰒓"
             text: "Open Settings"
             onClicked: {
-                Quickshell.execDetached(["qs", "-p", Settings.settingsAppPath]);
+                Quickshell.execDetached(["/usr/bin/qs", "-p", Settings.settingsAppPath]);
                 step.openSettings();
             }
         }

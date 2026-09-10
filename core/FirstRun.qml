@@ -30,7 +30,7 @@ Singleton {
     property bool checked: false
 
     function launch() {
-        Quickshell.execDetached(["qs", "-p", Settings.welcomeAppPath]);
+        Quickshell.execDetached(["/usr/bin/qs", "-p", Settings.welcomeAppPath]);
     }
 
     // Called by welcome.qml on finish/skip. Sync write, not the debounced

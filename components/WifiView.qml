@@ -272,6 +272,7 @@ Item {
 
             delegate: Item {
                 id: delegateWrapper
+                required property var modelData
                 width: scanList.width
                 height: isExpanded ? 100 : 52
 

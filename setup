@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
+# Prime sudo timeout
+sudo -v
+
 # Wisp setup script - manages installation of dependencies and dotfiles.
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -38,6 +41,7 @@ dependencies=(
     "xdg-user-dirs" # provides xdg-user-dir -- core/Settings.qml's wallpaper
                     # folder default (falls back silently if missing, but
                     # ship it so the fallback is never needed)
+    "xdg-utils"   # provides xdg-open -- settings.qml uses it to open folders
     "curl"        # scripts/weather.sh (weather.enable defaults true) and
                   # scripts/game_watch.sh (Steam cover art / achievements)
 )
@@ -47,16 +51,16 @@ ensure_aur_helper() {
     if command -v yay &>/dev/null; then echo "yay"; return; fi
     if ! command -v pacman &>/dev/null; then return; fi
 
-    print_warn "No AUR helper (paru/yay) found. Building paru from AUR..."
+    print_warn "No AUR helper (paru/yay) found. Building yay from AUR..."
     sudo pacman -S --needed --noconfirm base-devel git
     local build_dir; build_dir="$(mktemp -d)"
-    if git clone --depth 1 https://aur.archlinux.org/paru-bin.git "$build_dir" >/dev/null 2>&1 \
+    if git clone --depth 1 https://aur.archlinux.org/yay-bin.git "$build_dir" >/dev/null 2>&1 \
         && (cd "$build_dir" && makepkg -si --noconfirm); then
         rm -rf "$build_dir"
-        echo "paru"
+        echo "yay"
     else
         rm -rf "$build_dir"
-        print_warn "Failed to build paru automatically."
+        print_warn "Failed to build yay automatically."
     fi
 }
 
@@ -84,12 +88,12 @@ install_dependencies() {
 
     local helper; helper="$(ensure_aur_helper)"
     if [ -z "$helper" ]; then
-        print_warn "No AUR helper available — missing packages were not installed: ${missing[*]}"
-        return
+        print_err "No AUR helper available — missing packages were not installed: ${missing[*]}"
+        exit 1
     fi
 
     print_info "Installing via $helper..."
-    "$helper" -S --needed --noconfirm "${missing[@]}" || print_warn "Some packages failed to install."
+    "$helper" -S --needed --noconfirm "${missing[@]}" || { print_err "Some packages failed to install."; exit 1; }
     print_succ "Dependencies installed."
 }
 
@@ -98,7 +102,9 @@ install_wisp() {
 
     # 1. Install Wisp Shell core to local share
     mkdir -p "$DATA_DIR"
-    cp -a "$REPO_ROOT"/* "$DATA_DIR/"
+    if [ "$REPO_ROOT" != "$DATA_DIR" ]; then
+        cp -a "$REPO_ROOT"/* "$DATA_DIR/"
+    fi
 
     # 2. Setup the wisp CLI wrapper
     mkdir -p "$BIN_DIR"

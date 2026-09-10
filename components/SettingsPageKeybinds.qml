@@ -21,7 +21,7 @@ CfgPage {
 
     Process {
         id: listProc
-        command: ["bash", String(Qt.resolvedUrl("../scripts/keybinds_list.sh")).replace("file://", "")]
+        command: ["bash", Quickshell.shellPath("scripts/keybinds_list.sh")]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {

@@ -80,7 +80,7 @@ Rectangle {
 
             Repeater {
                 model: root.groups
-                delegate: NotifGroupCard { width: groupCol.width; group: modelData }
+                delegate: NotifGroupCard { required property var modelData; width: groupCol.width; group: modelData }
             }
         }
     }
@@ -218,7 +218,7 @@ Rectangle {
                 spacing: 6
                 Repeater {
                     model: groupCard.multi && !groupCard.expanded ? [groupCard.group.notifs[0]] : groupCard.group.notifs
-                    delegate: NotifRow { width: parent.width; n: modelData; showAppIcon: !groupCard.multi }
+                    delegate: NotifRow { required property var modelData; width: parent.width; n: modelData; showAppIcon: !groupCard.multi }
                 }
             }
         }
@@ -336,6 +336,7 @@ Rectangle {
                     Repeater {
                         model: notifRow.n ? notifRow.n.actions : []
                         delegate: Rectangle {
+                            required property var modelData
                             radius: 10; height: 26
                             width: actLabel.implicitWidth + 20
                             color: Theme.surface0

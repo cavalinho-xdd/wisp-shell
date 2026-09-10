@@ -56,6 +56,7 @@ Item {
                         { name: "Performance", icon: "󰓅" }
                     ]
                     delegate: Rectangle {
+                        required property var modelData
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         radius: 12
@@ -264,7 +265,7 @@ Item {
                             onClicked: {
                                 if (launching) return;
                                 launching = true;
-                                Quickshell.execDetached(["qs", "-p", Settings.settingsAppPath]);
+                                Quickshell.execDetached(["/usr/bin/qs", "-p", Settings.settingsAppPath]);
                                 launchCooldown.start();
                             }
                             Timer { id: launchCooldown; interval: 1000; onTriggered: settingsBtn.launching = false }
@@ -310,13 +311,14 @@ Item {
                                         model: [
                                             // Own native lock screen (lock.qml entry point), not loginctl —
                                             // nothing on this host listens for the lock-session signal
-                                            { label: "Lock", icon: "󰌾", danger: false, hold: false, cmd: ["qs", "-p", Settings.lockAppPath] },
+                                            { label: "Lock", icon: "󰌾", danger: false, hold: false, cmd: ["/usr/bin/qs", "-p", Settings.lockAppPath] },
                                             { label: "Log Out", icon: "󰍃", danger: false, hold: true, cmd: ["hyprctl", "dispatch", "hl.dsp.exit()"] },
                                             { label: "Restart", icon: "󰑐", danger: false, hold: true, cmd: ["bash", "-c", "systemctl reboot || loginctl reboot"] },
                                             { label: "Shut Down", icon: "󰐥", danger: true, hold: true, cmd: ["bash", "-c", "systemctl poweroff || loginctl poweroff"] }
                                         ]
                                         delegate: Rectangle {
                                             id: powerRow
+                                            required property var modelData
                                             width: powerMenuCol.width
                                             height: 38
                                             radius: 10
@@ -516,7 +518,7 @@ Item {
                         // Wallpaper — launches the standalone fullscreen picker (wallpaper.qml)
                         // rather than pushing an in-widget browser; keeps exactly one wallpaper-
                         // apply codepath instead of two copies of the same swww/hyprpaper command.
-                        IconButton { width: 44; height: 44; text: "󰸉"; isChecked: false; onClicked: Quickshell.execDetached(["qs", "-p", Settings.wallpaperAppPath]) }
+                        IconButton { width: 44; height: 44; text: "󰸉"; isChecked: false; onClicked: Quickshell.execDetached(["/usr/bin/qs", "-p", Settings.wallpaperAppPath]) }
                     }
 
                     // Notifications — grouped by app, swipe-to-dismiss, per-notif actions.

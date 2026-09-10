@@ -129,6 +129,7 @@ Rectangle {
             Repeater {
                 model: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
                 delegate: Text {
+                    required property var modelData
                     font.family: Theme.fontFamily;
                     Layout.fillWidth: true
                     horizontalAlignment: Text.AlignHCenter
@@ -162,6 +163,7 @@ Rectangle {
                 Repeater {
                     model: root.cells
                     delegate: Item {
+                        required property var modelData
                         width: gridCol.width / 7
                         height: 25
 
@@ -250,6 +252,7 @@ Rectangle {
                 Repeater {
                     model: root.selectedEvents
                     delegate: Rectangle {
+                        required property var modelData
                         width: evCol.width
                         height: 28
                         radius: 8

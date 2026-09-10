@@ -402,6 +402,7 @@ Item {
             model: (root.adapter && root.btEnabled) ? root.adapter.devices.values : null
 
             delegate: Item {
+                required property var modelData
                 width: scanList.width
                 height: 56
 

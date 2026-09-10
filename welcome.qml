@@ -29,6 +29,7 @@ ShellRoot {
         { icon: "󰄛", title: "Welcome" },
         { icon: "󰸌", title: "Appearance" },
         { icon: "󰸉", title: "Wallpaper" },
+        { icon: "󰍜", title: "SDDM Theme" },
         { icon: "󰍜", title: "Shell" },
         { icon: "󰄬", title: "Ready" }
     ]
@@ -239,6 +240,7 @@ ShellRoot {
                         WelcomeStepIntro {}
                         WelcomeStepAppearance {}
                         WelcomeStepWallpaper {}
+                        WelcomeStepSddm {}
                         WelcomeStepShell {}
                         WelcomeStepReady { onOpenSettings: root.finish() }
                     }

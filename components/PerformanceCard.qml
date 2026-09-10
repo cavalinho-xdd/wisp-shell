@@ -26,7 +26,7 @@ Rectangle {
 
     Process {
         id: sysmonProc
-        command: ["bash", String(Qt.resolvedUrl("../scripts/sysmon_snapshot.sh")).replace("file://", "")]
+        command: ["bash", Quickshell.shellPath("scripts/sysmon_snapshot.sh")]
         running: root.active
         stdout: SplitParser {
             onRead: message => {
@@ -153,6 +153,7 @@ Rectangle {
                         Repeater {
                             model: root.sysData.top || []
                             delegate: Item {
+                                required property var modelData
                                 width: parent.width
                                 height: 24
 
