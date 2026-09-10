@@ -93,4 +93,12 @@ if [[ -f "$DOTS_MATUGEN" ]]; then
         --source-color-index 0 -q || true
 fi
 pkill -USR1 -x kitty 2>/dev/null || true
-    hyprctl reload >/dev/null 2>&1 || true
+# Apply Hyprland border colors live without full reload
+if [[ -f "$HOME/.config/hypr/colors.conf" ]]; then
+    ACTIVE=$(grep "^\$active_border" "$HOME/.config/hypr/colors.conf" | cut -d= -f2- | sed "s/^[[:space:]]*//")
+    INACTIVE=$(grep "^\$inactive_border" "$HOME/.config/hypr/colors.conf" | cut -d= -f2- | sed "s/^[[:space:]]*//")
+    if [[ -n "$ACTIVE" && -n "$INACTIVE" ]]; then
+        hyprctl keyword general:col.active_border "$ACTIVE" 2>/dev/null || true
+        hyprctl keyword general:col.inactive_border "$INACTIVE" 2>/dev/null || true
+    fi
+fi
