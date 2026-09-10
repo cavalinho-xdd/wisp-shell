@@ -93,3 +93,4 @@ if [[ -f "$DOTS_MATUGEN" ]]; then
         --source-color-index 0 -q || true
 fi
 pkill -USR1 -x kitty 2>/dev/null || true
+    hyprctl reload >/dev/null 2>&1 || true
