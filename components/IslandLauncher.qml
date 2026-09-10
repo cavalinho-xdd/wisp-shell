@@ -228,7 +228,7 @@ Item {
                                     font.pixelSize: 14
                                     color: Theme.text
                                     elide: Text.ElideRight
-                                    width: parent.width - 16
+                                    width: parent.parent.width - 16
                                     horizontalAlignment: Text.AlignHCenter
                                 }
                             }
