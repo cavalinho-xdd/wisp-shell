@@ -145,7 +145,7 @@ doctor() {
         printf '  %s✗%s %-22s %snone installed — every icon renders as a box%s\n' "$c_red" "$c_rst" "Nerd Font" "$c_red" "$c_rst"
         fail=$((fail+1))
     fi
-    if grep -qiE "google sans|inter|rubik" <<< "$fonts"; then
+    if grep -qiE "google sans|inter|rubik|noto sans" <<< "$fonts"; then
         printf '  %s✓%s %-22s %sbody text%s\n' "$c_grn" "$c_rst" "UI font" "$c_dim" "$c_rst"
     else
         printf '  %s!%s %-22s %sfalling back to the system sans%s\n' "$c_yel" "$c_rst" "UI font" "$c_yel" "$c_rst"

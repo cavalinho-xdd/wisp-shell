@@ -44,36 +44,66 @@ dependencies=(
     "xdg-utils"   # provides xdg-open -- settings.qml uses it to open folders
     "curl"        # scripts/weather.sh (weather.enable defaults true) and
                   # scripts/game_watch.sh (Steam cover art / achievements)
+    "noto-fonts"  # core/Theme.qml's fontFamily candidate list -- without a
+                  # match, body text falls back to plain "sans-serif"
+    "ttf-jetbrains-mono-nerd" # core/Theme.qml's fontIcon/fontMono candidate
+                  # list -- without a match every icon glyph renders as a box
+)
+
+# Only needed for `bootstrap`'s SDDM theme step, so `install`/`deps` (shell
+# only) stay exactly as fast/minimal as before. Pulled from qylock's own
+# sddm.sh dependency table (github.com/Darkkal44/qylock).
+sddm_theme_dependencies=(
+    "sddm"
+    "qt6-declarative"
+    "qt6-5compat"
+    "qt6-svg"
+    "qt6-multimedia"
+    "qt6-multimedia-ffmpeg"
+    "gst-plugins-base"
+    "gst-plugins-good"
+    "gst-plugins-bad"
+    "gst-plugins-ugly"
 )
 
 ensure_aur_helper() {
+    # Callers capture this function's stdout via $(...) to get back just the
+    # helper name -- every other line here MUST go to stderr (>&2), or the
+    # build log itself becomes the "helper name" and the caller tries to
+    # execute it as a command.
     if command -v paru &>/dev/null; then echo "paru"; return; fi
     if command -v yay &>/dev/null; then echo "yay"; return; fi
     if ! command -v pacman &>/dev/null; then return; fi
 
-    print_warn "No AUR helper (paru/yay) found. Building yay from AUR..."
-    sudo pacman -S --needed --noconfirm base-devel git
+    print_warn "No AUR helper (paru/yay) found. Building yay from AUR..." >&2
+    sudo pacman -S --needed --noconfirm base-devel git >&2
     local build_dir; build_dir="$(mktemp -d)"
     if git clone --depth 1 https://aur.archlinux.org/yay-bin.git "$build_dir" >/dev/null 2>&1 \
-        && (cd "$build_dir" && makepkg -si --noconfirm); then
+        && (cd "$build_dir" && makepkg -si --noconfirm >&2); then
         rm -rf "$build_dir"
         echo "yay"
     else
         rm -rf "$build_dir"
-        print_warn "Failed to build yay automatically."
+        print_warn "Failed to build yay automatically." >&2
     fi
 }
 
 install_dependencies() {
+    # Defaults to the core shell dependency list; pass an explicit package
+    # list (e.g. "${sddm_theme_dependencies[@]}") to install a different set
+    # through the same missing-check/AUR-helper path.
+    local pkgs=("$@")
+    [ ${#pkgs[@]} -eq 0 ] && pkgs=("${dependencies[@]}")
+
     print_info "Checking dependencies..."
 
     if ! command -v pacman &>/dev/null; then
-        print_warn "Not on Arch (no pacman). Skipping package installation — install manually: ${dependencies[*]}"
+        print_warn "Not on Arch (no pacman). Skipping package installation — install manually: ${pkgs[*]}"
         return
     fi
 
     local missing=()
-    for pkg in "${dependencies[@]}"; do
+    for pkg in "${pkgs[@]}"; do
         if ! pacman -Qi "$pkg" &>/dev/null; then
             missing+=("$pkg")
         fi
@@ -116,12 +146,13 @@ install_wisp() {
     ensure_path
 }
 
-# hyprland.lua's autostart line calls a bare `wisp start`. Hyprland's own exec
-# environment does not inherit an interactive shell's PATH (fish's
-# fish_add_path, .bashrc, etc never run for it) — only what systemd's user
-# manager hands it at session start, which by default has no ~/.local/bin.
-# Without this, "wisp start" silently fails to spawn and the whole shell never
-# comes up, with nothing printed anywhere a user would see.
+# wisp-dots' hyprland.lua already calls its autostart with an absolute path
+# ($HOME/.local/bin/wisp start), so that one call doesn't need this. This is
+# for every *other* bare `wisp` invocation — interactive shell use, any other
+# exec-once/script that assumes PATH. Hyprland's own exec environment does not
+# inherit an interactive shell's PATH (fish's fish_add_path, .bashrc, etc
+# never run for it) — only what systemd's user manager hands it at session
+# start, which by default has no ~/.local/bin.
 ensure_path() {
     local envd="${XDG_CONFIG_HOME:-$HOME/.config}/environment.d"
     local envfile="$envd/50-wisp-bin.conf"
@@ -138,6 +169,111 @@ ensure_path() {
     fi
 }
 
+install_wisp_dots() {
+    print_info "Installing wisp-dots (Hyprland/fish/kitty/... dotfiles)..."
+
+    if ! command -v git &>/dev/null; then
+        print_err "git not found — cannot install wisp-dots."
+        exit 1
+    fi
+
+    # wisp-dots' own install.sh shells out to rsync (deploy_copy) but never
+    # declares or installs it itself — on a genuinely fresh box it isn't
+    # there. Not in manifest.toml's package list, so this has to be ours.
+    command -v rsync &>/dev/null || install_dependencies rsync
+
+    local dots_dir="$CONFIG_DIR/wisp-dots"
+    if [ -d "$dots_dir/.git" ]; then
+        print_info "wisp-dots already cloned — pulling latest..."
+        git -C "$dots_dir" pull origin main || print_warn "wisp-dots git pull failed, continuing with local checkout..."
+    else
+        git clone https://github.com/cavalinho-xdd/wisp-dots.git "$dots_dir" || { print_err "Failed to clone wisp-dots."; exit 1; }
+    fi
+
+    bash "$dots_dir/install.sh" --noconfirm || { print_err "wisp-dots install.sh failed."; exit 1; }
+    print_succ "wisp-dots installed."
+}
+
+install_sddm_theme() {
+    print_info "Installing SDDM theme (qylock: material-you-dark)..."
+
+    install_dependencies "${sddm_theme_dependencies[@]}"
+
+    local tmp; tmp="$(mktemp -d)"
+    # Sparse + blobless checkout: qylock ships many themes' worth of art, we
+    # only want the one directory.
+    if ! git clone --depth 1 --filter=blob:none --sparse \
+        https://github.com/Darkkal44/qylock.git "$tmp" >/dev/null 2>&1; then
+        print_err "Failed to clone qylock."
+        rm -rf "$tmp"
+        exit 1
+    fi
+    git -C "$tmp" sparse-checkout set themes/material-you-dark >/dev/null 2>&1
+
+    if [ ! -d "$tmp/themes/material-you-dark" ]; then
+        print_err "qylock's material-you-dark theme not found after checkout."
+        rm -rf "$tmp"
+        exit 1
+    fi
+
+    sudo mkdir -p /usr/share/sddm/themes
+    sudo rm -rf /usr/share/sddm/themes/material-you-dark
+    sudo cp -r "$tmp/themes/material-you-dark" /usr/share/sddm/themes/material-you-dark
+    rm -rf "$tmp"
+
+    sudo mkdir -p /etc/sddm.conf.d
+    # scripts/set_sddm.sh (the welcome wizard's theme switcher) sed-edits
+    # this exact file/key -- must exist with this name for it to work.
+    if [ ! -f /etc/sddm.conf.d/wisp.conf ]; then
+        printf '[Theme]\nCurrent=material-you-dark\n' | sudo tee /etc/sddm.conf.d/wisp.conf >/dev/null
+    else
+        sudo sed -i 's/^Current=.*/Current=material-you-dark/' /etc/sddm.conf.d/wisp.conf
+    fi
+    print_succ "SDDM theme installed and set as Current."
+
+    if command -v systemctl &>/dev/null && [ -d /run/systemd/system ]; then
+        for dm in gdm lightdm lxdm ly greetd; do
+            systemctl is-enabled "$dm.service" &>/dev/null && \
+                print_warn "$dm.service is also enabled — SDDM was NOT set as the active display manager for you. Switch manually if you want SDDM to win at boot."
+        done
+        sudo systemctl enable sddm.service 2>/dev/null && print_succ "sddm.service enabled." \
+            || print_warn "Could not enable sddm.service (already enabled, or another DM owns it)."
+    else
+        print_warn "No systemd running — skipping sddm.service enable (expected in a container)."
+    fi
+}
+
+install_wallpapers() {
+    print_info "Installing favorite wallpapers..."
+
+    local wall_dir; wall_dir="$(xdg-user-dir PICTURES 2>/dev/null || echo "$HOME/Pictures")/Wallpapers"
+    mkdir -p "$wall_dir"
+
+    local favorites; favorites="$(curl -fsSL https://raw.githubusercontent.com/ItsTerm1n4l/Wallpapers/main/pages/Favorites.md 2>/dev/null)"
+    if [ -z "$favorites" ]; then
+        print_warn "Could not reach the Wallpapers repo — skipping."
+        return
+    fi
+
+    local files; mapfile -t files < <(grep -oE '\(/images/[^)]+\)' <<< "$favorites" | sed -E 's/^\(\/images\///; s/\)$//')
+
+    local added=0 skipped=0
+    for f in "${files[@]}"; do
+        [ -n "$f" ] || continue
+        if [ -f "$wall_dir/$f" ]; then
+            skipped=$((skipped+1))
+            continue
+        fi
+        if curl -fsSL "https://raw.githubusercontent.com/ItsTerm1n4l/Wallpapers/main/images/$f" -o "$wall_dir/$f" 2>/dev/null; then
+            added=$((added+1))
+        else
+            print_warn "Failed to download $f"
+        fi
+    done
+
+    print_succ "Wallpapers: $added downloaded, $skipped already present, in $wall_dir"
+}
+
 uninstall() {
     print_info "Uninstalling Wisp Shell..."
     rm -rf "$DATA_DIR"
@@ -150,28 +286,49 @@ show_help() {
     cat <<EOF
 ${c_bold}Wisp Setup CLI${c_rst}
 
-Usage: ./setup <command>
+Usage: ./setup [command]
+
+  ./setup   With no command: full clean-install (same as 'bootstrap' below).
+            Zero manual steps after this — the one command for a fresh box.
 
 Commands:
-  install       Install dependencies and the Wisp core (no dotfiles — see wisp-dots).
+  bootstrap     Same as running ./setup with no command: shell + wisp-dots +
+                SDDM theme + wallpapers.
+  install       Install dependencies and the Wisp core only (no dotfiles —
+                see wisp-dots). Used internally by wisp-dots' own installer;
+                most people want plain './setup' instead.
   update        Update the Wisp core from the repository.
   uninstall     Remove Wisp core and CLI.
   deps          Only install missing dependencies.
   help          Show this help message.
 
-Dotfiles (Hyprland/fish/fastfetch/...) are not this script's job — install
-https://github.com/cavalinho-xdd/wisp-dots instead, which pulls this repo in
-as a dependency automatically.
+'install' alone only sets up the shell core — dotfiles
+(https://github.com/cavalinho-xdd/wisp-dots) are a separate manual step in
+that path. Plain './setup' (or './setup bootstrap') does everything in one go.
 EOF
 }
 
-command="${1:-help}"
+command="${1:-bootstrap}"
 
 case "$command" in
     install)
         install_dependencies
         install_wisp
         print_succ "Installation complete! $BIN_DIR was added to your PATH (new terminals and next login; already applied to this graphical session)."
+        ;;
+    bootstrap)
+        install_dependencies
+        install_wisp
+        install_wisp_dots
+        install_sddm_theme
+        install_wallpapers
+        print_info "Running wisp doctor for a final report..."
+        if "$BIN_DIR/wisp" doctor; then
+            print_succ "Bootstrap complete! Log out/in (or reboot) once so the new PATH and SDDM theme take full effect."
+        else
+            print_warn "Bootstrap finished, but wisp doctor found required pieces still missing (see report above). Fix those before rebooting into Hyprland."
+            exit 1
+        fi
         ;;
     update)
         print_info "Pulling latest changes..."

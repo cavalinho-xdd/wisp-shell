@@ -24,3 +24,4 @@ plan.md
 # part of the shell and must never be installed.
 test.qml
 test_*.qml
+scripts/docker-test/logs/
