@@ -137,11 +137,26 @@ Rectangle {
             width: 32; height: 32; cursorShape: Qt.PointingHandCursor
             hoverEnabled: true
             onClicked: {
+                if (Notifs.server.trackedNotifications.values.length === 0) return;
                 clearSweep.restart();
-                root.expandedGroups = {};
-                let notifs = Notifs.server.trackedNotifications.values;
-                for (let i = notifs.length - 1; i >= 0; i--) {
-                    notifs[i].dismiss();
+                clearAllAnim.restart();
+            }
+            SequentialAnimation {
+                id: clearAllAnim
+                ParallelAnimation {
+                    NumberAnimation { target: groupCol; property: "opacity"; to: 0; duration: 200; easing.type: Easing.OutQuad }
+                    NumberAnimation { target: groupCol; property: "x"; to: 80; duration: 200; easing.type: Easing.InQuad }
+                }
+                ScriptAction {
+                    script: {
+                        root.expandedGroups = {};
+                        let notifs = Notifs.server.trackedNotifications.values;
+                        for (let i = notifs.length - 1; i >= 0; i--) {
+                            notifs[i].dismiss();
+                        }
+                        groupCol.opacity = 1;
+                        groupCol.x = 0;
+                    }
                 }
             }
             Text {
@@ -324,7 +339,7 @@ Rectangle {
 
                     Text {
                         text: "󰅗"; font.family: Theme.fontIcon; color: Theme.subtext0; font.pixelSize: 15
-                        MouseArea { anchors.fill: parent; anchors.margins: -8; cursorShape: Qt.PointingHandCursor; onClicked: notifRow.n && notifRow.n.dismiss() }
+                        MouseArea { anchors.fill: parent; anchors.margins: -8; cursorShape: Qt.PointingHandCursor; onClicked: { if (notifRow.n) notifRow.commitDismiss(1) } }
                     }
                 }
 
