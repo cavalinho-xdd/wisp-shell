@@ -25,3 +25,5 @@ plan.md
 test.qml
 test_*.qml
 scripts/docker-test/logs/
+.agents/
+skills-lock.json

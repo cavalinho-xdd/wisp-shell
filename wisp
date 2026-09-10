@@ -191,6 +191,7 @@ ${c_bold}wisp${c_rst} — Quickshell desktop shell for Hyprland
   ${c_bold}wisp wallpaper${c_rst}    Open the wallpaper picker
   ${c_bold}wisp launcher${c_rst}     Open the app launcher
   ${c_bold}wisp lock${c_rst}         ${c_yel}Lock the session immediately${c_rst}
+  ${c_bold}wisp screenshot${c_rst}   Capture an area screenshot
 
   ${c_bold}wisp config${c_rst}       Print the config file path
   ${c_bold}wisp logs${c_rst}         Follow the Quickshell log
@@ -207,6 +208,7 @@ case "${1:-}" in
     wallpaper)  shift; run_entry wallpaper "$@" ;;
     launcher)   toggle_launcher ;;
     lock)       shift; run_entry lock "$@" ;;
+    screenshot) shift; exec "$SHELL_DIR/scripts/screenshot.sh" "$@" ;;
 
     start)
         [ -z "$(running_pids)" ] || die "already running (wisp restart to replace it)"
