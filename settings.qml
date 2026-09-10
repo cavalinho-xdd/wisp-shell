@@ -28,7 +28,6 @@ ShellRoot {
         }
         readonly property var pages: [
             { name: "Hyprland", icon: "󰉼", component: "SettingsPageHypr.qml" },
-            { name: "Window Rules", icon: "󰖲", component: "SettingsPageWindowRules.qml" },
             { name: "Colors", icon: "󰸌", component: "SettingsPageColors.qml" },
             { name: "Monitors", icon: "󰹑", component: "SettingsPageMonitors.qml" },
             { name: "Keybinds", icon: "󰌌", component: "SettingsPageKeybinds.qml" },
