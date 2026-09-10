@@ -192,6 +192,17 @@ ensure_path() {
     if command -v systemctl &>/dev/null; then
         systemctl --user set-environment PATH="$BIN_DIR:${PATH}" 2>/dev/null || true
     fi
+    # systemd's env above only reaches processes systemd itself spawns (the
+    # compositor, exec-once units) -- a plain interactive shell (the one this
+    # very script is running in, or a fresh TTY login before any graphical
+    # session exists) never consults it. fish reads neither environment.d nor
+    # a dotfile for PATH; its universal-variable path list is the one
+    # mechanism every fish shell picks up, including already-open ones (it
+    # syncs live) -- this is what actually makes plain `wisp` in a terminal
+    # work, not just inside the graphical session.
+    if command -v fish &>/dev/null; then
+        fish -c "fish_add_path -m '$BIN_DIR'" 2>/dev/null || true
+    fi
 }
 
 install_wisp_dots() {
