@@ -9,6 +9,7 @@ import Quickshell.Services.Pipewire
 import Quickshell.Services.Polkit
 import Quickshell.Networking
 import Quickshell.Bluetooth
+import Quickshell.Io
 import "core"
 import "components"
 
@@ -69,7 +70,14 @@ ShellRoot {
     // and the only situation the retry could recover from (a competing agent
     // exiting mid-session) is rare. Do not reintroduce it without an upstream
     // fix making PolkitAgent teardown safe to repeat.
+
+    IpcHandler {
+        target: "shell"
+        function toggleLauncher(): void { ShellState.launcherActive = !ShellState.launcherActive; }
+    }
+
     PolkitAgent {
+
         id: polkitAgent
     }
 
@@ -169,13 +177,9 @@ ShellRoot {
                             // deferring the replace to the next tick via Qt.callLater
                             // lets that pop's transition settle before StackView is
                             // asked to do anything else.
-                            const stack = screenRoot.pill.contentStackRef;
                             screenRoot.pill.isExpanded = false
-                            if (stack.depth > 1) {
-                                stack.pop(null) // Pop to root
-                                Qt.callLater(() => stack.replace(screenRoot.pill.collapsedViewRef))
-                            } else {
-                                stack.replace(screenRoot.pill.collapsedViewRef)
+                            if (screenRoot.pill.dashboardStackRef.depth > 1) {
+                                screenRoot.pill.dashboardStackRef.pop(null)
                             }
                         }
                     }
@@ -217,14 +221,12 @@ ShellRoot {
                     id: floatingPill
                     screen: screenRoot.modelData
 
-                    property alias contentStackRef: contentStack
-                    property alias collapsedViewRef: collapsedView
-                    property alias expandedViewRef: expandedView
+                    property alias dashboardStackRef: dashboardStack
 
                     WlrLayershell.layer: WlrLayer.Overlay
                     // Keyboard reaches TextInputs (calendar event entry) only while expanded;
                     // collapsed pill must never steal focus from apps.
-                    WlrLayershell.keyboardFocus: isExpanded ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+                    WlrLayershell.keyboardFocus: ShellState.launcherActive ? WlrKeyboardFocus.Exclusive : (isExpanded ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None)
 
                     anchors {
                         top: true
@@ -233,8 +235,18 @@ ShellRoot {
                         top: 12
                     }
 
+                    
                     property bool isExpanded: false
-                    // Which dashboard tab to land on when expanding (media island jumps to Media)
+
+                    Connections {
+                        target: ShellState
+                        function onLauncherActiveChanged() {
+                            if (ShellState.launcherActive) {
+                                floatingPill.isExpanded = false;
+                            }
+                        }
+                    }
+// Which dashboard tab to land on when expanding (media island jumps to Media)
                     property int expandTab: 0
 
                     // Fullscreen apps (games, video players) take full precedence over the
@@ -257,7 +269,7 @@ ShellRoot {
                     // backing-store rect for the newly-exposed region until the buffer catches up.
                     // Only `container` below animates now; the mask keeps clicks off the invisible margin.
                     implicitWidth: 750
-                    implicitHeight: 550
+                    implicitHeight: 650
 
                     color: "transparent"
 
@@ -288,19 +300,29 @@ ShellRoot {
                         id: container
                         anchors.top: parent.top
                         anchors.horizontalCenter: parent.horizontalCenter
-                        // Third size tier: media island widens the collapsed pill without expanding
-                        readonly property real targetWidth: contentStack.depth > 1 ? 750
-                            : (floatingPill.isExpanded ? 750 : (Island.current !== "none" ? Island.activeWidth : 320))
-                        // Direction-aware easing needs to know grow vs shrink; compare against
-                        // the previous *target*, not the animated width (which lags mid-flight)
-                        property real lastTarget: 320
-                        property bool widthGrowing: true
-                        onTargetWidthChanged: {
-                            widthGrowing = targetWidth > lastTarget;
-                            lastTarget = targetWidth;
-                        }
-                        width: targetWidth
-                        height: contentStack.depth > 1 ? 550 : (floatingPill.isExpanded ? 550 : 48)
+                        states: [
+                            State {
+                                name: "collapsed"
+                                when: !floatingPill.isExpanded && !ShellState.launcherActive
+                                PropertyChanges { target: container; width: Island.current !== "none" ? Island.activeWidth : 320; height: 48; radius: 24 }
+                            },
+                            State {
+                                name: "expanded"
+                                when: floatingPill.isExpanded && !ShellState.launcherActive
+                                PropertyChanges { target: container; width: 750; height: 550; radius: 24 }
+                            },
+                            State {
+                                name: "launcher"
+                                when: ShellState.launcherActive
+                                PropertyChanges { target: container; width: 750; height: 600; radius: 24 }
+                            }
+                        ]
+
+                        transitions: [
+                            Transition {
+                                SpringAnimation { properties: "width,height,radius"; spring: 2.8; damping: 0.35; mass: 1.0 }
+                            }
+                        ]
                         color: Theme.panelBackground
                         radius: 24
                         // No outline. The pill is the shell's signature object and
@@ -330,27 +352,10 @@ ShellRoot {
 
                         // Hover invite: collapsed pill swells slightly, hinting it opens
                         transformOrigin: Item.Top
-                        scale: !floatingPill.isExpanded && bgMouse.containsMouse ? 1.04 : 1.0
+                        scale: !floatingPill.isExpanded && !ShellState.launcherActive && bgMouse.containsMouse ? 1.04 : 1.0
                         Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
 
-                        // Asymmetric morph: any growth blooms with overshoot (expand AND island
-                        // appear), any shrink slurps shut fast with no bounce — overshoot while
-                        // shrinking reads as wobble.
-                        Behavior on width {
-                            NumberAnimation {
-                                duration: container.widthGrowing ? 420 : 300
-                                easing.type: container.widthGrowing ? Easing.OutBack : Easing.OutQuint
-                                easing.overshoot: 1.08
-                            }
-                        }
-                        Behavior on height {
-                            NumberAnimation {
-                                duration: floatingPill.isExpanded ? 500 : 260
-                                easing.type: floatingPill.isExpanded ? Easing.OutBack : Easing.OutQuint
-                                easing.overshoot: 1.04
-                            }
-                        }
-                        Behavior on radius { NumberAnimation { duration: Theme.animSlow; easing.type: Theme.easeSpring } }
+                        
 
                         // Background click handler. Sits BEHIND widgets.
                         MouseArea {
@@ -358,78 +363,85 @@ ShellRoot {
                             anchors.fill: parent
                             hoverEnabled: true
                             onClicked: {
-                                if (contentStack.depth > 1) return;
+                                if (ShellState.launcherActive) {
+                                    ShellState.launcherActive = false;
+                                    return;
+                                }
+                                if (dashboardStack.depth > 1) return;
 
-                                // Only expand if collapsed. If already expanded, empty space clicks do nothing.
                                 if (!floatingPill.isExpanded) {
                                     floatingPill.expandTab = 0;
                                     floatingPill.isExpanded = true;
-                                    contentStack.replace(expandedView);
                                 }
                             }
                         }
 
                         // Inner content
-                        StackView {
-                            id: contentStack
+                        Item {
                             anchors.fill: parent
-                            initialItem: floatingPill.isExpanded ? expandedView : collapsedView
 
-                            // Expand/collapse content swap: scale-pop in
-                            replaceEnter: Transition {
-                                NumberAnimation { property: "opacity"; from: 0; to: 1; duration: Theme.animSlow }
-                                NumberAnimation { property: "scale"; from: 0.92; to: 1; duration: 450; easing.type: Easing.OutBack; easing.overshoot: 1.2 }
+                            CollapsedBar {
+                                id: collapsedView
+                                anchors.fill: parent
+                                visible: !floatingPill.isExpanded && !ShellState.launcherActive
+                                opacity: (floatingPill.isExpanded || ShellState.launcherActive) ? 0 : 1
+                                Behavior on opacity { NumberAnimation { duration: 150 } }
+
+                                onExpandMedia: {
+                                    floatingPill.expandTab = 2; // Media tab
+                                    floatingPill.isExpanded = true;
+                                }
+                                onExpandNotifs: {
+                                    Island.dismissFlash();
+                                    floatingPill.expandTab = 0; // Dashboard tab
+                                    floatingPill.isExpanded = true;
+                                }
                             }
-                            replaceExit: Transition {
-                                NumberAnimation { property: "opacity"; from: 1; to: 0; duration: Theme.animFast }
+
+                            IslandLauncher {
+                                id: islandLauncher
+                                anchors.fill: parent
+                                visible: ShellState.launcherActive
+                                opacity: ShellState.launcherActive ? 1 : 0
+                                Behavior on opacity { NumberAnimation { duration: 150 } }
+                                onDismiss: ShellState.launcherActive = false
                             }
-                            // Subview enter: rises up into place
-                            pushEnter: Transition {
-                                NumberAnimation { property: "opacity"; from: 0; to: 1; duration: Theme.animSlow }
-                                NumberAnimation { property: "y"; from: 40; to: 0; duration: 420; easing.type: Easing.OutQuint }
-                            }
-                            pushExit: Transition {
-                                NumberAnimation { property: "opacity"; from: 1; to: 0; duration: Theme.animFast }
-                                NumberAnimation { property: "scale"; from: 1; to: 0.96; duration: Theme.animFast }
-                            }
-                            // Subview leave: dashboard scales back up, subview drops away
-                            popEnter: Transition {
-                                NumberAnimation { property: "opacity"; from: 0; to: 1; duration: Theme.animSlow }
-                                NumberAnimation { property: "scale"; from: 0.96; to: 1; duration: 420; easing.type: Easing.OutQuint }
-                            }
-                            popExit: Transition {
-                                NumberAnimation { property: "opacity"; from: 1; to: 0; duration: Theme.animFast }
-                                NumberAnimation { property: "y"; from: 0; to: 40; duration: Theme.animFast; easing.type: Easing.InQuad }
+
+                            StackView {
+                                id: dashboardStack
+                                anchors.fill: parent
+                                visible: floatingPill.isExpanded && !ShellState.launcherActive
+                                opacity: (floatingPill.isExpanded && !ShellState.launcherActive) ? 1 : 0
+                                Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuad } }
+
+                                initialItem: ExpandedDashboard {
+                                    stack: dashboardStack
+                                    currentTab: floatingPill.expandTab
+                                }
+
+                                // Subview enter: rises up into place
+                                pushEnter: Transition {
+                                    NumberAnimation { property: "opacity"; from: 0; to: 1; duration: Theme.animSlow }
+                                    NumberAnimation { property: "y"; from: 40; to: 0; duration: 420; easing.type: Easing.OutQuint }
+                                }
+                                pushExit: Transition {
+                                    NumberAnimation { property: "opacity"; from: 1; to: 0; duration: Theme.animFast }
+                                    NumberAnimation { property: "scale"; from: 1; to: 0.96; duration: Theme.animFast }
+                                }
+                                // Subview leave: dashboard scales back up, subview drops away
+                                popEnter: Transition {
+                                    NumberAnimation { property: "opacity"; from: 0; to: 1; duration: Theme.animSlow }
+                                    NumberAnimation { property: "scale"; from: 0.96; to: 1; duration: 420; easing.type: Easing.OutQuint }
+                                }
+                                popExit: Transition {
+                                    NumberAnimation { property: "opacity"; from: 1; to: 0; duration: Theme.animFast }
+                                    NumberAnimation { property: "y"; from: 0; to: 40; duration: Theme.animFast; easing.type: Easing.InQuad }
+                                }
                             }
                         }
-                    }
-
-                    Component {
-                        id: collapsedView
-                        CollapsedBar {
-                            onExpandMedia: {
-                                floatingPill.expandTab = 2; // Media tab
-                                floatingPill.isExpanded = true;
-                                contentStack.replace(expandedView);
-                            }
-                            onExpandNotifs: {
-                                Island.dismissFlash();
-                                floatingPill.expandTab = 0; // Dashboard tab (notif centre)
-                                floatingPill.isExpanded = true;
-                                contentStack.replace(expandedView);
-                            }
-                        }
-                    }
-
-                    Component {
-                        id: expandedView
-                        ExpandedDashboard {
-                            stack: contentStack
-                            currentTab: floatingPill.expandTab
-                        }
-                    }
-                }
+                    } // close container Rectangle
             }
         }
     }
+}
 }

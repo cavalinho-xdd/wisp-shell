@@ -62,15 +62,8 @@ running_pids() { pgrep -f "$SHELL_DIR/shell.qml" 2>/dev/null || true; }
 # only the fallback if IPC doesn't land.
 toggle_launcher() {
     [ -n "$QS" ] || die "quickshell not found in PATH (install 'quickshell')"
-    local f; f="$(entry launcher)"
-    [ -f "$f" ] || die "missing $f — is WISP_SHELL_DIR correct?"
-    local pid; pid="$(pgrep -f "$QS -p $f" 2>/dev/null | head -1)" || true
-    if [ -n "$pid" ]; then
-        "$QS" -p "$f" ipc call launcher dismiss >/dev/null 2>&1 || kill "$pid" 2>/dev/null || true
-    else
-        bootstrap
-        exec "$QS" -p "$f"
-    fi
+    # Instead of launching a separate launcher.qml, we IPC to the main shell
+    "$QS" -p "$SHELL_DIR/shell.qml" ipc call shell toggleLauncher || true
 }
 
 # ── doctor ─────────────────────────────────────────────────────────────────

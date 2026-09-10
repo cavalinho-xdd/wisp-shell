@@ -13,3 +13,4 @@ singleton Battery Battery.qml
 singleton Paths Paths.qml
 singleton Osd Osd.qml
 singleton FirstRun FirstRun.qml
+singleton ShellState ShellState.qml
