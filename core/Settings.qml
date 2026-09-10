@@ -107,6 +107,31 @@ Singleton {
         writeCustomKeybinds();
     }
 
+    // ── Custom window rules ──
+    function writeCustomWindowRules() {
+        const items = (adapter.customWindowRules || []).map(r => ({
+            match: r.match,
+            rules: r.rules
+        }));
+        Quickshell.execDetached(["python3", Paths.shell("scripts/write_custom_windowrules.py"),
+            root.hyprConfigDir, JSON.stringify(items)]);
+        reloadTimer2.restart();
+    }
+
+    function addCustomWindowRule(entry) {
+        let list = (adapter.customWindowRules || []).slice();
+        list.push(entry);
+        adapter.customWindowRules = list;
+        writeCustomWindowRules();
+    }
+
+    function removeCustomWindowRule(index) {
+        let list = (adapter.customWindowRules || []).slice();
+        list.splice(index, 1);
+        adapter.customWindowRules = list;
+        writeCustomWindowRules();
+    }
+
     // No-op now that keybind overrides are direct file edits rather than a
     // runtime hl.unbind/hl.bind layer — kept only so a fresh shell start
     // doesn't have to special-case "first apply".
@@ -277,6 +302,7 @@ Singleton {
 
             property var keybindOverrides: []
             property var customKeybinds: []
+            property var customWindowRules: []
 
             property JsonObject shell: JsonObject {
                 property int workspaceCount: 5
