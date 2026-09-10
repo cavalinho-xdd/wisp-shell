@@ -53,6 +53,9 @@ dependencies=(
                   # and idle_restore.sh also assume it exists
     "bluez"       # components/BluetoothView.qml imports Quickshell.Bluetooth,
                   # which talks to bluez over D-Bus -- no bluetoothd, no widget
+    "bluez-utils" # ships bluetoothd/bluetoothctl and the bluetooth.service
+                  # unit -- "bluez" alone is just the kernel-side libs, no
+                  # daemon, confirmed empty in a sandbox bootstrap run
     "networkmanager" # components/WifiView.qml imports Quickshell.Networking,
                   # which talks to NetworkManager over D-Bus -- same story
 )
