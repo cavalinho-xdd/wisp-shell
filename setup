@@ -48,6 +48,13 @@ dependencies=(
                   # match, body text falls back to plain "sans-serif"
     "ttf-jetbrains-mono-nerd" # core/Theme.qml's fontIcon/fontMono candidate
                   # list -- without a match every icon glyph renders as a box
+    "hypridle"    # ExpandedDashboard.qml's caffeine toggle unconditionally
+                  # runs `killall -STOP/-CONT hypridle`; scripts/idle_takeover.sh
+                  # and idle_restore.sh also assume it exists
+    "bluez"       # components/BluetoothView.qml imports Quickshell.Bluetooth,
+                  # which talks to bluez over D-Bus -- no bluetoothd, no widget
+    "networkmanager" # components/WifiView.qml imports Quickshell.Networking,
+                  # which talks to NetworkManager over D-Bus -- same story
 )
 
 # Only needed for `bootstrap`'s SDDM theme step, so `install`/`deps` (shell
@@ -125,6 +132,21 @@ install_dependencies() {
     print_info "Installing via $helper..."
     "$helper" -S --needed --noconfirm "${missing[@]}" || { print_err "Some packages failed to install."; exit 1; }
     print_succ "Dependencies installed."
+}
+
+enable_system_services() {
+    # bluez/networkmanager just being installed isn't enough on a minimal
+    # Arch install -- neither daemon is enabled by default, so
+    # BluetoothView.qml/WifiView.qml would still show nothing until a reboot
+    # after a manual `systemctl enable --now`.
+    if ! command -v systemctl &>/dev/null || [ ! -d /run/systemd/system ]; then
+        print_warn "No systemd running -- skipping bluetooth/NetworkManager service enable (expected in a container)."
+        return
+    fi
+    for svc in bluetooth NetworkManager; do
+        sudo systemctl enable --now "$svc.service" 2>/dev/null && print_succ "$svc.service enabled." \
+            || print_warn "Could not enable $svc.service (already enabled/masked, or package missing)."
+    done
 }
 
 install_wisp() {
@@ -313,11 +335,13 @@ command="${1:-bootstrap}"
 case "$command" in
     install)
         install_dependencies
+        enable_system_services
         install_wisp
         print_succ "Installation complete! $BIN_DIR was added to your PATH (new terminals and next login; already applied to this graphical session)."
         ;;
     bootstrap)
         install_dependencies
+        enable_system_services
         install_wisp
         install_wisp_dots
         install_sddm_theme

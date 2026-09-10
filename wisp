@@ -126,6 +126,9 @@ doctor() {
     chk "xdg-utils"   req "opening files and folders"                xdg-open xdg-user-dir
     chk "node"        req "osu! island lane runtime (needs osu!lazer + tosu too)" node
     chk "curl"        req "weather card, Steam cover art/achievements" curl
+    chk "hypridle"    req "dashboard caffeine toggle, idle_takeover/idle_restore scripts" hypridle
+    chk "bluez"       req "Bluetooth panel (Quickshell.Bluetooth needs bluetoothd)" bluetoothctl
+    chk "networkmanager" req "Wifi panel (Quickshell.Networking needs NetworkManager)" nmcli
     chk "qalc"        opt "launcher calculator"                      qalc
     chk "nvidia-smi"  opt "GPU ring (Nvidia only)"                   nvidia-smi
     chk "terminal"    opt "launching terminal apps"                  kitty
