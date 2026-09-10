@@ -48,6 +48,7 @@ dependencies=(
                   # match, body text falls back to plain "sans-serif"
     "ttf-jetbrains-mono-nerd" # core/Theme.qml's fontIcon/fontMono candidate
                   # list -- without a match every icon glyph renders as a box
+    "plasma-browser-integration"
     "hypridle"    # ExpandedDashboard.qml's caffeine toggle unconditionally
                   # runs `killall -STOP/-CONT hypridle`; scripts/idle_takeover.sh
                   # and idle_restore.sh also assume it exists
