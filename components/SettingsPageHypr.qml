@@ -234,7 +234,7 @@ CfgPage {
                             }
 
                             IconButton {
-                                icon: "󰅖"
+                                text: "󰅖"
                                 color: Theme.red
                                 onClicked: Settings.removeCustomWindowRule(index)
                             }
@@ -294,6 +294,7 @@ CfgPage {
                     }
                     ToggleSwitch {
                         id: floatInput
+                        onToggled: v => checked = v
                     }
                     
                     Item { Layout.preferredWidth: 10 }
@@ -306,6 +307,7 @@ CfgPage {
                     }
                     ToggleSwitch {
                         id: centerInput
+                        onToggled: v => checked = v
                     }
                 }
 
