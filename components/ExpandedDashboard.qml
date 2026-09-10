@@ -57,6 +57,7 @@ Item {
                     ]
                     delegate: Rectangle {
                         required property var modelData
+                        required property int index
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         radius: 12
@@ -319,6 +320,7 @@ Item {
                                         delegate: Rectangle {
                                             id: powerRow
                                             required property var modelData
+                                            required property int index
                                             width: powerMenuCol.width
                                             height: 38
                                             radius: 10

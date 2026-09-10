@@ -130,6 +130,7 @@ Rectangle {
                 model: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
                 delegate: Text {
                     required property var modelData
+                    required property int index
                     font.family: Theme.fontFamily;
                     Layout.fillWidth: true
                     horizontalAlignment: Text.AlignHCenter
@@ -253,6 +254,7 @@ Rectangle {
                     model: root.selectedEvents
                     delegate: Rectangle {
                         required property var modelData
+                        required property int index
                         width: evCol.width
                         height: 28
                         radius: 8
