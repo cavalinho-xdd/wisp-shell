@@ -273,15 +273,17 @@ ShellRoot {
 
                     color: "transparent"
 
-                    // Reserves space for the *collapsed* bar height only (12px top margin +
-                    // 48px collapsed pill), not the fixed 750x550 surface — tiled windows
-                    // now stay clear of the bar's baseline row instead of being drawn behind
-                    // it. exclusiveZone is independent of implicitHeight/anchored-edge size
+                    // Reserves space for the collapsed pill such that the gap below it
+                    // matches the 12px top margin exactly. Hyprland adds its own gaps_out (10)
+                    // to the reserved area (margin 12 + exclusiveZone). To get a 12px bottom gap:
+                    // 12 (margin) + 50 (exclusiveZone) + 10 (gaps_out) = 72px reserved total.
+                    // 72 - 60 (pill bottom) = 12px gap.
+                    // exclusiveZone is independent of implicitHeight/anchored-edge size
                     // (that's what ExclusionMode.Auto would use, and it would reserve the
                     // full 550px expanded height, which is wrong), so expand/collapse and
                     // the media-island width bump never resize the reserved zone.
                     exclusionMode: ExclusionMode.Normal
-                    exclusiveZone: 60
+                    exclusiveZone: 50
 
                     WlrLayershell.namespace: "wisp"
 
