@@ -30,7 +30,7 @@ ShellRoot {
         // Same trick for the first-run gate: touching it constructs the
         // singleton, which then waits for Settings.ready before deciding
         // whether to launch welcome.qml (see core/FirstRun.qml).
-        void FirstRun.checked
+        FirstRun.enableAutoLaunch()
         // Super+Space is bound statically in keybinds.lua (`wisp launcher`,
         // which toggles/dismisses via pgrep) — do NOT also inject a runtime
         // bind here. Hyprland keeps both binds live simultaneously rather

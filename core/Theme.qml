@@ -25,7 +25,8 @@ Singleton {
     }
 
     property color background: c("background", "#1e1e2e")
-    property color surface: c("surface_container", "#313244")
+    property color baseSurface: c("surface_container", "#313244")
+    property color surface: Qt.rgba(baseSurface.r, baseSurface.g, baseSurface.b, Settings.conf.colors.panelAlpha)
     property color primary: c("primary", "#cba6f7")
     property color colorOnPrimary: c("on_primary", "#11111b")
     // Border/separator colour. Was #45475a (Catppuccin surface1) — the same
@@ -48,7 +49,8 @@ Singleton {
     // the other half of the pair — stop setting this colour at 10–11px, so the
     // ≥45 large/bold target applies instead (DESIGN.md finding A4).
     property color subtext0: c("on_surface_variant", "#bac2de")
-    property color surface0: c("surface_container_highest", "#45475a")
+    property color baseSurface0: c("surface_container_highest", "#45475a")
+    property color surface0: Qt.rgba(baseSurface0.r, baseSurface0.g, baseSurface0.b, Settings.conf.colors.panelAlpha)
     property color red: c("error", "#f38ba8")
     property color green: "#a6e3a1"
     property color peach: "#fab387"

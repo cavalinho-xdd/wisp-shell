@@ -130,9 +130,9 @@ There is **no sandbox and no separate "apply" layer**: Settings > Look & Feel ed
 This only works against a Hyprland config written in Lua against the `hl.*` API (Hyprland >= 0.55's Lua config layer) — the file *shape* matters: renaming `gaps_in`, restructuring the `blur = {...}` table, or writing binds across multiple lines will make Settings unable to find what it's looking for. wisp-dots' config is written to match this exactly; if you're on a hand-rolled classic `.conf` config instead, Settings' Look & Feel/Keybinds pages won't have anything to edit.
 
 ## Architecture
-- `core/` — singleton services: `Settings` (config + Hyprland file writes), `Theme` (fonts/colors), `Island` (dynamic-island arbitration), `Audio`/`Battery`/`Notifs`/`Osd` (hardware/system state), `Discord`/`Games`/`Osu` (the three island integrations above), `Paths` (where every file lives), `FirstRun`.
-- `components/` — UI: `ExpandedDashboard.qml` (the 4-tab dashboard), `CollapsedBar.qml` + the `Island*Strip.qml` components (the collapsed pill's content lane), `Settings*`/`Welcome*` (the settings app and first-run wizard pages).
-- `scripts/` — everything shelled out to: Hyprland config writers, `game_watch.sh`/`osu_connect.js` (the two island data feeds), `apply_colors.sh` (Matugen), `weather.sh`, `sysmon_snapshot.sh`.
+- `core/` — singleton services: `Settings` (config + Hyprland file writes), `Theme` (fonts/colors), `Island` (dynamic-island arbitration), `Audio`/`Battery`/`Notifs`/`Osd` (hardware/system state), `Discord`/`Games`/`Osu` (the three island integrations above), `Paths` (where every file lives), `FirstRun`, `EventStore`, `AppUsage`.
+- `components/` — UI: `ExpandedDashboard.qml` (the 4-tab dashboard), `CollapsedBar.qml` + the `Island*Strip.qml` components (the collapsed pill's content lane), `Settings*`/`Welcome*` (the settings app and first-run wizard pages including `WelcomeStepSddm`), `BluetoothView`, `WifiView`, `CalendarCard`, `PolkitDialog`.
+- `scripts/` — everything shelled out to: Hyprland config writers (`apply_hypr_look.py`, `apply_hypr_keybind.py`, `write_custom_keybinds.py`, `write_custom_windowrules.py`), `game_watch.sh`/`osu_connect.js` (the two island data feeds), `apply_colors.sh` (Matugen), `weather.sh`, `sysmon_snapshot.sh`, `idle_restore.sh`, `idle_takeover.sh`, `set_sddm.sh`.
 - Entry points (`shell.qml`, `settings.qml`, `launcher.qml`, `lock.qml`, `wallpaper.qml`, `welcome.qml`) are separate processes sharing `core/`/`components/` but nothing at runtime.
 
 ## Troubleshooting

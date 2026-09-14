@@ -763,4 +763,4 @@ The next major milestone for Wisp Shell is automating deployment and updates to 
 
 - **CI/CD Workflows via GitHub Actions**: We will implement automated pipelines for linting, testing, and potentially building/packaging Wisp Shell. This ensures the main branch remains stable and that the "bulletproof" setup script works correctly across environments.
 - **Automated Updates (`wisp update`)**: Instead of relying on manual `git pull` and re-running `setup`, we'll enhance the `wisp update` CLI command to automatically fetch, verify, and apply updates directly from GitHub.
-- **GUI Update Integration**: We'll introduce a QML-based update widget or settings page that notifies the user of available updates and allows them to apply them seamlessly with a single click from the Wisp Shell interface itself.
+- **GUI Update Integration**: We'll introduce a QML-based update widget or settings page that notifies the user of available updates and allows them to apply them seamlessly with a single click from the Wisp Shell interface itself. 

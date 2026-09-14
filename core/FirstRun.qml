@@ -28,6 +28,12 @@ Singleton {
     // Guards against re-checking if Settings.ready ever cycles (e.g. an
     // external edit to settings.json triggering a reload).
     property bool checked: false
+    property bool autoLaunchEnabled: false
+
+    function enableAutoLaunch() {
+        root.autoLaunchEnabled = true;
+        root.check();
+    }
 
     function launch() {
         Quickshell.execDetached(["/usr/bin/qs", "-p", Settings.welcomeAppPath]);
@@ -48,7 +54,7 @@ Singleton {
     }
 
     function check() {
-        if (root.checked || !Settings.ready) return;
+        if (!root.autoLaunchEnabled || root.checked || !Settings.ready) return;
         root.checked = true;
         if (!Settings.conf.shell.welcomeSeen) root.launch();
     }
