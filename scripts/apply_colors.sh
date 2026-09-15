@@ -98,7 +98,12 @@ if [[ -f "$HOME/.config/hypr/colors.conf" ]]; then
     ACTIVE=$(grep "^\$active_border" "$HOME/.config/hypr/colors.conf" | cut -d= -f2- | sed "s/^[[:space:]]*//")
     INACTIVE=$(grep "^\$inactive_border" "$HOME/.config/hypr/colors.conf" | cut -d= -f2- | sed "s/^[[:space:]]*//")
     if [[ -n "$ACTIVE" && -n "$INACTIVE" ]]; then
-        hyprctl keyword general:col.active_border "$ACTIVE" 2>/dev/null || true
-        hyprctl keyword general:col.inactive_border "$INACTIVE" 2>/dev/null || true
+        OUT=$(hyprctl keyword general:col.active_border "$ACTIVE" 2>&1)
+        if [[ "$OUT" == *"non-legacy parsers"* ]]; then
+            # hyprctl keyword fails on hyprland-lua
+            hyprctl reload 2>/dev/null || true
+        else
+            hyprctl keyword general:col.inactive_border "$INACTIVE" 2>/dev/null || true
+        fi
     fi
 fi
