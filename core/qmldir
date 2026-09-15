@@ -14,3 +14,5 @@ singleton Paths Paths.qml
 singleton Osd Osd.qml
 singleton FirstRun FirstRun.qml
 singleton ShellState ShellState.qml
+singleton Usb Usb.qml
+singleton Brightness Brightness.qml

@@ -104,6 +104,18 @@ Item {
             Layout.preferredWidth: implicitWidth
         }
 
+        IslandUsbStrip {
+            Layout.alignment: Qt.AlignVCenter
+            Layout.preferredHeight: 48
+            Layout.preferredWidth: implicitWidth
+        }
+
+        IslandBluetoothStrip {
+            Layout.alignment: Qt.AlignVCenter
+            Layout.preferredHeight: 48
+            Layout.preferredWidth: implicitWidth
+        }
+
         IslandNotifFlash {
             Layout.alignment: Qt.AlignVCenter
             Layout.preferredHeight: 48

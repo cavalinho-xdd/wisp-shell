@@ -302,29 +302,12 @@ ShellRoot {
                         id: container
                         anchors.top: parent.top
                         anchors.horizontalCenter: parent.horizontalCenter
-                        states: [
-                            State {
-                                name: "collapsed"
-                                when: !floatingPill.isExpanded && !ShellState.launcherActive
-                                PropertyChanges { target: container; width: Island.current !== "none" ? Island.activeWidth : 320; height: 48; radius: 24 }
-                            },
-                            State {
-                                name: "expanded"
-                                when: floatingPill.isExpanded && !ShellState.launcherActive
-                                PropertyChanges { target: container; width: 750; height: 550; radius: 24 }
-                            },
-                            State {
-                                name: "launcher"
-                                when: ShellState.launcherActive
-                                PropertyChanges { target: container; width: 750; height: 600; radius: 24 }
-                            }
-                        ]
+                        width: ShellState.launcherActive ? 750 : (floatingPill.isExpanded ? 750 : (Island.current !== "none" ? Island.activeWidth : 320))
+                        height: ShellState.launcherActive ? 600 : (floatingPill.isExpanded ? 550 : 48)
 
-                        transitions: [
-                            Transition {
-                                SpringAnimation { properties: "width,height,radius"; spring: 2.8; damping: 0.35; mass: 1.0 }
-                            }
-                        ]
+                        Behavior on width { SpringAnimation { spring: 2.8; damping: 0.35; mass: 1.0 } }
+                        Behavior on height { SpringAnimation { spring: 2.8; damping: 0.35; mass: 1.0 } }
+                        
                         color: Theme.panelBackground
                         radius: 24
                         // No outline. The pill is the shell's signature object and

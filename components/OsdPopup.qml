@@ -9,11 +9,15 @@ Item {
     id: root
     anchors.fill: parent
 
+    // Force singleton init so script runs
+    property bool _brightInit: Brightness.ready
+
     readonly property bool isMic: Osd.reason === "mic"
-    readonly property string glyph: isMic
-        ? (Osd.muted ? "󰍭" : "󰍬")
+    readonly property bool isBright: Osd.reason === "brightness"
+    readonly property string glyph: isBright ? "󰃠"
+        : isMic ? (Osd.muted ? "󰍭" : "󰍬")
         : (Osd.muted ? "󰝟" : "󰕾")
-    readonly property color accent: Osd.muted ? Theme.red : Theme.primary
+    readonly property color accent: (Osd.muted && !isBright) ? Theme.red : (isBright ? Theme.yellow : Theme.primary)
 
     Rectangle {
         id: pill

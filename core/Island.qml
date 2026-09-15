@@ -4,6 +4,8 @@ import Quickshell
 import Quickshell.Services.Mpris
 import Quickshell.Services.Notifications
 
+import Quickshell.Bluetooth
+
 // Live-activity state for the collapsed pill's dynamic-island strip.
 //
 // Two layers, iOS-style:
@@ -16,20 +18,70 @@ import Quickshell.Services.Notifications
 Singleton {
     id: island
 
+    // ── Hardware Events (Bluetooth) ──
+    property string btFlashName: ""
+    property bool btFlashIsConnect: false
+    property bool btFlashActive: false
+
+    property var _lastBtConnected: []
+    property var _currentBtConnected: {
+        if (!Bluetooth.defaultAdapter || !Bluetooth.defaultAdapter.enabled) return [];
+        let devs = Bluetooth.defaultAdapter.devices.values;
+        let connected = [];
+        for (let i = 0; i < devs.length; i++) {
+            if (devs[i].connected) connected.push(devs[i].name);
+        }
+        return connected;
+    }
+
+    on_CurrentBtConnectedChanged: {
+        let oldList = _lastBtConnected;
+        let newList = _currentBtConnected;
+        
+        let connected = newList.filter(x => !oldList.includes(x));
+        let disconnected = oldList.filter(x => !newList.includes(x));
+
+        if (connected.length > 0) {
+            btFlashName = connected[0];
+            btFlashIsConnect = true;
+            btFlashActive = true;
+            btFlashTimer.restart();
+        } else if (disconnected.length > 0) {
+            btFlashName = disconnected[0];
+            btFlashIsConnect = false;
+            btFlashActive = true;
+            btFlashTimer.restart();
+        }
+        
+        _lastBtConnected = newList;
+    }
+
+    Timer {
+        id: btFlashTimer
+        interval: 3000
+        onTriggered: island.btFlashActive = false
+    }
+
+    // ── Hardware Events (USB) ──
+    property bool usbFlashIsConnect: false
+    property bool usbFlashActive: false
+
+    function triggerUsbFlash(event) {
+        usbFlashIsConnect = (event === "add");
+        usbFlashActive = true;
+        usbFlashTimer.restart();
+    }
+
+    Timer {
+        id: usbFlashTimer
+        interval: 3000
+        onTriggered: island.usbFlashActive = false
+    }
+
     // ── Arbitration ──
-    // osu!lazer (via Osu.qml/tosu) outranks media: while it's running it's
-    // the thing the user is actively engaged with, live PP/combo is more
-    // time-sensitive than a song title.
-    // Discord voice sits at the *bottom* of the stack, below media: being in
-    // a call is a long-lived ambient fact, not a moment worth the island, so
-    // anything with actual content — a notification, a live osu score, a
-    // playing track — takes the strip back off it.
-    // A running game sits directly under notifications and above osu: it is
-    // the single longest-lived thing the user is actively inside, and unlike
-    // osu it carries its own transient (an achievement unlock swaps the game
-    // strip's own face rather than taking a lane, so it never has to win
-    // arbitration to be seen).
     readonly property string current: flashNotif ? "notif"
+        : usbFlashActive ? "usb"
+        : btFlashActive ? "bluetooth"
         : Games.active ? "game"
         : Osu.active ? "osu"
         : mediaActive ? "media"
@@ -39,6 +91,8 @@ Singleton {
     // falls back to its own "none" width (320) when current === "none".
     readonly property int activeWidth: current === "osu"
         ? (Osu.inGameplay ? 620 : 540)
+        : current === "bluetooth" ? 540
+        : current === "usb" ? 540
         : current === "game" ? (Games.flashing ? 620 : 530)
         : current === "discord" ? 460
         : 540
