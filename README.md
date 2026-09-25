@@ -36,7 +36,7 @@ git clone https://github.com/cavalinho-xdd/wisp-dots.git ~/.config/wisp-dots
 cd ~/.config/wisp-dots
 ./install.sh
 ```
-That single command installs every package (Hyprland included), clones this repo to `~/.local/share/wisp-shell` and runs its `./setup install`, deploys all dotfiles, generates your first color scheme, and reloads Hyprland. Reboot (or log out/in) once it finishes. This is the only path that gives you working keybinds (`SUPER+E` file manager, `SUPER+Space` launcher, `SUPER+Return` terminal, workspace/window binds, hardware volume/brightness keys) and the `hyprctl` autostart line that launches the shell every login — see [Settings app writes your real dotfiles](#settings-app-writes-your-real-dotfiles) for why that Hyprland config has to be Lua, specifically.
+That single command installs every package (Hyprland included), clones this repo to `~/.local/share/wisp-shell` and runs its `./setup install`, deploys all dotfiles, generates your first color scheme, and reloads Hyprland. Reboot (or log out/in) once it finishes. This is the only path that gives you working keybinds (`SUPER+E` file manager, `SUPER+Space` launcher, `SUPER+Return` terminal, `SUPER+F` fullscreen, workspace/window binds, hardware volume/brightness keys) and the `hyprctl` autostart line that launches the shell every login — see [Settings app writes your real dotfiles](#settings-app-writes-your-real-dotfiles) for why that Hyprland config has to be Lua, specifically.
 
 ### Manual / standalone installation
 If you already have your own Hyprland config and just want the shell:
