@@ -457,7 +457,9 @@ Read every settings page file directly (not via fork — these are local repos, 
 
 ## 🔴 Big Future Tasks
 
-### 1. Full Notification Center
+### 1. Full Notification Center — ✅ BUILT (2026-09-25)
+- **Built**: `core/Notifs.qml` keeps one newest-first list of plain records (live + history), persisted to `~/.local/state/wisp/notifications.json` (7 days / 200 items, state dir chmod 700). Pure logic in `core/notif_rules.js`, unit tested with `node --test scripts/test_notif_rules.js`. Real DND (manual + auto during games / fullscreen / schedule, critical always passes) replaces the dead `~/.cache/dnd-state` file; Island only gets `incoming` for notifications that should flash. Card: click = "default" action or focus/launch app, inline reply, honours app `expireTimeout` (ms), searchable "Earlier" history. Settings > Notifications: DND triggers + per-app rules (never flash, don't save content, allow in DND).
+- **Still open**: the ii-dots DBus ownership conflict below; window focus on click relies on the toplevel `appId` matching `desktopEntry`/`appName`.
 - **Goal**: Replace mock. Hook up real notifications. Handle groups, images, actions.
 - **Tooling**: `NotificationServer` API. Route DBus port to resolve main dotfiles conflict.
 - **Reference**: `caelestia-dots/services/NotifData.qml` — one `QtObject` per notification with a `Connections` block mirroring the live `Notification`'s properties, a lock-counted `close()` so a popup and a list entry can both hold a reference, and an expiry `Timer` that respects fullscreen state. Good shape to copy for both the popup and the in-dashboard list.
