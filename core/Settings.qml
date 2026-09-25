@@ -330,6 +330,19 @@ Singleton {
                 property bool enable: true
             }
 
+            // Notification centre (core/Notifs.qml). `dnd` is the manual toggle;
+            // the other three switches can turn DND on automatically.
+            // appRules: { "<appName>": { noFlash, noStore, allowInDnd } }.
+            property JsonObject notifications: JsonObject {
+                property bool dnd: false
+                property bool dndDuringGames: true
+                property bool dndWhenFullscreen: true
+                property bool dndScheduleEnabled: false
+                property string dndFrom: "22:00"
+                property string dndTo: "07:00"
+                property var appRules: ({})
+            }
+
             // Discord voice island controls. There is no local API to drive a
             // Discord client with — arRPC's IPC socket carries rich presence
             // only, Vencord exposes nothing external — so the buttons deliver

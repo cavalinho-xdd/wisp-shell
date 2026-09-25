@@ -40,6 +40,7 @@ Singleton {
     // nothing but a re-run.
     readonly property string colorsFile: root.stateDir + "/colors.json"
     readonly property string eventsFile: root.stateDir + "/events.json"
+    readonly property string notificationsFile: root.stateDir + "/notifications.json"
     readonly property string appUsageFile: root.stateDir + "/app_usage.json"
     readonly property string terminalOscFile: root.generatedDir + "/terminal-osc.sh"
 
