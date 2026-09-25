@@ -32,6 +32,7 @@ ShellRoot {
             { name: "Monitors", icon: "󰹑", component: "SettingsPageMonitors.qml" },
             { name: "Keybinds", icon: "󰌌", component: "SettingsPageKeybinds.qml" },
             { name: "Shell", icon: "󰍜", component: "SettingsPageShell.qml" },
+            { name: "Notifications", icon: "󰂚", component: "SettingsPageNotifications.qml" },
             { name: "Advanced", icon: "󰒓", component: "SettingsPageAdvanced.qml" },
             { name: "About", icon: "󰋽", component: "SettingsPageAbout.qml" }
         ]
