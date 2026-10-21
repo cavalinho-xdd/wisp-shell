@@ -16,8 +16,8 @@ Item {
     visible: opacity > 0.01
 
     Behavior on opacity { NumberAnimation { duration: 250 } }
-    Behavior on scale { NumberAnimation { duration: 220; easing.type: Theme.easeSpring; easing.overshoot: 1.3 } }
-    Behavior on implicitWidth { NumberAnimation { duration: 420; easing.type: Easing.OutBack; easing.overshoot: 1.05 } }
+    Behavior on scale { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+    Behavior on implicitWidth { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
 
     HoverHandler { id: hoverHandler }
 
