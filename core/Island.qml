@@ -152,18 +152,6 @@ Singleton {
         : mediaActive ? "media"
         : Discord.inVoice ? "discord" : "none"
 
-    // Collapsed-pill width for whichever activity is current; shell.qml
-    // falls back to its own "none" width (320) when current === "none".
-    readonly property int activeWidth: current === "osu"
-        ? (Osu.inGameplay ? 620 : 540)
-        : current === "bluetooth" ? 540
-        : current === "usb" ? 540
-        : current === "network" ? 540
-        : current === "battery" ? 480
-        : current === "game" ? (Games.flashing ? 620 : 530)
-        : current === "discord" ? 460
-        : 540
-
     // ── Transient: notification flash ──
     property var flashNotif: null
 

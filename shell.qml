@@ -302,7 +302,7 @@ ShellRoot {
                         id: container
                         anchors.top: parent.top
                         anchors.horizontalCenter: parent.horizontalCenter
-                        width: ShellState.launcherActive ? 750 : (floatingPill.isExpanded ? 750 : (Island.current !== "none" ? Island.activeWidth : 320))
+                        width: (ShellState.launcherActive || floatingPill.isExpanded) ? 750 : Math.min(750, collapsedView.implicitWidth)
                         height: ShellState.launcherActive ? 600 : (floatingPill.isExpanded ? 550 : 48)
 
                         Behavior on width { SpringAnimation { spring: 2.8; damping: 0.35; mass: 1.0 } }

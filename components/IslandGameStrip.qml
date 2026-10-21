@@ -96,9 +96,8 @@ Item {
         }
 
         // ── Label column ──
-        // Fixed width so neither face resizes the strip under the cursor and
-        // the two crossfade in place; the pill's own growth for the wider
-        // achievement face is Island.activeWidth's job.
+        // Fixed width per face so the two crossfade in place; the pill
+        // follows the strip's implicitWidth (CollapsedBar) as it widens.
         Item {
             width: root.flashing ? 300 : 200
             height: 38

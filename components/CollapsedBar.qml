@@ -12,12 +12,17 @@ Item {
     // From the notification flash: expand onto the Dashboard tab (notif centre)
     signal expandNotifs()
 
+    // Natural width: the pill (shell.qml) sizes itself to this, so activities
+    // grow it by exactly their own content instead of a per-activity constant.
+    implicitWidth: row.implicitWidth + row.anchors.leftMargin + row.anchors.rightMargin
+
     SystemClock {
         id: clock
         precision: SystemClock.Minutes
     }
 
     RowLayout {
+        id: row
         anchors.fill: parent
         anchors.leftMargin: 20
         anchors.rightMargin: 20
@@ -74,7 +79,7 @@ Item {
             }
         }
 
-        Item { Layout.fillWidth: true } // Spacer
+        Item { Layout.fillWidth: true; Layout.minimumWidth: 12 } // Spacer
 
         // Dynamic-island activities — zero-width when idle, twin spacers
         // keep them centered between dots and clock. Island.current
@@ -135,7 +140,7 @@ Item {
             onExpandRequested: root.expandNotifs()
         }
 
-        Item { Layout.fillWidth: true } // Spacer
+        Item { Layout.fillWidth: true; Layout.minimumWidth: 12 } // Spacer
 
         // Battery — hidden entirely on hardware with no laptop battery
         // (core/Battery.qml gates on isLaptopBattery, not just isPresent),
