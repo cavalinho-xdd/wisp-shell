@@ -118,6 +118,74 @@ Rectangle {
                     icon: "󰻠"
                     color: Theme.peach
                 }
+
+                CircularProgress {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    value: root.sysData.disk ? parseFloat(root.sysData.disk.value) : 0.0
+                    title: root.sysData.disk ? root.sysData.disk.used : "0G"
+                    subtitle: "Disk"
+                    icon: "󰋊"
+                    color: Theme.yellow
+                }
+            }
+
+            // Network Activity
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 64
+                color: Theme.surface0
+                radius: 16
+
+                RowLayout {
+                    anchors.fill: parent
+                    anchors.margins: 16
+                    spacing: 16
+                    
+                    Text {
+                        font.family: Theme.fontIcon
+                        text: "󰤨"
+                        font.pixelSize: 20
+                        color: Theme.primary
+                    }
+                    Text {
+                        font.family: Theme.fontFamily
+                        text: "Network I/O"
+                        font.pixelSize: 14
+                        font.bold: true
+                        color: Theme.text
+                        Layout.fillWidth: true
+                    }
+                    Text {
+                        font.family: Theme.fontIcon
+                        text: "󰇚"
+                        font.pixelSize: 14
+                        color: Theme.subtext0
+                    }
+                    Text {
+                        font.family: Theme.fontFamily
+                        text: root.sysData.net ? root.sysData.net.rx : "0 B/s"
+                        font.pixelSize: 14
+                        color: Theme.text
+                        Layout.preferredWidth: 80
+                        horizontalAlignment: Text.AlignRight
+                    }
+                    Text {
+                        font.family: Theme.fontIcon
+                        text: "󰕒"
+                        font.pixelSize: 14
+                        color: Theme.subtext0
+                        Layout.leftMargin: 16
+                    }
+                    Text {
+                        font.family: Theme.fontFamily
+                        text: root.sysData.net ? root.sysData.net.tx : "0 B/s"
+                        font.pixelSize: 14
+                        color: Theme.text
+                        Layout.preferredWidth: 80
+                        horizontalAlignment: Text.AlignRight
+                    }
+                }
             }
 
             // Top Processes
