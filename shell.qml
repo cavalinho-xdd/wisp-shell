@@ -306,8 +306,8 @@ ShellRoot {
                         height: ShellState.launcherActive ? 600 : (floatingPill.isExpanded ? 550 : 48)
 
                         // Damped enough to settle with one small overshoot instead of wobbling
-                        Behavior on width { SpringAnimation { spring: 2.8; damping: 0.55; mass: 1.0 } }
-                        Behavior on height { SpringAnimation { spring: 2.8; damping: 0.55; mass: 1.0 } }
+                        Behavior on width { SpringAnimation { spring: 4.0; damping: 0.55; mass: 1.0 } }
+                        Behavior on height { SpringAnimation { spring: 4.0; damping: 0.55; mass: 1.0 } }
 
                         color: Theme.panelBackground
                         // Collapsed: full capsule (half of 48). Open: a softer 32 so the
