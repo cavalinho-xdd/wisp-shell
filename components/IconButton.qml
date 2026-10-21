@@ -7,6 +7,7 @@ Rectangle {
     property string text: ""
     property int iconSize: 20
     signal clicked()
+    signal rightClicked()
     
     width: 48; height: 48
     radius: isChecked ? 12 : 24  
@@ -38,6 +39,13 @@ Rectangle {
         id: mouse
         anchors.fill: parent
         hoverEnabled: true
-        onClicked: btn.clicked()
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: (mouseEvent) => {
+            if (mouseEvent.button === Qt.RightButton) {
+                btn.rightClicked()
+            } else {
+                btn.clicked()
+            }
+        }
     }
 }

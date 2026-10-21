@@ -478,15 +478,41 @@ Item {
                         }
                     }
 
-                    // Quick Toggles
-                    RowLayout {
-                        Layout.fillWidth: true; Layout.alignment: Qt.AlignHCenter; spacing: 12
-                        IconButton { width: 44; height: 44; text: "󰤨"; isChecked: Networking.wifiEnabled; onClicked: if(root.stack) root.stack.push(wifiViewComp) }
-                        IconButton { width: 44; height: 44; text: "󰂯"; property var adapter: Bluetooth.defaultAdapter; isChecked: adapter ? adapter.enabled : false; onClicked: if(root.stack) root.stack.push(btViewComp) }
+                    // Quick Toggles (Grid)
+                    GridLayout {
+                        columns: 4
+                        columnSpacing: 16
+                        rowSpacing: 16
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignHCenter
+
+                        // Wi-Fi
+                        IconButton {
+                            width: 52; height: 52; iconSize: 24; text: "󰤨"
+                            isChecked: Networking.wifiEnabled
+                            onClicked: Quickshell.execDetached(["nmcli", "radio", "wifi", Networking.wifiEnabled ? "off" : "on"])
+                            onRightClicked: if(root.stack) root.stack.push(wifiViewComp)
+                        }
+                        
+                        // Bluetooth
+                        IconButton {
+                            width: 52; height: 52; iconSize: 24; text: "󰂯"
+                            property var adapter: Bluetooth.defaultAdapter
+                            isChecked: adapter ? adapter.enabled : false
+                            onClicked: if (adapter) Quickshell.execDetached(["bluetoothctl", "power", adapter.enabled ? "off" : "on"])
+                            onRightClicked: if(root.stack) root.stack.push(btViewComp)
+                        }
+
+                        // DND
+                        IconButton {
+                            width: 52; height: 52; iconSize: 24; text: Notifs.dnd ? "󰍷" : "󰂚"
+                            isChecked: Notifs.dnd
+                            onClicked: Notifs.setDnd(!Notifs.conf.dnd)
+                        }
                         
                         // Night Mode
                         IconButton { 
-                            width: 44; height: 44; text: "󰖔"
+                            width: 52; height: 52; iconSize: 24; text: "󰖔"
                             isChecked: dashboardTab.nightModeEnabled
                             onClicked: {
                                 dashboardTab.nightModeEnabled = !dashboardTab.nightModeEnabled;
@@ -495,21 +521,21 @@ Item {
                                 Quickshell.execDetached(["bash", "-c", cmd]);
                             }
                         }
+                        
                         // Game Mode
                         IconButton { 
-                            width: 44; height: 44; text: "󰊴"
+                            width: 52; height: 52; iconSize: 24; text: "󰊴"
                             isChecked: dashboardTab.gameModeEnabled
                             onClicked: {
                                 dashboardTab.gameModeEnabled = !dashboardTab.gameModeEnabled;
-                                // Game mode strips eye candy, so effects are the inverse of the toggle.
                                 let fx = !dashboardTab.gameModeEnabled;
-                                Quickshell.execDetached(["hyprctl", "eval",
-                                    `hl.config({ decoration = { blur = { enabled = ${fx} } }, animations = { enabled = ${fx} }, debug = { vfr = ${fx} } })`]);
+                                Quickshell.execDetached(["hyprctl", "eval", `hl.config({ decoration = { blur = { enabled = ${fx} } }, animations = { enabled = ${fx} }, debug = { vfr = ${fx} } })`]);
                             }
                         }
+                        
                         // Caffeine
                         IconButton { 
-                            width: 44; height: 44; text: "󰅶"
+                            width: 52; height: 52; iconSize: 24; text: "󰅶"
                             isChecked: dashboardTab.caffeineEnabled
                             onClicked: {
                                 dashboardTab.caffeineEnabled = !dashboardTab.caffeineEnabled;
@@ -517,10 +543,13 @@ Item {
                                 Quickshell.execDetached(["bash", "-c", cmd]);
                             }
                         }
-                        // Wallpaper — launches the standalone fullscreen picker (wallpaper.qml)
-                        // rather than pushing an in-widget browser; keeps exactly one wallpaper-
-                        // apply codepath instead of two copies of the same swww/hyprpaper command.
-                        IconButton { width: 44; height: 44; text: "󰸉"; isChecked: false; onClicked: Quickshell.execDetached(["/usr/bin/qs", "-p", Settings.wallpaperAppPath]) }
+                        
+                        // Wallpaper
+                        IconButton {
+                            width: 52; height: 52; iconSize: 24; text: "󰸉"
+                            isChecked: false
+                            onClicked: Quickshell.execDetached(["/usr/bin/qs", "-p", Settings.wallpaperAppPath])
+                        }
                     }
 
                     // Notifications — grouped by app, swipe-to-dismiss, per-notif actions.
