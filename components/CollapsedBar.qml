@@ -104,6 +104,18 @@ Item {
             Layout.preferredWidth: implicitWidth
         }
 
+        IslandBatteryStrip {
+            Layout.alignment: Qt.AlignVCenter
+            Layout.preferredHeight: 48
+            Layout.preferredWidth: implicitWidth
+        }
+
+        IslandNetworkStrip {
+            Layout.alignment: Qt.AlignVCenter
+            Layout.preferredHeight: 48
+            Layout.preferredWidth: implicitWidth
+        }
+
         IslandUsbStrip {
             Layout.alignment: Qt.AlignVCenter
             Layout.preferredHeight: 48

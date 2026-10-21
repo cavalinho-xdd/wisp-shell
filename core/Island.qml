@@ -3,8 +3,8 @@ import QtQuick
 import Quickshell
 import Quickshell.Services.Mpris
 import Quickshell.Services.Notifications
-
 import Quickshell.Bluetooth
+import Quickshell.Networking
 
 // Live-activity state for the collapsed pill's dynamic-island strip.
 //
@@ -78,8 +78,73 @@ Singleton {
         onTriggered: island.usbFlashActive = false
     }
 
+    // ── Hardware Events (Battery) ──
+    property string batFlashReason: "" // "low", "critical", "charging", "full"
+    property bool batFlashActive: false
+
+    function triggerBatteryFlash(reason) {
+        batFlashReason = reason;
+        batFlashActive = true;
+        batFlashTimer.restart();
+    }
+
+    Timer {
+        id: batFlashTimer
+        interval: 3500
+        onTriggered: island.batFlashActive = false
+    }
+
+    // ── Hardware Events (Network) ──
+    property string netFlashName: ""
+    property bool netFlashIsConnect: false
+    property bool netFlashActive: false
+
+    property var _lastNetConnected: []
+    property var _currentNetConnected: {
+        let devs = Networking.devices.values;
+        let connected = [];
+        for (let i = 0; i < devs.length; i++) {
+            let nets = devs[i].networks.values;
+            for (let j = 0; j < nets.length; j++) {
+                if (nets[j].connected) connected.push(nets[j].name);
+            }
+        }
+        return connected;
+    }
+
+    on_CurrentNetConnectedChanged: {
+        let oldList = _lastNetConnected;
+        let newList = _currentNetConnected;
+        
+        let connected = newList.filter(x => !oldList.includes(x));
+        let disconnected = oldList.filter(x => !newList.includes(x));
+
+        if (connected.length > 0) {
+            triggerNetworkFlash(connected[0], true);
+        } else if (disconnected.length > 0) {
+            triggerNetworkFlash(disconnected[0], false);
+        }
+        
+        _lastNetConnected = newList;
+    }
+
+    function triggerNetworkFlash(name, connected) {
+        netFlashName = name;
+        netFlashIsConnect = connected;
+        netFlashActive = true;
+        netFlashTimer.restart();
+    }
+
+    Timer {
+        id: netFlashTimer
+        interval: 3000
+        onTriggered: island.netFlashActive = false
+    }
+
     // ── Arbitration ──
     readonly property string current: flashNotif ? "notif"
+        : batFlashActive ? "battery"
+        : netFlashActive ? "network"
         : usbFlashActive ? "usb"
         : btFlashActive ? "bluetooth"
         : Games.active ? "game"
@@ -93,6 +158,8 @@ Singleton {
         ? (Osu.inGameplay ? 620 : 540)
         : current === "bluetooth" ? 540
         : current === "usb" ? 540
+        : current === "network" ? 540
+        : current === "battery" ? 480
         : current === "game" ? (Games.flashing ? 620 : 530)
         : current === "discord" ? 460
         : 540
