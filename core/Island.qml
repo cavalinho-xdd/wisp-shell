@@ -18,6 +18,16 @@ import Quickshell.Networking
 Singleton {
     id: island
 
+    // Device lists start empty and fill in asynchronously once the
+    // Bluetooth/Networking services report — that first fill would read as
+    // "just connected". Lists are tracked silently until this settles.
+    property bool _settled: false
+    Timer {
+        running: true
+        interval: 3000
+        onTriggered: island._settled = true
+    }
+
     // ── Hardware Events (Bluetooth) ──
     property string btFlashName: ""
     property bool btFlashIsConnect: false
@@ -37,6 +47,8 @@ Singleton {
     on_CurrentBtConnectedChanged: {
         let oldList = _lastBtConnected;
         let newList = _currentBtConnected;
+        _lastBtConnected = newList;
+        if (!_settled) return;
         
         let connected = newList.filter(x => !oldList.includes(x));
         let disconnected = oldList.filter(x => !newList.includes(x));
@@ -52,8 +64,6 @@ Singleton {
             btFlashActive = true;
             btFlashTimer.restart();
         }
-        
-        _lastBtConnected = newList;
     }
 
     Timer {
@@ -115,6 +125,8 @@ Singleton {
     on_CurrentNetConnectedChanged: {
         let oldList = _lastNetConnected;
         let newList = _currentNetConnected;
+        _lastNetConnected = newList;
+        if (!_settled) return;
         
         let connected = newList.filter(x => !oldList.includes(x));
         let disconnected = oldList.filter(x => !newList.includes(x));
@@ -124,8 +136,6 @@ Singleton {
         } else if (disconnected.length > 0) {
             triggerNetworkFlash(disconnected[0], false);
         }
-        
-        _lastNetConnected = newList;
     }
 
     function triggerNetworkFlash(name, connected) {
