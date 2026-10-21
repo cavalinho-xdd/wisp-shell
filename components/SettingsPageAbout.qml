@@ -7,14 +7,24 @@ import "../core"
 Item {
     id: root
     
-    property string hyprVer: "..."
-    property string osName: "..."
+    property string hyprVer: ""
+    property string qsVer: ""
+    property string osName: ""
 
+    // `hyprctl version` opens with "Hyprland 0.56.2 built from branch …"
     Process {
-        command: ["bash", "-c", "hyprctl version | grep -i '^version' | awk '{print $2}'"]
+        command: ["bash", "-c", "hyprctl version | head -1 | awk '{print $2}'"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: root.hyprVer = this.text.trim()
+        }
+    }
+
+    Process {
+        command: ["bash", "-c", "qs --version | head -1 | awk '{print $2}'"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: root.qsVer = this.text.trim()
         }
     }
 
@@ -26,187 +36,201 @@ Item {
         }
     }
 
+    property string clock: Qt.formatTime(new Date(), "hh:mm")
+    Timer {
+        interval: 10000; running: true; repeat: true
+        onTriggered: root.clock = Qt.formatTime(new Date(), "hh:mm")
+    }
+
     ColumnLayout {
         anchors.centerIn: parent
-        spacing: 16
+        anchors.verticalCenterOffset: -16
+        spacing: 0
 
-        // Mini collapsed-pill logo
-        Rectangle {
+        // The collapsed pill itself, as the mark — hover it and it opens up,
+        // the way the real one does
+        Item {
             Layout.alignment: Qt.AlignHCenter
-            width: 140; height: 36; radius: 18
-            color: Theme.surface
-            Row {
+            Layout.preferredWidth: 300
+            Layout.preferredHeight: 48
+
+            Rectangle {
+                id: pill
+                readonly property bool open: pillMa.containsMouse
                 anchors.centerIn: parent
-                spacing: 6
-                Repeater {
-                    model: 3
-                    Rectangle {
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: index === 0 ? 20 : 7
-                        height: 7; radius: 4
-                        color: index === 0 ? Theme.primary : Theme.subtext0
+                width: open ? 300 : 232
+                height: open ? 48 : 42
+                radius: height / 2
+                color: Theme.surface0
+                Behavior on width { NumberAnimation { duration: 420; easing.type: Easing.OutBack; easing.overshoot: 1.4 } }
+                Behavior on height { NumberAnimation { duration: 420; easing.type: Easing.OutBack; easing.overshoot: 1.4 } }
+
+                // Workspaces
+                Row {
+                    anchors.left: parent.left
+                    anchors.leftMargin: 16
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 5
+                    Repeater {
+                        model: 3
+                        Rectangle {
+                            required property int index
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: index === 0 ? 18 : 6
+                            height: 6; radius: 3
+                            color: index === 0 ? Theme.primary : Qt.alpha(Theme.text, 0.35)
+                        }
                     }
                 }
+
+                Text {
+                    anchors.centerIn: parent
+                    text: root.clock
+                    font.family: Theme.fontFamily
+                    font.features: { "tnum": 1 }
+                    font.pixelSize: 14
+                    font.weight: Font.Medium
+                    color: Theme.text
+                }
+
+                Row {
+                    anchors.right: parent.right
+                    anchors.rightMargin: 16
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 10
+                    Text { text: "󰕾"; font.family: Theme.fontIcon; font.pixelSize: 13; color: Theme.subtext0 }
+                    Text { text: "󰖩"; font.family: Theme.fontIcon; font.pixelSize: 13; color: Theme.subtext0 }
+                }
+
+                MouseArea { id: pillMa; anchors.fill: parent; anchors.margins: -12; hoverEnabled: true }
             }
         }
 
         Text {
-            font.family: Theme.fontFamily;
             Layout.alignment: Qt.AlignHCenter
+            Layout.topMargin: 28
+            font.family: Theme.fontFamily
             text: "Wisp Shell"
-            font.pixelSize: 28; font.bold: true
+            font.pixelSize: 30
+            font.bold: true
+            font.letterSpacing: -0.5
             color: Theme.text
         }
 
         Text {
-            font.family: Theme.fontFamily;
             Layout.alignment: Qt.AlignHCenter
+            Layout.topMargin: 6
+            font.family: Theme.fontFamily
             text: "A dynamic-island desktop shell for Hyprland"
             font.pixelSize: 14
             color: Theme.subtext0
-            horizontalAlignment: Text.AlignHCenter
         }
 
-        // Info Cards
-        RowLayout {
+        // What it runs on: one strip, split by hairlines, label over value
+        Rectangle {
             Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: 16
-            spacing: 16
+            Layout.topMargin: 32
+            Layout.preferredWidth: 480
+            Layout.preferredHeight: 66
+            radius: 16
+            color: Qt.alpha(Theme.surface0, 0.5)
 
-            Rectangle {
-                Layout.preferredWidth: 160
-                Layout.preferredHeight: 80
-                radius: 12
-                color: Theme.surface
-                ColumnLayout {
-                    anchors.centerIn: parent
-                    spacing: 4
-                    Text {
-                        text: "󰄛"
-                        font.family: Theme.fontIcon
-                        font.pixelSize: 20
-                        color: Theme.primary
-                        Layout.alignment: Qt.AlignHCenter
-                    }
-                    Text {
-                        text: "Quickshell"
-                        font.family: Theme.fontFamily
-                        font.pixelSize: 13
-                        font.bold: true
-                        color: Theme.text
-                        Layout.alignment: Qt.AlignHCenter
-                    }
-                }
-            }
+            Row {
+                anchors.fill: parent
+                Repeater {
+                    model: [
+                        { lbl: "Toolkit", val: root.qsVer ? "Quickshell " + root.qsVer : "…" },
+                        { lbl: "Compositor", val: root.hyprVer ? "Hyprland " + root.hyprVer : "…" },
+                        { lbl: "System", val: root.osName || "…" }
+                    ]
+                    delegate: Item {
+                        required property var modelData
+                        required property int index
+                        width: parent.width / 3
+                        height: parent.height
 
-            Rectangle {
-                Layout.preferredWidth: 160
-                Layout.preferredHeight: 80
-                radius: 12
-                color: Theme.surface
-                ColumnLayout {
-                    anchors.centerIn: parent
-                    spacing: 4
-                    Text {
-                        text: "󰉼"
-                        font.family: Theme.fontIcon
-                        font.pixelSize: 20
-                        color: Theme.primary
-                        Layout.alignment: Qt.AlignHCenter
-                    }
-                    Text {
-                        text: "Hyprland " + root.hyprVer
-                        font.family: Theme.fontFamily
-                        font.pixelSize: 13
-                        font.bold: true
-                        color: Theme.text
-                        Layout.alignment: Qt.AlignHCenter
-                    }
-                }
-            }
-
-            Rectangle {
-                Layout.preferredWidth: 160
-                Layout.preferredHeight: 80
-                radius: 12
-                color: Theme.surface
-                ColumnLayout {
-                    anchors.centerIn: parent
-                    spacing: 4
-                    Text {
-                        text: "󰣇"
-                        font.family: Theme.fontIcon
-                        font.pixelSize: 20
-                        color: Theme.primary
-                        Layout.alignment: Qt.AlignHCenter
-                    }
-                    Text {
-                        text: root.osName
-                        font.family: Theme.fontFamily
-                        font.pixelSize: 13
-                        font.bold: true
-                        color: Theme.text
-                        Layout.alignment: Qt.AlignHCenter
+                        Rectangle {
+                            visible: parent.index > 0
+                            anchors.left: parent.left
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 1; height: 30
+                            color: Qt.alpha(Theme.text, 0.08)
+                        }
+                        Column {
+                            anchors.centerIn: parent
+                            spacing: 3
+                            Text {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                text: modelData.lbl
+                                font.family: Theme.fontFamily
+                                font.pixelSize: 11
+                                color: Theme.subtext0
+                            }
+                            Text {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                text: modelData.val
+                                font.family: Theme.fontFamily
+                                font.features: { "tnum": 1 }
+                                font.pixelSize: 13
+                                font.weight: Font.Medium
+                                color: Theme.text
+                            }
+                        }
                     }
                 }
             }
         }
 
         Text {
-            font.family: Theme.fontFamily;
             Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: 24
-            text: "Maintained by Jakub Muzik (cavalinho-xdd)"
+            Layout.topMargin: 32
+            font.family: Theme.fontFamily
+            text: "Made by Jakub Muzik"
             font.pixelSize: 13
             color: Theme.text
-            horizontalAlignment: Text.AlignHCenter
         }
 
         Text {
-            font.family: Theme.fontFamily;
             Layout.alignment: Qt.AlignHCenter
+            Layout.topMargin: 4
+            font.family: Theme.fontFamily
             text: "Inspired by illogical-impulse, caelestia-dots & illyamiro"
             font.pixelSize: 12
             color: Theme.subtext0
-            horizontalAlignment: Text.AlignHCenter
         }
-        
-        // Link Buttons
-        RowLayout {
+
+        Rectangle {
             Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: 16
-            spacing: 12
-            
-            Rectangle {
-                Layout.preferredWidth: 120
-                Layout.preferredHeight: 36
-                radius: 10
-                color: ghMa.containsMouse ? Theme.surface0 : Theme.surface
-                border.color: Theme.primary
-                border.width: 1
-                Behavior on color { ColorAnimation { duration: Theme.animFast } }
-                
-                Row {
-                    anchors.centerIn: parent
-                    spacing: 8
-                    Text {
-                        text: "󰊤"
-                        font.family: Theme.fontIcon; font.pixelSize: 14; color: Theme.text
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-                    Text {
-                        text: "GitHub"
-                        font.family: Theme.fontFamily; font.pixelSize: 13; font.bold: true; color: Theme.text
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
+            Layout.topMargin: 20
+            Layout.preferredWidth: ghRow.implicitWidth + 36
+            Layout.preferredHeight: 36
+            radius: 18
+            color: ghMa.containsMouse ? Qt.lighter(Theme.surface0, 1.25) : Theme.surface0
+            Behavior on color { ColorAnimation { duration: Theme.animFast } }
+            scale: ghMa.pressed ? 0.96 : 1.0
+            Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
+
+            Row {
+                id: ghRow
+                anchors.centerIn: parent
+                spacing: 8
+                Text {
+                    text: "󰊤"
+                    font.family: Theme.fontIcon; font.pixelSize: 14; color: Theme.text
+                    anchors.verticalCenter: parent.verticalCenter
                 }
-                MouseArea {
-                    id: ghMa
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: Quickshell.execDetached(["xdg-open", "https://github.com/cavalinho-xdd/wisp-shell"])
+                Text {
+                    text: "cavalinho-xdd/wisp-shell"
+                    font.family: Theme.fontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.text
+                    anchors.verticalCenter: parent.verticalCenter
                 }
+            }
+            MouseArea {
+                id: ghMa
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: Quickshell.execDetached(["xdg-open", "https://github.com/cavalinho-xdd/wisp-shell"])
             }
         }
     }
