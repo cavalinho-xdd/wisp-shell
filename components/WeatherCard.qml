@@ -7,8 +7,7 @@ import "../core"
 // Weather + 5-day forecast card. Data comes from scripts/weather.sh (open-meteo,
 // cached 15 min, stale-while-revalidate). Several interaction principles are
 // borrowed from illyamiro's CalendarPopup: the animated temperature counter that
-// tints by direction while ticking, the direction-aware content swap, and the
-// circular metric gauges.
+// tints by direction while ticking and the direction-aware content swap.
 Rectangle {
     id: root
     radius: 20
@@ -69,32 +68,39 @@ Rectangle {
     }
     Timer { interval: 900000; running: true; repeat: true; onTriggered: wxProc.running = true }
 
+    // Week-wide temperature span, shared by every day's range bar
+    readonly property real weekMin: {
+        if (!wx || !wx.days || wx.days.length === 0) return 0;
+        return Math.min.apply(null, wx.days.map(d => Number(d.min)));
+    }
+    readonly property real weekMax: {
+        if (!wx || !wx.days || wx.days.length === 0) return 1;
+        return Math.max.apply(null, wx.days.map(d => Number(d.max)));
+    }
+
+    // Today shows live conditions where open-meteo has them; other days their daily values
+    readonly property var cur: shownDay === 0 && wx && wx.current ? wx.current : null
+
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 16
-        spacing: 10
+        anchors.margins: 18
+        spacing: 0
 
         // ── Header: city + refresh ──
         RowLayout {
             Layout.fillWidth: true
             spacing: 8
             Text {
-                font.family: Theme.fontFamily;
+                font.family: Theme.fontFamily
                 text: root.wx ? root.wx.city : "Weather"
-                font.pixelSize: 14; font.bold: true; color: Theme.text
-            }
-            Text {
-                font.family: Theme.fontFamily;
-                text: root.shownDay === 0 ? "now" : (root.dayData ? root.dayData.date : "")
-                font.pixelSize: 11; color: Theme.subtext0
-                anchors.baseline: undefined
+                font.pixelSize: 15; font.weight: Font.Bold; color: Theme.text
             }
             Item { Layout.fillWidth: true }
             Text {
                 id: refreshIcon
                 text: "󰑐"
                 font.family: Theme.fontIcon; font.pixelSize: 14
-                color: refreshMa.containsMouse ? Theme.primary : Theme.subtext0
+                color: refreshMa.containsMouse ? Theme.text : Theme.subtext0
                 Behavior on color { ColorAnimation { duration: Theme.animFast } }
                 RotationAnimation on rotation {
                     running: wxProc.running
@@ -113,255 +119,288 @@ Rectangle {
             }
         }
 
-        // ── Hero: big icon + ticking temperature ──
+        // ── Hero: ticking temperature, condition beside it ──
         RowLayout {
             Layout.fillWidth: true
+            Layout.topMargin: 6
             spacing: 14
             opacity: root.contentOpacity
             transform: Translate { x: root.contentShift }
 
             Text {
-                text: root.shownDay === 0 && root.wx && root.wx.current ? root.wx.current.icon
-                    : (root.dayData ? root.dayData.icon : "󰖐")
-                font.family: Theme.fontIcon
-                font.pixelSize: 46
-                color: {
-                    const hex = root.shownDay === 0 && root.wx && root.wx.current ? root.wx.current.hex
-                        : (root.dayData ? root.dayData.hex : "");
-                    return hex !== "" ? hex : Theme.primary;
-                }
-                Behavior on color { ColorAnimation { duration: 400 } }
-            }
-
-            Text {
-                font.family: Theme.fontFamily;
+                font.family: Theme.fontFamily
+                font.features: { "tnum": 1 }
                 text: Math.round(root.displayedTemp) + "°"
-                font.pixelSize: 42
-                font.weight: Font.Black
+                font.pixelSize: 56
+                font.weight: Font.Medium
+                font.letterSpacing: -2
                 color: root.tempColor
                 Behavior on color { ColorAnimation { duration: 250 } }
             }
 
-            Item { Layout.fillWidth: true }
-
             ColumnLayout {
-                spacing: 2
                 Layout.alignment: Qt.AlignVCenter
-                Text {
-                    font.family: Theme.fontFamily;
-                    Layout.alignment: Qt.AlignRight
-                    text: root.shownDay === 0 && root.wx && root.wx.current ? root.wx.current.desc
-                        : (root.dayData ? root.dayData.desc : "Loading…")
-                    font.pixelSize: 13; font.bold: true; color: Theme.text
+                spacing: 3
+                RowLayout {
+                    spacing: 6
+                    Text {
+                        text: root.cur ? root.cur.icon : (root.dayData ? root.dayData.icon : "󰖐")
+                        font.family: Theme.fontIcon
+                        font.pixelSize: 16
+                        color: {
+                            const hex = root.cur ? root.cur.hex : (root.dayData ? root.dayData.hex : "");
+                            return hex !== "" ? hex : Theme.subtext0;
+                        }
+                        Behavior on color { ColorAnimation { duration: 400 } }
+                    }
+                    Text {
+                        font.family: Theme.fontFamily
+                        text: root.cur ? root.cur.desc : (root.dayData ? root.dayData.desc : "Loading…")
+                        font.pixelSize: 14; font.weight: Font.Medium; color: Theme.text
+                    }
                 }
                 Text {
-                    Layout.alignment: Qt.AlignRight
-                    text: root.dayData ? ("󰁝 " + Math.round(root.dayData.max) + "°  󰁅 " + Math.round(root.dayData.min) + "°") : ""
-                    font.family: Theme.fontIcon
-                    font.pixelSize: 11; color: Theme.subtext0
+                    font.family: Theme.fontFamily
+                    font.features: { "tnum": 1 }
+                    text: !root.dayData ? ""
+                        : (root.shownDay === 0 ? "Today" : root.dayData.date) + "  ·  "
+                          + Math.round(root.dayData.max) + "° / " + Math.round(root.dayData.min) + "°"
+                    font.pixelSize: 12; color: Theme.subtext0
+                }
+            }
+
+            Item { Layout.fillWidth: true }
+        }
+
+        // ── Hourly: temperature line with time underneath ──
+        Item {
+            id: hourly
+            Layout.fillWidth: true
+            Layout.topMargin: 10
+            Layout.preferredHeight: 92
+            opacity: root.contentOpacity
+            transform: Translate { x: root.contentShift * 1.5 }
+
+            readonly property var hours: root.dayData ? root.dayData.hourly : []
+            readonly property real colW: hours.length > 0 ? width / hours.length : 0
+            readonly property real tMin: hours.length ? Math.min.apply(null, hours.map(h => Number(h.temp))) : 0
+            readonly property real tMax: hours.length ? Math.max.apply(null, hours.map(h => Number(h.temp))) : 1
+            // On today, the slot nearest the current hour
+            readonly property int nowIdx: root.shownDay === 0 ? Math.min(7, Math.round(new Date().getHours() / 3)) : -1
+            function pointY(t) {
+                const span = Math.max(1, tMax - tMin);
+                return 18 + (1 - (t - tMin) / span) * 20;
+            }
+
+            Canvas {
+                id: lineCanvas
+                anchors.fill: parent
+                property var pts: hourly.hours
+                onPtsChanged: requestPaint()
+                onWidthChanged: requestPaint()
+                onPaint: {
+                    const ctx = getContext("2d");
+                    ctx.reset();
+                    if (!pts || pts.length < 2) return;
+                    ctx.beginPath();
+                    for (let i = 0; i < pts.length; i++) {
+                        const x = hourly.colW * (i + 0.5);
+                        const y = hourly.pointY(Number(pts[i].temp));
+                        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                    }
+                    ctx.strokeStyle = Qt.alpha(Theme.text, 0.35);
+                    ctx.lineWidth = 2;
+                    ctx.lineJoin = "round";
+                    ctx.stroke();
+                }
+            }
+
+            Repeater {
+                model: hourly.hours
+                delegate: Item {
+                    required property var modelData
+                    required property int index
+                    readonly property bool isNow: index === hourly.nowIdx
+                    readonly property real py: hourly.pointY(Number(modelData.temp))
+                    x: hourly.colW * index
+                    width: hourly.colW
+                    height: hourly.height
+
+                    Text {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        y: parent.py - 19
+                        font.family: Theme.fontFamily
+                        font.features: { "tnum": 1 }
+                        text: Math.round(modelData.temp) + "°"
+                        font.pixelSize: 12
+                        font.weight: parent.isNow ? Font.Bold : Font.Normal
+                        color: Theme.text
+                    }
+                    Rectangle {
+                        visible: parent.isNow
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        y: parent.py - height / 2
+                        width: 8; height: 8; radius: 4
+                        color: Theme.primary
+                    }
+                    Text {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        y: 52
+                        text: modelData.icon
+                        font.family: Theme.fontIcon
+                        font.pixelSize: 14
+                        color: modelData.hex
+                    }
+                    Text {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.bottom: parent.bottom
+                        font.family: Theme.fontFamily
+                        font.features: { "tnum": 1 }
+                        text: parent.isNow ? "Now" : modelData.time.substring(0, 2)
+                        font.pixelSize: 11
+                        font.weight: parent.isNow ? Font.Bold : Font.Normal
+                        color: parent.isNow ? Theme.text : Theme.subtext0
+                    }
                 }
             }
         }
 
-        // ── Day selector chips ──
-        RowLayout {
+        // ── Days: one row each, range bar on the week's shared scale ──
+        Column {
+            id: dayList
             Layout.fillWidth: true
-            spacing: 6
+            Layout.fillHeight: true
+            Layout.topMargin: 16
+            spacing: 2
+
             Repeater {
                 model: root.wx && root.wx.days ? root.wx.days : []
                 delegate: Rectangle {
+                    id: dayRow
                     required property var modelData
                     required property int index
                     readonly property bool active: index === root.selectedDay
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 50
-                    radius: 12
-                    color: active ? Theme.surface0 : (chipMa.containsMouse ? Qt.alpha(Theme.surface0, 0.5) : "transparent")
-                    border.color: active ? Theme.primary : "transparent"
-                    border.width: 1
+                    width: parent.width
+                    // Rows share the free height, within a comfortable pitch
+                    height: Math.max(32, Math.min(42, (dayList.height - 8) / 5))
+                    radius: 10
+                    color: active ? Theme.surface0 : (dayMa.containsMouse ? Qt.alpha(Theme.surface0, 0.5) : "transparent")
                     Behavior on color { ColorAnimation { duration: Theme.animFast } }
 
-                    scale: chipMa.pressed ? 0.94 : 1.0
-                    Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.leftMargin: 10
+                        anchors.rightMargin: 10
+                        spacing: 10
 
-                    Column {
-                        anchors.centerIn: parent
-                        spacing: 2
                         Text {
-                            font.family: Theme.fontFamily;
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: index === 0 ? "Now" : modelData.day
-                            font.pixelSize: 10
-                            font.bold: active
-                            color: active ? Theme.text : Theme.subtext0
-                        }
-                        Text {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: modelData.icon
-                            font.family: Theme.fontIcon
+                            Layout.preferredWidth: 44
+                            font.family: Theme.fontFamily
+                            text: dayRow.index === 0 ? "Today" : dayRow.modelData.day
                             font.pixelSize: 13
-                            color: modelData.hex
+                            font.weight: dayRow.active ? Font.Bold : Font.Normal
+                            color: Theme.text
                         }
                         Text {
-                            font.family: Theme.fontFamily;
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: Math.round(modelData.max) + "°"
-                            font.pixelSize: 10
-                            font.bold: true
-                            color: active ? Theme.text : Theme.subtext0
+                            Layout.preferredWidth: 18
+                            horizontalAlignment: Text.AlignHCenter
+                            text: dayRow.modelData.icon
+                            font.family: Theme.fontIcon
+                            font.pixelSize: 14
+                            color: dayRow.modelData.hex
+                        }
+                        Text {
+                            Layout.preferredWidth: 30
+                            horizontalAlignment: Text.AlignRight
+                            font.family: Theme.fontFamily
+                            font.features: { "tnum": 1 }
+                            text: Math.round(dayRow.modelData.pop) + "%"
+                            font.pixelSize: 11
+                            color: Theme.subtext0
+                        }
+                        Text {
+                            Layout.preferredWidth: 26
+                            horizontalAlignment: Text.AlignRight
+                            font.family: Theme.fontFamily
+                            font.features: { "tnum": 1 }
+                            text: Math.round(dayRow.modelData.min) + "°"
+                            font.pixelSize: 13
+                            color: Theme.subtext0
+                        }
+                        Item {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 4
+                            Rectangle {
+                                anchors.fill: parent
+                                radius: 2
+                                color: Qt.alpha(Theme.text, 0.08)
+                            }
+                            Rectangle {
+                                readonly property real span: Math.max(1, root.weekMax - root.weekMin)
+                                x: parent.width * (dayRow.modelData.min - root.weekMin) / span
+                                width: Math.max(4, parent.width * (dayRow.modelData.max - dayRow.modelData.min) / span)
+                                height: parent.height
+                                radius: 2
+                                color: dayRow.active ? Theme.primary : Qt.alpha(Theme.text, 0.4)
+                                Behavior on color { ColorAnimation { duration: Theme.animFast } }
+                            }
+                        }
+                        Text {
+                            Layout.preferredWidth: 26
+                            horizontalAlignment: Text.AlignRight
+                            font.family: Theme.fontFamily
+                            font.features: { "tnum": 1 }
+                            text: Math.round(dayRow.modelData.max) + "°"
+                            font.pixelSize: 13
+                            color: Theme.text
                         }
                     }
 
                     MouseArea {
-                        id: chipMa
+                        id: dayMa
                         anchors.fill: parent
                         hoverEnabled: true
-                        onClicked: root.selectDay(index)
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: root.selectDay(dayRow.index)
                     }
                 }
             }
         }
 
-        // ── Hourly strip ──
-        Flickable {
+        // ── Conditions: label over value ──
+        Row {
+            id: conditions
             Layout.fillWidth: true
-            Layout.preferredHeight: 64
-            contentWidth: hourRow.width
-            clip: true
-            interactive: contentWidth > width
-            opacity: root.contentOpacity
-            transform: Translate { x: root.contentShift * 1.5 }
-
-            Row {
-                id: hourRow
-                spacing: 5
-                Repeater {
-                    model: root.dayData ? root.dayData.hourly : []
-                    delegate: Rectangle {
-                        required property var modelData
-                        required property int index
-                        // On today, highlight the slot nearest the current hour
-                        readonly property bool nowSlot: root.shownDay === 0
-                            && index === Math.min(7, Math.round(new Date().getHours() / 3))
-                        width: 34; height: 64; radius: 12
-                        color: nowSlot ? Theme.primary : Theme.surface0
-                        Column {
-                            anchors.centerIn: parent
-                            spacing: 3
-                            Text {
-                                font.family: Theme.fontFamily;
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                text: modelData.time.substring(0, 2)
-                                font.pixelSize: 9
-                                color: nowSlot ? Theme.background : Theme.subtext0
-                            }
-                            Text {
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                text: modelData.icon
-                                font.family: Theme.fontIcon
-                                font.pixelSize: 13
-                                color: nowSlot ? Theme.background : modelData.hex
-                            }
-                            Text {
-                                font.family: Theme.fontFamily;
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                text: Math.round(modelData.temp) + "°"
-                                font.pixelSize: 10; font.bold: true
-                                color: nowSlot ? Theme.background : Theme.text
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        Item { Layout.fillHeight: true }
-
-        // ── Metric gauges: WIND / HUM / RAIN / FEEL ──
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: 4
+            Layout.topMargin: 14
             opacity: root.contentOpacity
 
             Repeater {
-                model: 4
-                delegate: Item {
-                    id: gaugeWrap
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 72
-
-                    readonly property var d: root.dayData
-                    readonly property string lbl: ["WIND", "HUM", "RAIN", "FEEL"][index]
-                    readonly property string val: d ? (
-                        index === 0 ? Math.round(d.wind) + "" :
-                        index === 1 ? d.humidity + "%" :
-                        index === 2 ? Math.round(d.pop) + "%" :
-                        Math.round(d.feels) + "°") : ""
-                    readonly property real fill: d ? (
-                        index === 0 ? Math.min(1, d.wind / 60.0) :
-                        index === 1 ? d.humidity / 100.0 :
-                        index === 2 ? d.pop / 100.0 :
-                        Math.max(0, Math.min(1, (d.feels + 15) / 55.0))) : 0
-
-                    scale: gaugeMa.containsMouse ? 1.12 : 1.0
-                    Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
-
-                    Column {
-                        anchors.centerIn: parent
-                        spacing: 4
-
-                        Item {
-                            width: 48; height: 48
-                            anchors.horizontalCenter: parent.horizontalCenter
-
-                            Canvas {
-                                id: gaugeCanvas
-                                anchors.fill: parent
-                                rotation: -90
-                                property real p: gaugeWrap.fill
-                                Behavior on p { NumberAnimation { duration: 1000; easing.type: Easing.OutExpo } }
-                                onPChanged: requestPaint()
-                                onWidthChanged: requestPaint()
-                                onPaint: {
-                                    const ctx = getContext("2d");
-                                    ctx.reset();
-                                    const r = width / 2;
-                                    ctx.beginPath();
-                                    ctx.arc(r, r, r - 3, 0, 2 * Math.PI);
-                                    ctx.strokeStyle = Qt.alpha(Theme.text, 0.08);
-                                    ctx.lineWidth = 3;
-                                    ctx.stroke();
-                                    if (p > 0.01) {
-                                        ctx.beginPath();
-                                        ctx.arc(r, r, r - 3, 0, p * 2 * Math.PI);
-                                        ctx.strokeStyle = Theme.primary;
-                                        ctx.lineWidth = 3;
-                                        ctx.lineCap = "round";
-                                        ctx.stroke();
-                                    }
-                                }
-                            }
-
-                            Text {
-                                font.family: Theme.fontFamily;
-                                anchors.centerIn: parent
-                                text: gaugeWrap.val
-                                font.pixelSize: 11; font.bold: true
-                                color: Theme.text
-                            }
-                        }
-
-                        Text {
-                            font.family: Theme.fontFamily;
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: gaugeWrap.lbl
-                            font.pixelSize: 9
-                            color: gaugeMa.containsMouse ? Theme.primary : Theme.subtext0
-                            Behavior on color { ColorAnimation { duration: Theme.animFast } }
-                        }
+                model: [
+                    { lbl: "Wind", val: root.cur ? root.cur.wind : (root.dayData ? root.dayData.wind : null), unit: " km/h" },
+                    { lbl: "Humidity", val: root.cur ? root.cur.humidity : (root.dayData ? root.dayData.humidity : null), unit: "%" },
+                    { lbl: "Rain", val: root.dayData ? root.dayData.pop : null, unit: "%" },
+                    { lbl: "Feels like", val: root.cur ? root.cur.feels : (root.dayData ? root.dayData.feels : null), unit: "°" }
+                ]
+                delegate: Column {
+                    required property var modelData
+                    width: conditions.width / 4
+                    spacing: 2
+                    Text {
+                        font.family: Theme.fontFamily
+                        text: modelData.lbl
+                        font.pixelSize: 11
+                        color: Theme.subtext0
                     }
-
-                    MouseArea { id: gaugeMa; anchors.fill: parent; hoverEnabled: true }
+                    Text {
+                        font.family: Theme.fontFamily
+                        font.features: { "tnum": 1 }
+                        textFormat: Text.StyledText
+                        text: modelData.val === null || modelData.val === undefined ? "–"
+                            : Math.round(modelData.val) + "<font color=\"" + Theme.subtext0 + "\">" + modelData.unit + "</font>"
+                        font.pixelSize: 15
+                        font.weight: Font.Medium
+                        color: Theme.text
+                    }
                 }
             }
         }
