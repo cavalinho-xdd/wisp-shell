@@ -20,7 +20,7 @@ Flickable {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.margins: 24
-        anchors.topMargin: 16
-        spacing: 28
+        anchors.topMargin: 20
+        spacing: 24
     }
 }

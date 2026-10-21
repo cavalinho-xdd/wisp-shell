@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import "../core"
 
-// Full-width clickable row: icon, label, switch on the right.
+// Full-width clickable row: label (and hint), switch on the right.
 // Modeled on ii-dots ConfigSwitch — the whole row toggles.
 Rectangle {
     id: root
@@ -13,9 +13,9 @@ Rectangle {
     signal toggled(bool value)
 
     Layout.fillWidth: true
-    implicitHeight: rowContent.implicitHeight + 20
-    radius: 12
-    color: rowMa.containsMouse ? Theme.surface0 : "transparent"
+    implicitHeight: Math.max(40, rowContent.implicitHeight + 18)
+    radius: 10
+    color: rowMa.containsMouse ? Qt.alpha(Theme.surface0, 0.5) : "transparent"
     Behavior on color { ColorAnimation { duration: Theme.animFast } }
 
     ColumnLayout {
@@ -29,16 +29,9 @@ Rectangle {
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: 10
+            spacing: 16
             Text {
-                text: root.icon
-                font.family: Theme.fontIcon
-                font.pixelSize: 15
-                color: root.enabled ? Theme.text : Theme.subtext0
-                visible: root.icon !== ""
-            }
-            Text {
-                font.family: Theme.fontFamily;
+                font.family: Theme.fontFamily
                 Layout.fillWidth: true
                 text: root.text
                 font.pixelSize: 13
@@ -54,7 +47,8 @@ Rectangle {
             font.family: Theme.fontFamily;
             Layout.fillWidth: true
             text: root.hint
-            font.pixelSize: 11
+            Layout.rightMargin: 56
+            font.pixelSize: 12
             color: Theme.subtext0
             wrapMode: Text.WordWrap
             visible: root.hint !== ""

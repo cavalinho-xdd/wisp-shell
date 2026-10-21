@@ -6,21 +6,21 @@ Item {
     id: sw
     property bool checked: false
     signal toggled(bool value)
-    width: 40; height: 22
+    width: 36; height: 20
 
     Rectangle {
         anchors.fill: parent
-        radius: 11
+        radius: 10
         // Track fill alone. Checked, the border matched its own fill; unchecked,
         // it outlined a track that the surface0 tonal step already defines.
         color: sw.checked ? Theme.primary : Theme.surface0
         Behavior on color { ColorAnimation { duration: Theme.animFast } }
 
         Rectangle {
-            width: 16; height: 16; radius: 8
+            width: 14; height: 14; radius: 7
             anchors.verticalCenter: parent.verticalCenter
             x: sw.checked ? parent.width - width - 3 : 3
-            color: sw.checked ? Theme.background : Theme.subtext0
+            color: sw.checked ? Theme.colorOnPrimary : Theme.subtext0
             Behavior on x { NumberAnimation { duration: Theme.animSlow; easing.type: Theme.easeSpring } }
             Behavior on color { ColorAnimation { duration: Theme.animFast } }
         }

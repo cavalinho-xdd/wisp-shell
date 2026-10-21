@@ -14,21 +14,15 @@ RowLayout {
     Layout.fillWidth: true
     Layout.leftMargin: 12
     Layout.rightMargin: 12
-    spacing: 10
+    Layout.preferredHeight: 40
+    spacing: 16
 
     Text {
-        text: root.icon
-        font.family: Theme.fontIcon
-        font.pixelSize: 15
-        color: root.enabled ? Theme.text : Theme.subtext0
-        visible: root.icon !== ""
-    }
-    Text {
-        font.family: Theme.fontFamily;
+        font.family: Theme.fontFamily
         text: root.text
         font.pixelSize: 13
         color: root.enabled ? Theme.text : Theme.subtext0
-        Layout.preferredWidth: 110
+        Layout.preferredWidth: 140
     }
     Slider {
         Layout.fillWidth: true
@@ -36,12 +30,12 @@ RowLayout {
         onMoved: function(v) { root.edited(Math.round(v * root.maxValue)) }
     }
     Text {
-        font.family: Theme.fontFamily;
+        font.family: Theme.fontFamily
+        font.features: { "tnum": 1 }
         text: root.value
         font.pixelSize: 13
-        font.bold: true
-        color: Theme.primary
-        Layout.preferredWidth: 28
+        color: Theme.text
+        Layout.preferredWidth: 24
         horizontalAlignment: Text.AlignRight
     }
 }

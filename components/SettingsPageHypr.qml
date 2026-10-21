@@ -63,36 +63,41 @@ CfgPage {
 
     property int currentTab: 0
 
-    // Top Tabs
-    RowLayout {
-        Layout.fillWidth: true
-        Layout.preferredHeight: 40
-        spacing: 12
-
+    // Text tabs under the page title; the active one is underlined, not filled
+    Row {
+        Layout.leftMargin: 12
+        spacing: 22
         Repeater {
-            model: ["Look & Feel", "Window Rules"]
-            delegate: Rectangle {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                radius: 14
-                color: page.currentTab === index ? Theme.primary : (tabMa.containsMouse ? Theme.surface0 : Theme.surface)
-                Behavior on color { ColorAnimation { duration: Theme.animFast } }
-                
+            model: ["Look & feel", "Window rules"]
+            delegate: Item {
+                required property string modelData
+                required property int index
+                readonly property bool active: page.currentTab === index
+                width: tabLabel.implicitWidth
+                height: 28
                 Text {
-                    anchors.centerIn: parent
-                    text: modelData
+                    id: tabLabel
+                    anchors.top: parent.top
+                    text: parent.modelData
                     font.family: Theme.fontFamily
                     font.pixelSize: 13
-                    font.bold: true
-                    color: page.currentTab === index ? Theme.background : Theme.text
+                    font.weight: parent.active ? Font.Medium : Font.Normal
+                    color: parent.active || tabMa.containsMouse ? Theme.text : Theme.subtext0
                     Behavior on color { ColorAnimation { duration: Theme.animFast } }
                 }
-                
+                Rectangle {
+                    anchors.bottom: parent.bottom
+                    width: parent.width; height: 2; radius: 1
+                    color: Theme.text
+                    opacity: parent.active ? 1 : 0
+                    Behavior on opacity { NumberAnimation { duration: Theme.animFast } }
+                }
                 MouseArea {
                     id: tabMa
                     anchors.fill: parent
                     hoverEnabled: true
-                    onClicked: page.currentTab = index
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: page.currentTab = parent.index
                 }
             }
         }
@@ -101,53 +106,51 @@ CfgPage {
     // ── Tab 0: Look & Feel ──
     ColumnLayout {
         Layout.fillWidth: true
-        spacing: 28
+        spacing: 24
         visible: page.currentTab === 0
 
         CfgNotice {
-            text: "Writes straight to your Hyprland config (general.lua / animations.lua) and reloads it — this is your real config now, not a preview layer."
+            text: "Changes are written to general.lua and animations.lua, and Hyprland reloads straight away."
         }
 
         CfgSection {
-            title: "Look & Feel"
-            icon: "󰉼"
+            title: "Gaps and borders"
 
             CfgSlider {
-                icon: "󰁌"
                 text: "Inner gaps"
                 value: Settings.conf.hypr.gapsIn
                 maxValue: 30
                 onEdited: v => { Settings.conf.hypr.gapsIn = v; page.queueApply() }
             }
             CfgSlider {
-                icon: "󰁌"
                 text: "Outer gaps"
                 value: Settings.conf.hypr.gapsOut
                 maxValue: 60
                 onEdited: v => { Settings.conf.hypr.gapsOut = v; page.queueApply() }
             }
             CfgSlider {
-                icon: "󰺿"
                 text: "Border size"
                 value: Settings.conf.hypr.borderSize
                 maxValue: 8
                 onEdited: v => { Settings.conf.hypr.borderSize = v; page.queueApply() }
             }
             CfgSlider {
-                icon: "󱓻"
                 text: "Rounding"
                 value: Settings.conf.hypr.rounding
                 maxValue: 30
                 onEdited: v => { Settings.conf.hypr.rounding = v; page.queueApply() }
             }
+        }
+
+        CfgSection {
+            title: "Blur"
+
             CfgSwitch {
-                icon: "󰂵"
-                text: "Blur"
+                text: "Blur behind windows"
                 checked: Settings.conf.hypr.blurEnabled
                 onToggled: value => { Settings.conf.hypr.blurEnabled = value; page.queueApply() }
             }
             CfgSpin {
-                icon: "󰘦"
                 text: "Blur size"
                 enabled: Settings.conf.hypr.blurEnabled
                 value: Settings.conf.hypr.blurSize
@@ -155,16 +158,19 @@ CfgPage {
                 onEdited: v => { Settings.conf.hypr.blurSize = v; page.queueApply() }
             }
             CfgSpin {
-                icon: "󰑖"
                 text: "Blur passes"
                 enabled: Settings.conf.hypr.blurEnabled
                 value: Settings.conf.hypr.blurPasses
                 from: 1; to: 4
                 onEdited: v => { Settings.conf.hypr.blurPasses = v; page.queueApply() }
             }
+        }
+
+        CfgSection {
+            title: "Motion"
+
             CfgSwitch {
-                icon: "󰤺"
-                text: "Animations"
+                text: "Window animations"
                 checked: Settings.conf.hypr.animationsEnabled
                 onToggled: value => { Settings.conf.hypr.animationsEnabled = value; page.queueApply() }
             }
@@ -174,7 +180,7 @@ CfgPage {
     // ── Tab 1: Window Rules ──
     ColumnLayout {
         Layout.fillWidth: true
-        spacing: 28
+        spacing: 24
         visible: page.currentTab === 1
 
         CfgNotice {
@@ -183,7 +189,6 @@ CfgPage {
 
         CfgSection {
             title: "Rules"
-            icon: "󰖲"
 
             ColumnLayout {
                 Layout.fillWidth: true
@@ -246,7 +251,6 @@ CfgPage {
 
         CfgSection {
             title: "Add new rule"
-            icon: "󰐕"
 
             ColumnLayout {
                 Layout.fillWidth: true

@@ -2,8 +2,9 @@ import QtQuick
 import QtQuick.Layouts
 import "../core"
 
-// Settings section: nerd-font icon + title header, children below.
-// Modeled on ii-dots ContentSection.
+// Settings section: a plain title over its rows. `icon` is kept for the
+// pages that still pass one, but no longer drawn — an accent glyph on every
+// heading competed with the rows it introduced.
 ColumnLayout {
     id: root
     property string title: ""
@@ -11,30 +12,20 @@ ColumnLayout {
     default property alias contentData: sectionContent.data
 
     Layout.fillWidth: true
-    spacing: 8
+    spacing: 6
 
-    RowLayout {
-        spacing: 10
-        Text {
-            text: root.icon
-            font.family: Theme.fontIcon
-            font.pixelSize: 18
-            color: Theme.primary
-            visible: root.icon !== ""
-        }
-        Text {
-            font.family: Theme.fontFamily;
-            text: root.title
-            font.pixelSize: 16
-            font.bold: true
-            color: Theme.text
-        }
+    Text {
+        Layout.leftMargin: 12
+        font.family: Theme.fontFamily
+        text: root.title
+        font.pixelSize: 14
+        font.bold: true
+        color: Theme.text
     }
 
     ColumnLayout {
         id: sectionContent
         Layout.fillWidth: true
-        Layout.leftMargin: 4
-        spacing: 4
+        spacing: 0
     }
 }
