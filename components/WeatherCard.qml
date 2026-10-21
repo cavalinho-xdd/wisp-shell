@@ -177,7 +177,7 @@ Rectangle {
             id: hourly
             Layout.fillWidth: true
             Layout.topMargin: 10
-            Layout.preferredHeight: 92
+            Layout.preferredHeight: 86
             opacity: root.contentOpacity
             transform: Translate { x: root.contentShift * 1.5 }
 
@@ -245,7 +245,7 @@ Rectangle {
                     }
                     Text {
                         anchors.horizontalCenter: parent.horizontalCenter
-                        y: 52
+                        y: 48
                         text: modelData.icon
                         font.family: Theme.fontIcon
                         font.pixelSize: 14
@@ -270,7 +270,11 @@ Rectangle {
             id: dayList
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.topMargin: 16
+            // Sized by the layout, not by its rows — the rows follow its height
+            Layout.preferredHeight: 5 * 30
+            Layout.minimumHeight: 5 * 26
+            Layout.topMargin: 12
+            clip: true
             spacing: 2
 
             Repeater {
@@ -282,7 +286,7 @@ Rectangle {
                     readonly property bool active: index === root.selectedDay
                     width: parent.width
                     // Rows share the free height, within a comfortable pitch
-                    height: Math.max(32, Math.min(42, (dayList.height - 8) / 5))
+                    height: Math.max(26, Math.min(42, (dayList.height - 8) / 5))
                     radius: 10
                     color: active ? Theme.surface0 : (dayMa.containsMouse ? Qt.alpha(Theme.surface0, 0.5) : "transparent")
                     Behavior on color { ColorAnimation { duration: Theme.animFast } }
