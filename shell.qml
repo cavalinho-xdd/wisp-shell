@@ -305,11 +305,15 @@ ShellRoot {
                         width: (ShellState.launcherActive || floatingPill.isExpanded) ? 750 : Math.min(750, collapsedView.implicitWidth)
                         height: ShellState.launcherActive ? 600 : (floatingPill.isExpanded ? 550 : 48)
 
-                        Behavior on width { SpringAnimation { spring: 2.8; damping: 0.35; mass: 1.0 } }
-                        Behavior on height { SpringAnimation { spring: 2.8; damping: 0.35; mass: 1.0 } }
-                        
+                        // Damped enough to settle with one small overshoot instead of wobbling
+                        Behavior on width { SpringAnimation { spring: 2.8; damping: 0.55; mass: 1.0 } }
+                        Behavior on height { SpringAnimation { spring: 2.8; damping: 0.55; mass: 1.0 } }
+
                         color: Theme.panelBackground
-                        radius: 24
+                        // Collapsed: full capsule (half of 48). Open: a softer 32 so the
+                        // big panel doesn't read as a stretched pill.
+                        radius: (ShellState.launcherActive || floatingPill.isExpanded) ? 32 : 24
+                        Behavior on radius { NumberAnimation { duration: Theme.animSlow; easing.type: Easing.OutCubic } }
                         // No outline. The pill is the shell's signature object and
                         // the most-seen surface in it; a grey hairline around it was
                         // the "box around everything" tell at its most visible.
