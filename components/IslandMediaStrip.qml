@@ -4,9 +4,9 @@ import Quickshell.Services.Mpris
 import "../core"
 
 // Compact "dynamic island" media presentation for the collapsed bar:
-// spinning album art + marquee title/artist + EQ bars, controls on hover,
-// frame-synced progress hairline underneath. Purely presentational —
-// all state comes from the Island singleton.
+// rounded album art, title over "artist · player", a progress hairline
+// under the text, and always-visible transport controls. Purely
+// presentational — all state comes from the Island singleton.
 Item {
     id: root
 
@@ -24,23 +24,11 @@ Item {
     implicitHeight: 48
 
     opacity: active ? 1 : 0
-    // Whole-capsule hover invite (small embiggen) layered onto the active/inactive pop
-    scale: active ? (hover.hovered ? 1.035 : 1.0) : 0.7
+    scale: active ? 1.0 : 0.85
     visible: opacity > 0.01
     Behavior on opacity { NumberAnimation { duration: 250 } }
-    Behavior on scale { NumberAnimation { duration: 220; easing.type: Theme.easeSpring; easing.overshoot: 1.3 } }
-    Behavior on implicitWidth { NumberAnimation { duration: 420; easing.type: Easing.OutBack; easing.overshoot: 1.05 } }
-
-    // iOS-style squish on track change: quick inhale, springy settle
-    SequentialAnimation {
-        id: trackPop
-        NumberAnimation { target: strip; property: "scale"; to: 1.1; duration: 90; easing.type: Easing.OutQuad }
-        NumberAnimation { target: strip; property: "scale"; to: 1.0; duration: 380; easing.type: Easing.OutBack; easing.overshoot: 2.2 }
-    }
-    Connections {
-        target: root.player
-        function onTrackTitleChanged() { if (root.active) trackPop.restart() }
-    }
+    Behavior on scale { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+    Behavior on implicitWidth { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
 
     // Mpris only emits position on demand — poke it every render frame, so
     // the progress hairline advances at the compositor's full refresh rate.
@@ -50,10 +38,8 @@ Item {
         onTriggered: root.player.positionChanged()
     }
 
-    HoverHandler { id: hover }
-
     // Whole-strip click opens the dashboard on the Media tab; sits under
-    // the control buttons so those still win on hover.
+    // the control buttons so those still win.
     MouseArea {
         anchors.fill: parent
         onClicked: root.expandRequested()
@@ -63,24 +49,12 @@ Item {
         id: strip
         anchors.verticalCenter: parent.verticalCenter
         spacing: 10
-        transformOrigin: Item.Center
 
-        // ── Spinning album art ──
+        // ── Album art ──
         Item {
-            width: 30
-            height: 30
+            width: 32
+            height: 32
             anchors.verticalCenter: parent.verticalCenter
-
-            // Accent ring, breathes with playback state
-            Rectangle {
-                anchors.fill: parent
-                anchors.margins: -3
-                radius: width / 2
-                color: "transparent"
-                border.color: root.playing ? Theme.primary : Theme.surface0
-                border.width: root.playing ? 2 : 1
-                Behavior on border.color { ColorAnimation { duration: 400 } }
-            }
 
             Image {
                 id: art
@@ -91,41 +65,24 @@ Item {
                 asynchronous: true
             }
 
+            // NOTE: do NOT add shadowEnabled/shadow* here — MultiEffect's mask
+            // silently breaks (art renders unmasked) the moment shadowEnabled
+            // is true alongside maskEnabled, on this Qt/Quickshell build.
             MultiEffect {
-                id: artMasked
                 anchors.fill: art
                 source: art
                 maskEnabled: true
                 visible: art.status === Image.Ready
-                // NOTE: do NOT add shadowEnabled/shadow* here — confirmed via
-                // isolated probe that MultiEffect's mask silently breaks (art
-                // renders square, not circular) the moment shadowEnabled is
-                // true alongside maskEnabled, on this Qt/Quickshell build.
-                // Tried it for a "subtle depth" look; reverted — not worth a
-                // second unmasked MultiEffect layer just for a drop shadow.
                 maskSource: ShaderEffectSource {
-                    sourceItem: Rectangle { width: 30; height: 30; radius: 15 }
-                }
-                // Vinyl spin — pauses in place instead of resetting
-                RotationAnimation on rotation {
-                    from: 0; to: 360
-                    duration: 9000
-                    loops: Animation.Infinite
-                    running: true
-                    paused: !root.playing || !root.visible
+                    sourceItem: Rectangle { width: 32; height: 32; radius: 8 }
                 }
             }
 
-            // Fallback: own-drawn disc + plain note. The disc-in-glyph icon
-            // (󰎆) draws off-center inside its em box and can't be centered
-            // reliably; a Rectangle we control centers exactly. The note's
-            // 1px ink offset is compensated by hand (verified via
-            // test_glyph.qml crosshair probe).
+            // Fallback tile. The note glyph's 1px ink offset is compensated by
+            // hand (verified via test_glyph.qml crosshair probe).
             Rectangle {
-                anchors.centerIn: parent
-                width: 30
-                height: 30
-                radius: 15
+                anchors.fill: parent
+                radius: 8
                 color: Theme.surface0
                 visible: art.status !== Image.Ready
 
@@ -135,205 +92,143 @@ Item {
                     anchors.verticalCenterOffset: -1
                     text: "󰎈"
                     font.family: Theme.fontIcon
-                    font.pixelSize: 13
-                    color: Theme.text
+                    font.pixelSize: 14
+                    color: Theme.subtext0
                 }
             }
         }
 
-        // ── Title/artist marquee ⟷ hover controls (crossfade) ──
-        Item {
-            id: centerArea
-            width: 150
-            height: 34
+        // ── Title, "artist · player", progress ──
+        // Fixed width so the pill doesn't resize on every track change.
+        Column {
+            id: textCol
+            width: 168
             anchors.verticalCenter: parent.verticalCenter
+            spacing: 1
+            // Track change slides this, not y — a y animation fights the anchor
+            transform: Translate { id: titleShift }
 
-            Item {
-                id: titleClip
-                anchors.fill: parent
-                clip: true
-                opacity: hover.hovered ? 0 : 1
-                scale: hover.hovered ? 0.9 : 1
-                Behavior on opacity { NumberAnimation { duration: 180 } }
-                Behavior on scale { NumberAnimation { duration: 250; easing.type: Theme.easeSpring } }
+            Text {
+                id: titleText
+                width: parent.width
+                text: root.player ? (root.player.trackTitle || "Unknown") : ""
+                color: Theme.text
+                font.family: Theme.fontFamily
+                font.pixelSize: 12
+                font.bold: true
+                elide: Text.ElideRight
 
-                Column {
-                    id: titleCol
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: 1
-                    // Slide-in animates this, not y — a y animation fights the anchor
-                    transform: Translate { id: titleShift }
-
-                    Text {
-                        font.family: Theme.fontFamily;
-                        id: titleText
-                        text: root.player ? (root.player.trackTitle || "Unknown") : ""
-                        color: Theme.text
-                        font.pixelSize: 12
-                        font.bold: true
-
-                        // New track: slide up into place
-                        onTextChanged: { x = 0; slideIn.restart() }
-                        ParallelAnimation {
-                            id: slideIn
-                            NumberAnimation { target: titleShift; property: "y"; from: 10; to: 0; duration: 350; easing.type: Easing.OutQuint }
-                            NumberAnimation { target: titleCol; property: "opacity"; from: 0; to: 1; duration: 300 }
-                        }
-
-                        // Marquee only when the title actually overflows
-                        SequentialAnimation {
-                            running: titleText.implicitWidth > titleClip.width && !hover.hovered && root.active
-                            loops: Animation.Infinite
-                            onStopped: titleText.x = 0
-                            PauseAnimation { duration: 1800 }
-                            NumberAnimation {
-                                target: titleText; property: "x"
-                                to: titleClip.width - titleText.implicitWidth
-                                duration: Math.max(600, (titleText.implicitWidth - titleClip.width) * 30)
-                                easing.type: Easing.InOutSine
-                            }
-                            PauseAnimation { duration: 1200 }
-                            NumberAnimation { target: titleText; property: "x"; to: 0; duration: 600; easing.type: Easing.InOutQuad }
-                        }
-                    }
-
-                    Text {
-                        font.family: Theme.fontFamily;
-                        text: root.player ? (root.player.trackArtist || "") : ""
-                        color: Theme.subtext0
-                        font.pixelSize: 10
-                        width: titleClip.width
-                        elide: Text.ElideRight
-                        // Empty artist (browser streams) still occupies a line
-                        // height and pushes the title off-center — drop it
-                        visible: text.length > 0
-                    }
+                onTextChanged: slideIn.restart()
+                ParallelAnimation {
+                    id: slideIn
+                    NumberAnimation { target: titleShift; property: "y"; from: 6; to: 0; duration: 350; easing.type: Easing.OutQuint }
+                    NumberAnimation { target: textCol; property: "opacity"; from: 0; to: 1; duration: 250 }
                 }
             }
 
-            // Hover controls — pseudo-staggered spring pop via per-button durations
-            Row {
-                anchors.centerIn: parent
-                spacing: 14
-                opacity: hover.hovered ? 1 : 0
-                visible: opacity > 0.01
-                Behavior on opacity { NumberAnimation { duration: 180 } }
+            Text {
+                width: parent.width
+                text: {
+                    if (!root.player) return "";
+                    const artist = root.player.trackArtist || "";
+                    const app = root.player.identity || "";
+                    return artist && app ? artist + " · " + app : (artist || app);
+                }
+                color: Theme.subtext0
+                font.family: Theme.fontFamily
+                font.pixelSize: 10
+                elide: Text.ElideRight
+                // An empty line would still take height and push the title off-centre
+                visible: text.length > 0
+            }
 
-                Repeater {
-                    // `enabled` mirrors the player's own capability flags.
-                    // Browsers routinely publish a player with canGoPrevious
-                    // false (a single YouTube tab has nothing to go back to),
-                    // and calling it anyway logs
-                    // `Cannot call previous() ... because canGoPrevious is false`
-                    // on every click — a dead button that also spams the log.
-                    model: [
-                        { glyph: "󰒮",
-                          enabled: !!root.player && root.player.canGoPrevious,
-                          action: () => root.player && root.player.canGoPrevious && root.player.previous() },
-                        { glyph: "",
-                          enabled: !!root.player && root.player.canTogglePlaying,
-                          action: () => root.player && root.player.canTogglePlaying && root.player.togglePlaying() },
-                        { glyph: "󰒭",
-                          enabled: !!root.player && root.player.canGoNext,
-                          action: () => root.player && root.player.canGoNext && root.player.next() }
-                    ]
-                    delegate: Text {
-                        required property var modelData
-                        required property int index
-                        anchors.verticalCenter: parent.verticalCenter
-                        // Middle button shows live play/pause state
-                        text: index === 1 ? (root.playing ? "󰏤" : "󰐊") : modelData.glyph
-                        font.family: Theme.fontIcon
-                        font.pixelSize: index === 1 ? 18 : 14
-                        // Unavailable actions dim rather than vanish — the row
-                        // keeps its shape, and the control still reads as one.
-                        opacity: modelData.enabled ? 1 : 0.32
-                        Behavior on opacity { NumberAnimation { duration: Theme.animFast } }
-                        color: (ctlMouse.containsMouse && modelData.enabled) ? Theme.primary : Theme.text
-                        scale: hover.hovered ? (ctlMouse.pressed && modelData.enabled ? 0.85 : 1) : 0.3
-                        Behavior on scale {
-                            NumberAnimation {
-                                duration: 280 + index * 70
-                                easing.type: Theme.easeSpring
-                                easing.overshoot: 1.6
-                            }
-                        }
-                        Behavior on color { ColorAnimation { duration: 120 } }
+            Item { width: 1; height: 3; visible: progressTrack.visible }
 
-                        MouseArea {
-                            id: ctlMouse
-                            anchors.centerIn: parent
-                            width: parent.width + 14
-                            height: 34
-                            hoverEnabled: true
-                            enabled: modelData.enabled
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: modelData.action()
-                        }
-                    }
+            Rectangle {
+                id: progressTrack
+                width: parent.width
+                height: 2
+                radius: 1
+                color: Theme.surface0
+                // Livestreams report length as int64-max microseconds — treat
+                // anything over 24 h as "no meaningful duration" and hide.
+                visible: !!root.player && root.player.length > 0 && root.player.length < 86400
+
+                Rectangle {
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    radius: 1
+                    color: Theme.primary
+                    width: parent.width * (root.player && root.player.length > 0
+                        ? Math.min(1, root.player.position / root.player.length) : 0)
                 }
             }
         }
 
-        // ── EQ bars ──
+        // ── Transport controls ──
         Row {
-            spacing: 3
-            height: 20
+            spacing: 4
             anchors.verticalCenter: parent.verticalCenter
 
             Repeater {
-                model: 4
-                delegate: Item {
+                // `enabled` mirrors the player's own capability flags.
+                // Browsers routinely publish a player with canGoPrevious
+                // false (a single YouTube tab has nothing to go back to),
+                // and calling it anyway logs
+                // `Cannot call previous() ... because canGoPrevious is false`
+                // on every click — a dead button that also spams the log.
+                model: [
+                    { glyph: "󰒮",
+                      enabled: !!root.player && root.player.canGoPrevious,
+                      action: () => root.player && root.player.canGoPrevious && root.player.previous() },
+                    { glyph: "",
+                      enabled: !!root.player && root.player.canTogglePlaying,
+                      action: () => root.player && root.player.canTogglePlaying && root.player.togglePlaying() },
+                    { glyph: "󰒭",
+                      enabled: !!root.player && root.player.canGoNext,
+                      action: () => root.player && root.player.canGoNext && root.player.next() }
+                ]
+                delegate: Rectangle {
+                    id: ctl
+                    required property var modelData
                     required property int index
-                    width: 3
-                    height: 20
+                    readonly property bool isPlay: index === 1
 
-                    Rectangle {
-                        id: eqBar
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 3
-                        radius: 1.5
-                        color: root.playing ? Theme.primary : Theme.surface0
-                        height: 3
-                        Behavior on color { ColorAnimation { duration: 400 } }
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 28
+                    height: 28
+                    radius: 14
+                    // Play/pause is the one filled control; the skips only
+                    // get a tone step under the cursor.
+                    color: isPlay ? Theme.text
+                         : (ctlMouse.containsMouse && modelData.enabled ? Theme.surface0 : "transparent")
+                    // Unavailable actions dim rather than vanish — the row
+                    // keeps its shape, and the control still reads as one.
+                    opacity: modelData.enabled ? 1 : 0.32
+                    scale: ctlMouse.pressed && modelData.enabled ? 0.9 : 1
+                    Behavior on color { ColorAnimation { duration: Theme.animFast } }
+                    Behavior on opacity { NumberAnimation { duration: Theme.animFast } }
+                    Behavior on scale { NumberAnimation { duration: 120; easing.type: Easing.OutCubic } }
 
-                        SequentialAnimation on height {
-                            running: root.playing && root.visible
-                            loops: Animation.Infinite
-                            onStopped: eqBar.height = 3
-                            NumberAnimation { to: [14, 18, 10, 16][index]; duration: 260 + index * 70; easing.type: Easing.InOutQuad }
-                            NumberAnimation { to: [6, 4, 8, 5][index]; duration: 300 + index * 50; easing.type: Easing.InOutQuad }
-                            NumberAnimation { to: [11, 15, 17, 9][index]; duration: 240 + index * 90; easing.type: Easing.InOutQuad }
-                            NumberAnimation { to: [5, 7, 4, 6][index]; duration: 280 + index * 60; easing.type: Easing.InOutQuad }
-                        }
+                    Text {
+                        anchors.centerIn: parent
+                        text: ctl.isPlay ? (root.playing ? "󰏤" : "󰐊") : ctl.modelData.glyph
+                        font.family: Theme.fontIcon
+                        font.pixelSize: ctl.isPlay ? 15 : 14
+                        color: ctl.isPlay ? Theme.background : Theme.text
+                    }
+
+                    MouseArea {
+                        id: ctlMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        enabled: ctl.modelData.enabled
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: ctl.modelData.action()
                     }
                 }
             }
-        }
-    }
-
-    // ── Frame-synced progress hairline ──
-    Rectangle {
-        id: progressTrack
-        anchors.left: strip.left
-        anchors.right: strip.right
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 4
-        height: 2
-        radius: 1
-        color: Theme.surface0
-        // Livestreams report length as int64-max microseconds — treat
-        // anything over 24 h as "no meaningful duration" and hide.
-        visible: !!root.player && root.player.length > 0 && root.player.length < 86400
-
-        Rectangle {
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            radius: 1
-            color: Theme.primary
-            width: parent.width * (root.player && root.player.length > 0
-                ? Math.min(1, root.player.position / root.player.length) : 0)
         }
     }
 }
