@@ -188,7 +188,8 @@ Item {
                 text: "󰥔"
                 font.family: Theme.fontIcon
                 font.pixelSize: 16
-                color: Theme.primary
+                // Neutral, not accent: primary is reserved for the active workspace dot
+                color: Theme.subtext0
                 // Baseline-align to the time — vertical centering drifts
                 // because the glyph's em box differs from the text font's
                 anchors.baseline: timeText.baseline
