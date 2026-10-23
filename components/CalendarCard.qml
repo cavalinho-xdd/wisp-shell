@@ -80,63 +80,63 @@ Rectangle {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 16
-        spacing: 6
+        anchors.margins: 18
+        spacing: 0
 
-        // ── Month navigation ──
+        // ── Month navigation: title left, arrows together on the right ──
         RowLayout {
             Layout.fillWidth: true
-            spacing: 4
+            spacing: 14
+
+            Text {
+                id: monthTitle
+                Layout.fillWidth: true
+                font.family: Theme.fontFamily
+                text: root.monthNames[root.viewMonth] + " " + root.viewYear
+                font.pixelSize: 15; font.weight: Font.Bold
+                color: Theme.text
+                opacity: root.gridOpacity
+                transform: Translate { x: root.gridShift }
+                MouseArea {
+                    width: monthTitle.contentWidth; height: parent.height
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: root.goToday()
+                }
+            }
 
             Text {
                 text: "󰅁"
                 font.family: Theme.fontIcon; font.pixelSize: 16
-                color: prevMa.containsMouse ? Theme.primary : Theme.subtext0
+                color: prevMa.containsMouse ? Theme.text : Theme.subtext0
                 Behavior on color { ColorAnimation { duration: Theme.animFast } }
-                MouseArea { id: prevMa; anchors.fill: parent; anchors.margins: -6; hoverEnabled: true; onClicked: root.shiftMonth(-1) }
-            }
-
-            Item {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 22
-                Text {
-                    font.family: Theme.fontFamily;
-                    id: monthTitle
-                    anchors.centerIn: parent
-                    text: root.monthNames[root.viewMonth] + " " + root.viewYear
-                    font.pixelSize: 14; font.bold: true
-                    color: titleMa.containsMouse ? Theme.primary : Theme.text
-                    Behavior on color { ColorAnimation { duration: Theme.animFast } }
-                    opacity: root.gridOpacity
-                    transform: Translate { x: root.gridShift }
-                }
-                MouseArea { id: titleMa; anchors.fill: parent; hoverEnabled: true; onClicked: root.goToday() }
+                MouseArea { id: prevMa; anchors.fill: parent; anchors.margins: -6; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.shiftMonth(-1) }
             }
 
             Text {
                 text: "󰅂"
                 font.family: Theme.fontIcon; font.pixelSize: 16
-                color: nextMa.containsMouse ? Theme.primary : Theme.subtext0
+                color: nextMa.containsMouse ? Theme.text : Theme.subtext0
                 Behavior on color { ColorAnimation { duration: Theme.animFast } }
-                MouseArea { id: nextMa; anchors.fill: parent; anchors.margins: -6; hoverEnabled: true; onClicked: root.shiftMonth(1) }
+                MouseArea { id: nextMa; anchors.fill: parent; anchors.margins: -6; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.shiftMonth(1) }
             }
         }
 
         // ── Day-of-week header ──
-        RowLayout {
+        Row {
+            id: dowRow
             Layout.fillWidth: true
-            spacing: 0
+            Layout.topMargin: 14
+            Layout.bottomMargin: 4
             Repeater {
                 model: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
                 delegate: Text {
                     required property var modelData
-                    required property int index
-                    font.family: Theme.fontFamily;
-                    Layout.fillWidth: true
+                    width: dowRow.width / 7
+                    font.family: Theme.fontFamily
                     horizontalAlignment: Text.AlignHCenter
                     text: modelData
-                    font.pixelSize: 10; font.bold: true
-                    color: index >= 5 ? Theme.peach : Theme.subtext0
+                    font.pixelSize: 11
+                    color: Theme.subtext0
                 }
             }
         }
@@ -166,43 +166,43 @@ Rectangle {
                     delegate: Item {
                         required property var modelData
                         width: gridCol.width / 7
-                        height: 25
+                        height: 32
 
                         readonly property date d: modelData
                         readonly property bool inMonth: d.getMonth() === root.viewMonth
                         readonly property bool isToday: root.sameDay(d, root.today)
                         readonly property bool isSelected: root.sameDay(d, root.selectedDate)
-                        readonly property bool isWeekend: d.getDay() === 0 || d.getDay() === 6
                         readonly property int evCount: (EventStore.days[EventStore.keyFor(d)] || []).length
 
                         Rectangle {
                             anchors.centerIn: parent
-                            width: 23; height: 23; radius: 12
-                            color: isToday ? Theme.primary : (cellMa.containsMouse ? Theme.surface0 : "transparent")
-                            border.color: isSelected && !isToday ? Theme.primary : "transparent"
-                            border.width: 1
+                            width: 28; height: 28; radius: 14
+                            color: isToday ? Theme.primary
+                                : isSelected ? Theme.surface0
+                                : cellMa.containsMouse ? Qt.alpha(Theme.surface0, 0.5) : "transparent"
                             Behavior on color { ColorAnimation { duration: Theme.animFast } }
                         }
 
                         Text {
-                            font.family: Theme.fontFamily;
+                            font.family: Theme.fontFamily
+                            font.features: { "tnum": 1 }
                             anchors.centerIn: parent
                             anchors.verticalCenterOffset: evCount > 0 ? -2 : 0
                             text: d.getDate()
-                            font.pixelSize: 11
-                            font.bold: isToday || isSelected
-                            color: isToday ? Theme.background
-                                : !inMonth ? Qt.alpha(Theme.subtext0, 0.35)
-                                : isWeekend ? Theme.peach : Theme.text
+                            font.pixelSize: 13
+                            font.weight: isToday || isSelected ? Font.Bold : Font.Normal
+                            color: isToday ? Theme.colorOnPrimary
+                                : !inMonth ? Qt.alpha(Theme.subtext0, 0.4)
+                                : Theme.text
                         }
 
                         // Event marker
                         Rectangle {
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.bottom: parent.bottom
-                            anchors.bottomMargin: 2
+                            anchors.bottomMargin: 5
                             width: 4; height: 4; radius: 2
-                            color: isToday ? Theme.background : Theme.primary
+                            color: isToday ? Theme.colorOnPrimary : Theme.primary
                             visible: evCount > 0
                         }
 
@@ -217,23 +217,31 @@ Rectangle {
             }
         }
 
-        Rectangle { Layout.fillWidth: true; height: 1; color: Theme.surface0 }
-
         // ── Selected-day header ──
         RowLayout {
             Layout.fillWidth: true
+            Layout.topMargin: 16
+            Layout.bottomMargin: 6
             Text {
-                font.family: Theme.fontFamily;
-                text: Qt.formatDate(root.selectedDate, "ddd d MMM")
-                font.pixelSize: 12; font.bold: true; color: Theme.text
+                font.family: Theme.fontFamily
+                text: Qt.formatDate(root.selectedDate, "dddd d MMMM")
+                font.pixelSize: 13; font.weight: Font.Bold; color: Theme.text
             }
             Item { Layout.fillWidth: true }
             Text {
-                font.family: Theme.fontFamily;
+                font.family: Theme.fontFamily
                 readonly property int n: root.selectedEvents.length
-                text: n === 0 ? "no events" : n + (n === 1 ? " event" : " events")
-                font.pixelSize: 11; color: Theme.subtext0
+                visible: n > 0
+                text: n + (n === 1 ? " event" : " events")
+                font.pixelSize: 12; color: Theme.subtext0
             }
+        }
+
+        Text {
+            visible: root.selectedEvents.length === 0
+            font.family: Theme.fontFamily
+            text: root.sameDay(root.selectedDate, root.today) ? "Nothing planned today." : "Nothing planned."
+            font.pixelSize: 12; color: Theme.subtext0
         }
 
         // ── Event list ──
@@ -330,7 +338,8 @@ Rectangle {
         // ── Add-event input ──
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 30
+            Layout.preferredHeight: 34
+            Layout.topMargin: 8
             radius: 10
             color: Theme.surface0
             border.color: evInput.activeFocus ? Theme.primary : "transparent"
@@ -358,9 +367,9 @@ Rectangle {
                     Text {
                         font.family: Theme.fontFamily;
                         anchors.verticalCenter: parent.verticalCenter
-                        text: "Add event…"
+                        text: "Add to " + Qt.formatDate(root.selectedDate, "d MMM") + "…"
                         font.pixelSize: 12
-                        color: Qt.alpha(Theme.subtext0, 0.6)
+                        color: Theme.subtext0
                         visible: evInput.text === "" && !evInput.activeFocus
                     }
                 }
@@ -368,7 +377,7 @@ Rectangle {
                 Text {
                     text: "󰐕"
                     font.family: Theme.fontIcon; font.pixelSize: 13
-                    color: addMa.containsMouse ? Theme.primary : Theme.subtext0
+                    color: addMa.containsMouse ? Theme.text : Theme.subtext0
                     Behavior on color { ColorAnimation { duration: Theme.animFast } }
                     scale: addMa.pressed ? 0.85 : 1.0
                     Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }

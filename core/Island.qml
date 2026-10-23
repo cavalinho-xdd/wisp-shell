@@ -3,8 +3,8 @@ import QtQuick
 import Quickshell
 import Quickshell.Services.Mpris
 import Quickshell.Services.Notifications
-
 import Quickshell.Bluetooth
+import Quickshell.Networking
 
 // Live-activity state for the collapsed pill's dynamic-island strip.
 //
@@ -17,6 +17,16 @@ import Quickshell.Bluetooth
 // as another transient with priority over notifications.
 Singleton {
     id: island
+
+    // Device lists start empty and fill in asynchronously once the
+    // Bluetooth/Networking services report — that first fill would read as
+    // "just connected". Lists are tracked silently until this settles.
+    property bool _settled: false
+    Timer {
+        running: true
+        interval: 3000
+        onTriggered: island._settled = true
+    }
 
     // ── Hardware Events (Bluetooth) ──
     property string btFlashName: ""
@@ -37,6 +47,8 @@ Singleton {
     on_CurrentBtConnectedChanged: {
         let oldList = _lastBtConnected;
         let newList = _currentBtConnected;
+        _lastBtConnected = newList;
+        if (!_settled) return;
         
         let connected = newList.filter(x => !oldList.includes(x));
         let disconnected = oldList.filter(x => !newList.includes(x));
@@ -52,8 +64,6 @@ Singleton {
             btFlashActive = true;
             btFlashTimer.restart();
         }
-        
-        _lastBtConnected = newList;
     }
 
     Timer {
@@ -78,24 +88,79 @@ Singleton {
         onTriggered: island.usbFlashActive = false
     }
 
+    // ── Hardware Events (Battery) ──
+    property string batFlashReason: "" // "low", "critical", "charging", "full"
+    property bool batFlashActive: false
+
+    function triggerBatteryFlash(reason) {
+        batFlashReason = reason;
+        batFlashActive = true;
+        batFlashTimer.restart();
+    }
+
+    Timer {
+        id: batFlashTimer
+        interval: 3500
+        onTriggered: island.batFlashActive = false
+    }
+
+    // ── Hardware Events (Network) ──
+    property string netFlashName: ""
+    property bool netFlashIsConnect: false
+    property bool netFlashActive: false
+
+    property var _lastNetConnected: []
+    property var _currentNetConnected: {
+        let devs = Networking.devices.values;
+        let connected = [];
+        for (let i = 0; i < devs.length; i++) {
+            let nets = devs[i].networks.values;
+            for (let j = 0; j < nets.length; j++) {
+                if (nets[j].connected) connected.push(nets[j].name);
+            }
+        }
+        return connected;
+    }
+
+    on_CurrentNetConnectedChanged: {
+        let oldList = _lastNetConnected;
+        let newList = _currentNetConnected;
+        _lastNetConnected = newList;
+        if (!_settled) return;
+        
+        let connected = newList.filter(x => !oldList.includes(x));
+        let disconnected = oldList.filter(x => !newList.includes(x));
+
+        if (connected.length > 0) {
+            triggerNetworkFlash(connected[0], true);
+        } else if (disconnected.length > 0) {
+            triggerNetworkFlash(disconnected[0], false);
+        }
+    }
+
+    function triggerNetworkFlash(name, connected) {
+        netFlashName = name;
+        netFlashIsConnect = connected;
+        netFlashActive = true;
+        netFlashTimer.restart();
+    }
+
+    Timer {
+        id: netFlashTimer
+        interval: 3000
+        onTriggered: island.netFlashActive = false
+    }
+
     // ── Arbitration ──
     readonly property string current: flashNotif ? "notif"
+        : batFlashActive ? "battery"
+        : netFlashActive ? "network"
         : usbFlashActive ? "usb"
         : btFlashActive ? "bluetooth"
         : Games.active ? "game"
         : Osu.active ? "osu"
         : mediaActive ? "media"
         : Discord.inVoice ? "discord" : "none"
-
-    // Collapsed-pill width for whichever activity is current; shell.qml
-    // falls back to its own "none" width (320) when current === "none".
-    readonly property int activeWidth: current === "osu"
-        ? (Osu.inGameplay ? 620 : 540)
-        : current === "bluetooth" ? 540
-        : current === "usb" ? 540
-        : current === "game" ? (Games.flashing ? 620 : 530)
-        : current === "discord" ? 460
-        : 540
 
     // ── Transient: notification flash ──
     property var flashNotif: null

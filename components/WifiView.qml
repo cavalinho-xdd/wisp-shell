@@ -103,18 +103,30 @@ Item {
         opacity: visible ? 1.0 : 0.0
         Behavior on opacity { NumberAnimation { duration: Theme.animSlow } }
 
-        // Concentric ring decorations
+        // Soft Ripple Animation (active only when connected)
         Repeater {
             model: 3
             Rectangle {
+                id: rippleRing
                 anchors.centerIn: parent
-                width: 170 + index * 45
-                height: width
-                radius: width / 2
+                width: 150
+                height: 150
+                radius: 75
                 color: "transparent"
-                border.color: Theme.surface
-                border.width: 1
-                opacity: 0.4 - index * 0.1
+                border.color: Theme.primary
+                border.width: 2
+                opacity: 0
+                scale: 1.0
+                
+                SequentialAnimation {
+                    running: root.connectedNetwork !== null && !root.showScanView
+                    loops: Animation.Infinite
+                    PauseAnimation { duration: index * 800 }
+                    ParallelAnimation {
+                        NumberAnimation { target: rippleRing; property: "scale"; from: 1.0; to: 2.2; duration: 2400; easing.type: Easing.OutCubic }
+                        NumberAnimation { target: rippleRing; property: "opacity"; from: 0.5; to: 0.0; duration: 2400; easing.type: Easing.OutCubic }
+                    }
+                }
             }
         }
 
@@ -126,20 +138,6 @@ Item {
             color: Theme.primary
             scale: connectedNetwork ? 1.0 : 0.5
             Behavior on scale { NumberAnimation { duration: Theme.animSlow; easing.type: Theme.easeSpring } }
-
-            // Pulse ring
-            Rectangle {
-                anchors.centerIn: parent
-                width: parent.width + 20; height: width; radius: width / 2
-                color: "transparent"
-                border.color: Theme.primary; border.width: 2
-                opacity: 0.25
-                SequentialAnimation on scale {
-                    loops: Animation.Infinite; running: true
-                    NumberAnimation { to: 1.08; duration: 2000; easing.type: Easing.InOutSine }
-                    NumberAnimation { to: 1.0; duration: 2000; easing.type: Easing.InOutSine }
-                }
-            }
 
             Column {
                 anchors.centerIn: parent

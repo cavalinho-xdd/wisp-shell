@@ -17,7 +17,8 @@ RowLayout {
     Layout.fillWidth: true
     Layout.leftMargin: 12
     Layout.rightMargin: 12
-    spacing: 10
+    Layout.preferredHeight: 40
+    spacing: 16
 
     function bump(dir) {
         const v = Math.max(root.from, Math.min(root.to, root.value + dir * root.stepSize));
@@ -25,14 +26,7 @@ RowLayout {
     }
 
     Text {
-        text: root.icon
-        font.family: Theme.fontIcon
-        font.pixelSize: 15
-        color: root.enabled ? Theme.text : Theme.subtext0
-        visible: root.icon !== ""
-    }
-    Text {
-        font.family: Theme.fontFamily;
+        font.family: Theme.fontFamily
         Layout.fillWidth: true
         text: root.text
         font.pixelSize: 13
@@ -40,9 +34,9 @@ RowLayout {
     }
 
     Rectangle {
-        Layout.preferredWidth: 108
+        Layout.preferredWidth: 104
         Layout.preferredHeight: 30
-        radius: 15
+        radius: 10
         color: Theme.surface0
 
         RowLayout {
@@ -57,7 +51,7 @@ RowLayout {
                     anchors.centerIn: parent
                     text: "󰍴"
                     font.family: Theme.fontIcon; font.pixelSize: 13
-                    color: minusMa.containsMouse ? Theme.primary : Theme.subtext0
+                    color: minusMa.containsMouse ? Theme.text : Theme.subtext0
                     scale: minusMa.pressed ? 0.8 : 1.0
                     Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
                 }
@@ -71,11 +65,12 @@ RowLayout {
             }
 
             Text {
-                font.family: Theme.fontFamily;
+                font.family: Theme.fontFamily
+                font.features: { "tnum": 1 }
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignHCenter
                 text: root.value
-                font.pixelSize: 13; font.bold: true
+                font.pixelSize: 13
                 color: Theme.text
             }
 
@@ -85,7 +80,7 @@ RowLayout {
                     anchors.centerIn: parent
                     text: "󰐕"
                     font.family: Theme.fontIcon; font.pixelSize: 13
-                    color: plusMa.containsMouse ? Theme.primary : Theme.subtext0
+                    color: plusMa.containsMouse ? Theme.text : Theme.subtext0
                     scale: plusMa.pressed ? 0.8 : 1.0
                     Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
                 }

@@ -54,14 +54,13 @@ Item {
     Rectangle {
         anchors.fill: parent
         radius: 14
-        // Fill carries surface, kind and hover state at once — no outline. An
-        // action is primary-tinted even at rest, which is what makes it read as
-        // clickable before the cursor gets there.
+        // Fill carries surface, kind and hover state at once.
+        // Actions get a background; readouts are transparent floating text.
         color: {
             if (root.isAction)
                 return nodeMa.containsMouse ? Qt.alpha(Theme.primary, 0.30)
                                             : Qt.alpha(Theme.primary, 0.16);
-            return nodeMa.containsMouse ? Qt.lighter(Theme.surface, 1.15) : Theme.surface;
+            return "transparent";
         }
         Behavior on color { ColorAnimation { duration: Theme.animFast } }
     }

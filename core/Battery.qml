@@ -25,6 +25,24 @@ Singleton {
     readonly property real timeToEmpty: available ? device.timeToEmpty : 0
     readonly property real timeToFull: available ? device.timeToFull : 0
 
+    onChargingChanged: {
+        if (!available) return;
+        if (charging) Island.triggerBatteryFlash("charging");
+        else if (percentage < 0.95) Island.triggerBatteryFlash("discharging");
+    }
+
+    onLowChanged: {
+        if (low) Island.triggerBatteryFlash("low");
+    }
+
+    onCriticalChanged: {
+        if (critical) Island.triggerBatteryFlash("critical");
+    }
+
+    onFullyChargedChanged: {
+        if (fullyCharged) Island.triggerBatteryFlash("full");
+    }
+
     function icon() {
         if (!available) return "";
         if (fullyCharged) return "󰁹";

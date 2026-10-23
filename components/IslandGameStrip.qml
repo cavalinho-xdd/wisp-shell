@@ -34,8 +34,8 @@ Item {
     scale: active ? (hover.hovered ? 1.035 : 1.0) : 0.7
     visible: opacity > 0.01
     Behavior on opacity { NumberAnimation { duration: 250 } }
-    Behavior on scale { NumberAnimation { duration: 220; easing.type: Theme.easeSpring; easing.overshoot: 1.3 } }
-    Behavior on implicitWidth { NumberAnimation { duration: 420; easing.type: Easing.OutBack; easing.overshoot: 1.05 } }
+    Behavior on scale { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+    Behavior on implicitWidth { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
 
     HoverHandler { id: hover }
 
@@ -96,9 +96,8 @@ Item {
         }
 
         // ── Label column ──
-        // Fixed width so neither face resizes the strip under the cursor and
-        // the two crossfade in place; the pill's own growth for the wider
-        // achievement face is Island.activeWidth's job.
+        // Fixed width per face so the two crossfade in place; the pill
+        // follows the strip's implicitWidth (CollapsedBar) as it widens.
         Item {
             width: root.flashing ? 300 : 200
             height: 38
