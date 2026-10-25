@@ -48,6 +48,14 @@ Scope {
         function toggle(island: string): void { controller.toggle(island); }
         function close(): void { controller.close(); }
         function launcher(): void { controller.toggleLauncher(); }
+        // Fills the notification list with n made-up records (the first two
+        // live) without touching the saved history; 0 empties it.
+        function notifs(n: int): void {
+            const apps = [["Discord", "Večer hrajem?", "Mám nový beatmap, koukni na to"], ["Signal", "Marek", "Posílám ti fotky z výletu, jsou hodně povedené a je jich dvanáct"],
+                ["System", "Aktualizace hotové", "12 balíčků, restart doporučen"], ["Zen", "Stahování dokončeno", "linux-6.12.iso"], ["Steam", "Kamarád je online", "Adam hraje Dota 2"]];
+            Notifs.records = Array.from({ length: n }, (_, i) => ({ key: "fake" + i, appName: apps[i % 5][0], appIcon: "", desktopEntry: "", summary: apps[i % 5][1], body: apps[i % 5][2],
+                image: "", urgency: 1, time: Date.now() - i * 240000, live: i < 2, transient: false, expiresAt: 0, redacted: false }));
+        }
         // Same step as the mouse wheel over the left island: 1 next, -1 previous.
         function workspace(delta: int): void { workspaces.step(delta); }
         // Fake notification for checking the flare (the real server can be

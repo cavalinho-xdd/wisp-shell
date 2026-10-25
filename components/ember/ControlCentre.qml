@@ -177,5 +177,98 @@ Item {
                 }
             }
         }
+
+        Kindle {
+            lit: root.lit
+            index: 4
+            width: column.width
+
+            Rectangle {
+                width: column.width
+                implicitHeight: Theme.spaceSm * 2 + headerRow.implicitHeight + Theme.spaceXs + Theme.notifRow * Theme.ccNotifRows
+                radius: Theme.radiusTile
+                color: Theme.ash
+
+                Item {
+                    id: headerRow
+                    x: Theme.spaceSm
+                    y: Theme.spaceSm
+                    width: parent.width - Theme.spaceSm * 2
+                    implicitHeight: Theme.controlSize - Theme.spaceXs
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        x: Theme.spaceXs
+                        text: "Notifications"
+                        color: Theme.islandMuted
+                        font.family: Theme.fontFamily
+                        font.pixelSize: Theme.textCaption
+                    }
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: clearText.left
+                        anchors.rightMargin: Theme.spaceSm
+                        visible: Notifs.records.length > 0
+                        text: Notifs.liveRecords.length > 0 ? Notifs.liveRecords.length + " new" : ""
+                        color: Theme.ember
+                        font.family: Theme.fontMono
+                        font.pixelSize: Theme.textMonoSmall
+                    }
+                    Text {
+                        id: clearText
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: parent.right
+                        anchors.rightMargin: Theme.spaceXs
+                        visible: Notifs.records.length > 0
+                        text: "Clear"
+                        color: clearMouse.containsMouse ? Theme.islandText : Theme.islandMuted
+                        font.family: Theme.fontFamily
+                        font.pixelSize: Theme.textCaption
+                        Behavior on color { ColorAnimation { duration: Theme.motionFast } }
+                        Accessible.role: Accessible.Button
+                        Accessible.name: "Clear notifications"
+                        MouseArea {
+                            id: clearMouse
+                            anchors.fill: parent
+                            anchors.margins: -Theme.spaceXs
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                Notifs.dismissAll();
+                                Notifs.clearHistory();
+                            }
+                        }
+                    }
+                }
+
+                ListView {
+                    id: notifList
+                    x: Theme.spaceXs
+                    y: headerRow.y + headerRow.height + Theme.spaceXs
+                    width: parent.width - Theme.spaceXs * 2
+                    height: Theme.notifRow * Theme.ccNotifRows
+                    clip: true
+                    boundsBehavior: Flickable.StopAtBounds
+                    model: Notifs.records
+
+                    delegate: NotifRow {
+                        required property var modelData
+                        width: ListView.view.width
+                        rec: modelData
+                        onActivated: Notifs.activate(rec.key)
+                        onDismissed: Notifs.dismiss(rec.key)
+                    }
+
+                    Text {
+                        anchors.centerIn: parent
+                        visible: notifList.count === 0
+                        text: "Nothing new"
+                        color: Theme.islandMuted
+                        font.family: Theme.fontFamily
+                        font.pixelSize: Theme.textBody
+                    }
+                }
+            }
+        }
     }
 }

@@ -172,6 +172,10 @@ Singleton {
     readonly property real flareGlowBoost: 1.5
     // Control centre in the right island.
     readonly property int ccWidth: 400
+    readonly property int notifRow: 48
+    readonly property int notifIcon: 30
+    // Notification rows visible at once in the list; more scroll.
+    readonly property int ccNotifRows: 3
     // Workspaces in the left island.
     readonly property int workspaceDot: 8
     readonly property int workspaceActiveWidth: 24
