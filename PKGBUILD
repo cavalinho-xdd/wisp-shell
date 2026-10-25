@@ -29,6 +29,7 @@ package() {
 
   install -d "$pkgdir/usr/share/wisp-shell"
   cp -a * "$pkgdir/usr/share/wisp-shell/"
+  rm -rf "$pkgdir/usr/share/wisp-shell/probes"
   
   install -d "$pkgdir/usr/bin"
   ln -s /usr/share/wisp-shell/wisp "$pkgdir/usr/bin/wisp"

@@ -116,7 +116,8 @@ Do not load `run` to launch the shell; use *Run and debug* below. The
   needs `ydotoold`, which is not running here.
 - A throwaway probe is the project's substitute for tests: a tiny
   `probe.qml` run with `qs -p probe.qml` that prints what you need with
-  `console.log`. Keep probes in the scratchpad, not the repo root.
+  `console.log`. One-off probes go in the scratchpad; ones worth re-running
+  after an update go in `probes/` (see its README), never the repo root.
 
 ## Quickshell building blocks
 
