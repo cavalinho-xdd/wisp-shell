@@ -14,21 +14,21 @@ colors:
   discord-blurple: "#5865f2"
 typography:
   body:
-    fontFamily: '"Geist", "Inter Tight", "Inter", "Noto Sans", sans-serif'
+    fontFamily: '"Mona Sans", "Inter", "Noto Sans", sans-serif'
     fontSize: "13.5px"
     fontWeight: 400
   title:
-    fontFamily: '"Geist", "Inter Tight", "Inter", "Noto Sans", sans-serif'
+    fontFamily: '"Mona Sans", "Inter", "Noto Sans", sans-serif'
     fontSize: "17px"
     fontWeight: 600
     letterSpacing: "-0.01em"
   label:
-    fontFamily: '"Geist", "Inter Tight", "Inter", "Noto Sans", sans-serif'
+    fontFamily: '"Mona Sans", "Inter", "Noto Sans", sans-serif'
     fontSize: "11px"
     fontWeight: 500
     letterSpacing: "0.08em"
   mono:
-    fontFamily: '"Geist Mono", "JetBrains Mono", monospace'
+    fontFamily: '"Monaspace Neon", "JetBrains Mono", monospace'
     fontSize: "14px"
     fontWeight: 500
 rounded:
@@ -100,7 +100,7 @@ components:
 
 ## Typography
 
-**UI font:** Geist (fallbacks Inter Tight, Inter, Noto Sans). **Numbers and clock:** Geist Mono with tabular figures. Fonts are resolved from a preference list at startup (`Theme.pickFont`), never hardcoded.
+**UI font:** Mona Sans (fallbacks Inter, Noto Sans). **Numbers and clock:** Monaspace Neon, a monospace, so digits never jump. Chosen over Geist, which is too common (D2). Fonts are resolved from a preference list at startup (`Theme.pickFont`), never hardcoded.
 
 ### Hierarchy
 - **Title** (17px, 600, −0.01em): track title, sub-panel title.

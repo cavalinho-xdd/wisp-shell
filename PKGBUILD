@@ -7,7 +7,8 @@ arch=('any')
 url="https://github.com/cavalinho-xdd/wisp-shell"
 license=('MIT')
 depends=('quickshell' 'hyprland' 'jq' 'upower' 'cliphist' 'wl-clipboard' 'grim' 'slurp' 'bc'
-         'matugen-bin' 'awww' 'libnotify' 'python' 'nodejs' 'xdg-user-dirs' 'curl')
+         'matugen-bin' 'awww' 'libnotify' 'python' 'nodejs' 'xdg-user-dirs' 'curl'
+         'ttf-mona-sans' 'otf-monaspace')
 optdepends=(
     'hyprpaper: alternative wallpaper backend to awww'
     'qalc: launcher calculator'

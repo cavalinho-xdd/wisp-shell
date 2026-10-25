@@ -27,7 +27,7 @@ island opens its own thing.
 | `glow` | 0.6 / 1.0 / 1.6 (setting) | multiplies glow blur + alpha |
 | radius collapsed / open | 20 / 30 | island; tiles 18, rows 14 |
 | island height collapsed | 40 | top margin 12 |
-| font UI / mono | Geist / Geist Mono (resolve via `pickFont`, keep fallbacks) | |
+| font UI / mono | Mona Sans / Monaspace Neon (resolve via `pickFont`, keep fallbacks) | D2; packages `ttf-mona-sans`, `otf-monaspace` |
 | motion `morph` | 620 ms, `BezierSpline [0.22, 1.18, 0.36, 1, 1, 1]` or `SpringAnimation` | geometry |
 | motion `kindle` | 550 ms, stagger 50 ms, delay 100 ms, `[0.2, 0.8, 0.2, 1, 1, 1]` | content |
 | motion `fast` | 150–200 ms | hover, press |

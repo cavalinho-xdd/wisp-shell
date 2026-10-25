@@ -140,7 +140,9 @@ Where each feature goes in Ember. *Proposal* rows are not decided yet (D1).
 | ID | Question | Blocks |
 |---|---|---|
 | D1 | Final homes for the *proposal* rows and the Performance view | M7 |
-| D2 | Install Geist / Geist Mono, or pick another font | M3 (tuning) |
-| D3 | Glow strength as a user setting (soft / medium / strong) or fixed | M3 |
 
-Decided: D4 — GitHub milestones only, no issues (2026-10-25).
+Decided (2026-10-25):
+- D2 — Mona Sans + Monaspace Neon (compared live with Noto/JetBrains,
+  Atkinson Hyperlegible, Overpass; Geist rejected as overused).
+- D3 — glow strength is a user setting (soft / medium / strong).
+- D4 — GitHub milestones only, no issues.

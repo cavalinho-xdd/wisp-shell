@@ -99,9 +99,10 @@ Singleton {
     // Body/UI text. Google Sans Flex is a variable font (one file covers
     // tooltip-size to headline-size cleanly) and is what both of the most
     // polished reference shells (ii-dots, caelestia-dots) use as their sans.
-    // Geist leads because the Ember design is set in it; not installed yet.
+    // Mona Sans leads: the Ember design is set in it (D2, chosen over Geist
+    // as less overused). Package ttf-mona-sans.
     readonly property string fontFamily: pickFont(
-        ["Geist", "Google Sans Flex", "Inter", "Rubik", "Noto Sans"], "sans-serif")
+        ["Mona Sans", "Google Sans Flex", "Inter", "Rubik", "Noto Sans"], "sans-serif")
 
     // Nerd Font glyphs. Must be a font that actually carries the Nerd glyph
     // ranges — the whole point of the resolution above.
@@ -109,9 +110,10 @@ Singleton {
         ["JetBrainsMono Nerd Font", "Symbols Nerd Font", "FantasqueSansM Nerd Font",
          "MesloLGS Nerd Font", "Iosevka Nerd Font"], "monospace")
 
-    // Monospace (keybind chips, action ids, config paths).
+    // Monospace (clock, numbers, keybind chips, config paths). Monaspace Neon
+    // is the Ember pair to Mona Sans (D2). Package otf-monaspace.
     readonly property string fontMono: pickFont(
-        ["Geist Mono", "GeistMono Nerd Font", "JetBrainsMono Nerd Font", "JetBrains Mono", "Noto Sans Mono"], "monospace")
+        ["Monaspace Neon", "JetBrainsMono Nerd Font", "JetBrains Mono", "Noto Sans Mono"], "monospace")
 
     Component.onCompleted: console.log("Theme fonts -> text:", fontFamily, "| icon:", fontIcon, "| mono:", fontMono)
 
