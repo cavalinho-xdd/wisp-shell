@@ -1,0 +1,681 @@
+components/AudioView.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/AudioView.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/AudioView.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unqualified	Unqualified access
+components/BluetoothView.qml	unresolved-type	Type "BluetoothAdapter" of property "defaultAdapter" not found. This is likely due to a missing dependency entry or a type not being exposed declaratively.
+components/CalendarCard.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/CalendarCard.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CalendarCard.qml	unqualified	Unqualified access
+components/CircularProgress.qml	block-scope-var-declaration	var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning 
+components/CircularProgress.qml	block-scope-var-declaration	var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning 
+components/CollapsedBar.qml	missing-property	Member "clock12h" not found on type "qs::io::JsonObject"
+components/CollapsedBar.qml	missing-property	Member "workspaceCount" not found on type "qs::io::JsonObject"
+components/CollapsedBar.qml	unqualified	Unqualified access
+components/CollapsedBar.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/ExpandedDashboard.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/ExpandedDashboard.qml	missing-property	Member "enable" not found on type "qs::io::JsonObject"
+components/ExpandedDashboard.qml	missing-property	Member "values" not found on type "UntypedObjectModel"
+components/ExpandedDashboard.qml	missing-property	Member "values" not found on type "UntypedObjectModel"
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unqualified	Unqualified access
+components/ExpandedDashboard.qml	unresolved-type	Type "BluetoothAdapter" of property "defaultAdapter" not found. This is likely due to a missing dependency entry or a type not being exposed declaratively.
+components/FolderPicker.qml	unqualified	Unqualified access
+components/FolderPicker.qml	unqualified	Unqualified access
+components/IconButton.qml	unqualified	Unqualified access
+components/IslandBatteryStrip.qml	unqualified	Unqualified access
+components/IslandBatteryStrip.qml	unqualified	Unqualified access
+components/IslandBatteryStrip.qml	unqualified	Unqualified access
+components/IslandBatteryStrip.qml	unqualified	Unqualified access
+components/IslandBatteryStrip.qml	unqualified	Unqualified access
+components/IslandBatteryStrip.qml	unqualified	Unqualified access
+components/IslandBatteryStrip.qml	unqualified	Unqualified access
+components/IslandBatteryStrip.qml	unqualified	Unqualified access
+components/IslandBatteryStrip.qml	unqualified	Unqualified access
+components/IslandBatteryStrip.qml	unqualified	Unqualified access
+components/IslandBatteryStrip.qml	unqualified	Unqualified access
+components/IslandBatteryStrip.qml	unqualified	Unqualified access
+components/IslandDiscordStrip.qml	missing-property	Member "deafenKey" not found on type "qs::io::JsonObject"
+components/IslandDiscordStrip.qml	missing-property	Member "leaveKey" not found on type "qs::io::JsonObject"
+components/IslandDiscordStrip.qml	missing-property	Member "muteKey" not found on type "qs::io::JsonObject"
+components/IslandDiscordStrip.qml	unqualified	Unqualified access
+components/IslandDiscordStrip.qml	unqualified	Unqualified access
+components/IslandDiscordStrip.qml	unqualified	Unqualified access
+components/IslandLauncher.qml	missing-property	Member "activeItem" not found on type "QQuickItem"
+components/IslandLauncher.qml	missing-property	Member "activeItem" not found on type "QQuickItem"
+components/IslandLauncher.qml	missing-property	Member "activeItem" not found on type "QQuickItem"
+components/IslandLauncher.qml	missing-property	Member "activeItem" not found on type "QQuickItem"
+components/IslandLauncher.qml	missing-property	Member "activeItem" not found on type "QQuickItem"
+components/IslandLauncher.qml	missing-property	Member "activeItem" not found on type "QQuickItem"
+components/IslandLauncher.qml	missing-property	Member "activeItem" not found on type "QQuickItem"
+components/IslandLauncher.qml	missing-property	Member "activeItem" not found on type "QQuickItem"
+components/IslandLauncher.qml	missing-property	Member "activeItem" not found on type "QQuickItem"
+components/IslandLauncher.qml	missing-property	Member "activeItem" not found on type "QQuickItem"
+components/IslandLauncher.qml	missing-property	Member "activeItem" not found on type "QQuickItem"
+components/IslandLauncher.qml	missing-property	Member "activeItem" not found on type "QQuickItem"
+components/IslandLauncher.qml	unqualified	Unqualified access
+components/IslandLauncher.qml	unqualified	Unqualified access
+components/IslandLauncher.qml	unqualified	Unqualified access
+components/IslandLauncher.qml	unqualified	Unqualified access
+components/IslandLauncher.qml	unqualified	Unqualified access
+components/IslandLauncher.qml	unqualified	Unqualified access
+components/IslandLauncher.qml	unqualified	Unqualified access
+components/IslandLauncher.qml	unqualified	Unqualified access
+components/IslandLauncher.qml	unqualified	Unqualified access
+components/IslandLauncher.qml	unqualified	Unqualified access
+components/IslandLauncher.qml	unqualified	Unqualified access
+components/IslandLauncher.qml	unqualified	Unqualified access
+components/IslandMediaStrip.qml	unqualified	Unqualified access
+components/LockContent.qml	missing-property	Member "clock12h" not found on type "qs::io::JsonObject"
+components/LockContent.qml	missing-property	Member "lastWallpaper" not found on type "qs::io::JsonObject"
+components/MediaCard.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/MediaCard.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/MediaCard.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/MediaCard.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/MediaCard.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/MediaCard.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/NotificationCard.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/NotificationCard.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/NotificationCard.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/NotificationCard.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/NotificationCard.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/NotificationCard.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/NotificationCard.qml	unqualified	Unqualified access
+components/NotificationCard.qml	unqualified	Unqualified access
+components/NotificationCard.qml	unqualified	Unqualified access
+components/NotificationCard.qml	unqualified	Unqualified access
+components/NotificationCard.qml	unqualified	Unqualified access
+components/NotificationCard.qml	unqualified	Unqualified access
+components/NotificationCard.qml	unqualified	Unqualified access
+components/NotificationCard.qml	unqualified	Unqualified access
+components/PerformanceCard.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/PerformanceCard.qml	unqualified	Unqualified access
+components/PerformanceCard.qml	unqualified	Unqualified access
+components/PerformanceCard.qml	unqualified	Unqualified access
+components/PerformanceCard.qml	unqualified	Unqualified access
+components/PerformanceCard.qml	unqualified	Unqualified access
+components/PerformanceCard.qml	unqualified	Unqualified access
+components/PolkitDialog.qml	unqualified	Unqualified access
+components/PolkitDialog.qml	unqualified	Unqualified access
+components/PolkitDialog.qml	unqualified	Unqualified access
+components/PolkitDialog.qml	unqualified	Unqualified access
+components/PolkitDialog.qml	unqualified	Unqualified access
+components/PwNodeDelegate.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/PwNodeDelegate.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/PwNodeDelegate.qml	unqualified	Unqualified access
+components/PwNodeDelegate.qml	unqualified	Unqualified access
+components/PwNodeDelegate.qml	unqualified	Unqualified access
+components/PwNodeDelegate.qml	unqualified	Unqualified access
+components/PwNodeDelegate.qml	unqualified	Unqualified access
+components/PwNodeDelegate.qml	unqualified	Unqualified access
+components/PwNodeDelegate.qml	unqualified	Unqualified access
+components/PwNodeDelegate.qml	unqualified	Unqualified access
+components/PwNodeDelegate.qml	unqualified	Unqualified access
+components/PwNodeDelegate.qml	unqualified	Unqualified access
+components/PwNodeDelegate.qml	unqualified	Unqualified access
+components/PwNodeDelegate.qml	unqualified	Unqualified access
+components/PwNodeDelegate.qml	unqualified	Unqualified access
+components/PwNodeDelegate.qml	unqualified	Unqualified access
+components/PwNodeDelegate.qml	unqualified	Unqualified access
+components/PwNodeDelegate.qml	unqualified	Unqualified access
+components/SettingsPageAbout.qml	unqualified	Unqualified access
+components/SettingsPageAbout.qml	unqualified	Unqualified access
+components/SettingsPageColors.qml	missing-property	Member "applyTerminal" not found on type "qs::io::JsonObject"
+components/SettingsPageColors.qml	missing-property	Member "applyTerminal" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::colors with type qs::io::JsonObject
+components/SettingsPageColors.qml	missing-property	Member "applyTerminalOSC" not found on type "qs::io::JsonObject"
+components/SettingsPageColors.qml	missing-property	Member "applyTerminalOSC" not found on type "qs::io::JsonObject"
+components/SettingsPageColors.qml	missing-property	Member "applyTerminalOSC" not found on type "qs::io::JsonObject"
+components/SettingsPageColors.qml	missing-property	Member "applyTerminalOSC" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::colors with type qs::io::JsonObject
+components/SettingsPageColors.qml	missing-property	Member "dynamicEnabled" not found on type "qs::io::JsonObject"
+components/SettingsPageColors.qml	missing-property	Member "dynamicEnabled" not found on type "qs::io::JsonObject"
+components/SettingsPageColors.qml	missing-property	Member "dynamicEnabled" not found on type "qs::io::JsonObject"
+components/SettingsPageColors.qml	missing-property	Member "dynamicEnabled" not found on type "qs::io::JsonObject"
+components/SettingsPageColors.qml	missing-property	Member "dynamicEnabled" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::colors with type qs::io::JsonObject
+components/SettingsPageColors.qml	missing-property	Member "mode" not found on type "qs::io::JsonObject"
+components/SettingsPageColors.qml	missing-property	Member "mode" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::colors with type qs::io::JsonObject
+components/SettingsPageColors.qml	missing-property	Member "panelAlpha" not found on type "qs::io::JsonObject"
+components/SettingsPageColors.qml	missing-property	Member "panelAlpha" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::colors with type qs::io::JsonObject
+components/SettingsPageColors.qml	missing-property	Member "scheme" not found on type "qs::io::JsonObject"
+components/SettingsPageColors.qml	missing-property	Member "scheme" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::colors with type qs::io::JsonObject
+components/SettingsPageColors.qml	missing-property	Member "wallpaperFolder" not found on type "qs::io::JsonObject"
+components/SettingsPageColors.qml	missing-property	Member "wallpaperFolder" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::colors with type qs::io::JsonObject
+components/SettingsPageColors.qml	missing-property	Member "wallpaperFolder" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::colors with type qs::io::JsonObject
+components/SettingsPageColors.qml	unqualified	Unqualified access
+components/SettingsPageColors.qml	unqualified	Unqualified access
+components/SettingsPageColors.qml	unqualified	Unqualified access
+components/SettingsPageColors.qml	unqualified	Unqualified access
+components/SettingsPageColors.qml	unqualified	Unqualified access
+components/SettingsPageColors.qml	unqualified	Unqualified access
+components/SettingsPageColors.qml	unqualified	Unqualified access
+components/SettingsPageColors.qml	unqualified	Unqualified access
+components/SettingsPageColors.qml	unqualified	Unqualified access
+components/SettingsPageColors.qml	unqualified	Unqualified access
+components/SettingsPageColors.qml	unqualified	Unqualified access
+components/SettingsPageColors.qml	unqualified	Unqualified access
+components/SettingsPageColors.qml	unqualified	Unqualified access
+components/SettingsPageColors.qml	unqualified	Unqualified access
+components/SettingsPageColors.qml	unqualified	Unqualified access
+components/SettingsPageColors.qml	unqualified	Unqualified access
+components/SettingsPageHypr.qml	missing-property	Member "animationsEnabled" not found on type "qs::io::JsonObject"
+components/SettingsPageHypr.qml	missing-property	Member "animationsEnabled" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::hypr with type qs::io::JsonObject
+components/SettingsPageHypr.qml	missing-property	Member "blurEnabled" not found on type "qs::io::JsonObject"
+components/SettingsPageHypr.qml	missing-property	Member "blurEnabled" not found on type "qs::io::JsonObject"
+components/SettingsPageHypr.qml	missing-property	Member "blurEnabled" not found on type "qs::io::JsonObject"
+components/SettingsPageHypr.qml	missing-property	Member "blurEnabled" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::hypr with type qs::io::JsonObject
+components/SettingsPageHypr.qml	missing-property	Member "blurPasses" not found on type "qs::io::JsonObject"
+components/SettingsPageHypr.qml	missing-property	Member "blurPasses" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::hypr with type qs::io::JsonObject
+components/SettingsPageHypr.qml	missing-property	Member "blurSize" not found on type "qs::io::JsonObject"
+components/SettingsPageHypr.qml	missing-property	Member "blurSize" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::hypr with type qs::io::JsonObject
+components/SettingsPageHypr.qml	missing-property	Member "borderSize" not found on type "qs::io::JsonObject"
+components/SettingsPageHypr.qml	missing-property	Member "borderSize" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::hypr with type qs::io::JsonObject
+components/SettingsPageHypr.qml	missing-property	Member "gapsIn" not found on type "qs::io::JsonObject"
+components/SettingsPageHypr.qml	missing-property	Member "gapsIn" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::hypr with type qs::io::JsonObject
+components/SettingsPageHypr.qml	missing-property	Member "gapsOut" not found on type "qs::io::JsonObject"
+components/SettingsPageHypr.qml	missing-property	Member "gapsOut" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::hypr with type qs::io::JsonObject
+components/SettingsPageHypr.qml	missing-property	Member "rounding" not found on type "qs::io::JsonObject"
+components/SettingsPageHypr.qml	missing-property	Member "rounding" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::hypr with type qs::io::JsonObject
+components/SettingsPageHypr.qml	unqualified	Unqualified access
+components/SettingsPageHypr.qml	unqualified	Unqualified access
+components/SettingsPageHypr.qml	unqualified	Unqualified access
+components/SettingsPageHypr.qml	unqualified	Unqualified access
+components/SettingsPageHypr.qml	unqualified	Unqualified access
+components/SettingsPageHypr.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/SettingsPageKeybinds.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/SettingsPageKeybinds.qml	comma	Do not use comma expressions.
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageKeybinds.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/SettingsPageMonitors.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/SettingsPageMonitors.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/SettingsPageMonitors.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/SettingsPageMonitors.qml	missing-property	Member "pillMonitor" not found on type "qs::io::JsonObject"
+components/SettingsPageMonitors.qml	missing-property	Member "pillMonitor" not found on type "qs::io::JsonObject"
+components/SettingsPageMonitors.qml	missing-property	Member "pillMonitor" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::shell with type qs::io::JsonObject
+components/SettingsPageMonitors.qml	missing-property	Member "pillMonitor" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::shell with type qs::io::JsonObject
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageMonitors.qml	unqualified	Unqualified access
+components/SettingsPageNotifications.qml	missing-property	Member "appRules" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::notifications with type qs::io::JsonObject
+components/SettingsPageNotifications.qml	missing-property	Member "dnd" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::notifications with type qs::io::JsonObject
+components/SettingsPageNotifications.qml	missing-property	Member "dndDuringGames" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::notifications with type qs::io::JsonObject
+components/SettingsPageNotifications.qml	missing-property	Member "dndFrom" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::notifications with type qs::io::JsonObject
+components/SettingsPageNotifications.qml	missing-property	Member "dndScheduleEnabled" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::notifications with type qs::io::JsonObject
+components/SettingsPageNotifications.qml	missing-property	Member "dndTo" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::notifications with type qs::io::JsonObject
+components/SettingsPageNotifications.qml	missing-property	Member "dndWhenFullscreen" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::notifications with type qs::io::JsonObject
+components/SettingsPageNotifications.qml	unqualified	Unqualified access
+components/SettingsPageNotifications.qml	unqualified	Unqualified access
+components/SettingsPageNotifications.qml	unqualified	Unqualified access
+components/SettingsPageNotifications.qml	unqualified	Unqualified access
+components/SettingsPageNotifications.qml	unqualified	Unqualified access
+components/SettingsPageNotifications.qml	unresolved-type	Property "adapter" has incomplete type "FileViewAdapter". You may be missing an import.
+components/SettingsPageShell.qml	missing-property	Member "clock12h" not found on type "qs::io::JsonObject"
+components/SettingsPageShell.qml	missing-property	Member "clock12h" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::shell with type qs::io::JsonObject
+components/SettingsPageShell.qml	missing-property	Member "enable" not found on type "qs::io::JsonObject"
+components/SettingsPageShell.qml	missing-property	Member "enable" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::weather with type qs::io::JsonObject
+components/SettingsPageShell.qml	missing-property	Member "workspaceCount" not found on type "qs::io::JsonObject"
+components/SettingsPageShell.qml	missing-property	Member "workspaceCount" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::shell with type qs::io::JsonObject
+components/StateLayer.qml	Quick.property-changes-parsed	Property "opacity" is custom-parsed in PropertyChanges. You should phrase this binding as "stateLayer.opacity: 0.15"
+components/StateLayer.qml	Quick.property-changes-parsed	Property "opacity" is custom-parsed in PropertyChanges. You should phrase this binding as "stateLayer.opacity: 0.25"
+components/StateLayer.qml	Quick.property-changes-parsed	You should remove any bindings on the "target" property and avoid custom-parsed bindings in PropertyChanges.
+components/StateLayer.qml	Quick.property-changes-parsed	You should remove any bindings on the "target" property and avoid custom-parsed bindings in PropertyChanges.
+components/StateLayer.qml	unqualified	Unqualified access
+components/StateLayer.qml	unqualified	Unqualified access
+components/StateLayer.qml	unqualified	Unqualified access
+components/TrayItem.qml	incompatible-type	Cannot assign binding of type qs::dbus::dbusmenu::DBusMenuHandle to qs::menu::QsMenuHandle
+components/WeatherCard.qml	Quick.layout-positioning	Detected x on an item that is managed by a layout. This is undefined behavior; use Layout.leftMargin or Layout.rightMargin instead.
+components/WeatherCard.qml	unqualified	Unqualified access
+components/WeatherCard.qml	unqualified	Unqualified access
+components/WeatherCard.qml	unqualified	Unqualified access
+components/WeatherCard.qml	unqualified	Unqualified access
+components/WeatherCard.qml	unqualified	Unqualified access
+components/WeatherCard.qml	unqualified	Unqualified access
+components/WeatherCard.qml	unqualified	Unqualified access
+components/WeatherCard.qml	unqualified	Unqualified access
+components/WeatherCard.qml	unqualified	Unqualified access
+components/WeatherCard.qml	unqualified	Unqualified access
+components/WeatherCard.qml	unqualified	Unqualified access
+components/WeatherCard.qml	unqualified	Unqualified access
+components/WeatherCard.qml	unqualified	Unqualified access
+components/WeatherCard.qml	unqualified	Unqualified access
+components/WeatherCard.qml	unqualified	Unqualified access
+components/WeatherCard.qml	unqualified	Unqualified access
+components/WeatherCard.qml	unqualified	Unqualified access
+components/WeatherCard.qml	unqualified	Unqualified access
+components/WeatherCard.qml	unqualified	Unqualified access
+components/WeatherCard.qml	unqualified	Unqualified access
+components/WeatherCard.qml	unqualified	Unqualified access
+components/WelcomeStepAppearance.qml	missing-property	Member "dynamicEnabled" not found on type "qs::io::JsonObject"
+components/WelcomeStepAppearance.qml	missing-property	Member "dynamicEnabled" not found on type "qs::io::JsonObject"
+components/WelcomeStepAppearance.qml	missing-property	Member "dynamicEnabled" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::colors with type qs::io::JsonObject
+components/WelcomeStepAppearance.qml	missing-property	Member "mode" not found on type "qs::io::JsonObject"
+components/WelcomeStepAppearance.qml	missing-property	Member "mode" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::colors with type qs::io::JsonObject
+components/WelcomeStepAppearance.qml	missing-property	Member "panelAlpha" not found on type "qs::io::JsonObject"
+components/WelcomeStepAppearance.qml	missing-property	Member "panelAlpha" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::colors with type qs::io::JsonObject
+components/WelcomeStepAppearance.qml	missing-property	Member "scheme" not found on type "qs::io::JsonObject"
+components/WelcomeStepAppearance.qml	missing-property	Member "scheme" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::colors with type qs::io::JsonObject
+components/WelcomeStepAppearance.qml	unqualified	Unqualified access
+components/WelcomeStepAppearance.qml	unqualified	Unqualified access
+components/WelcomeStepIntro.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/WelcomeStepIntro.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/WelcomeStepIntro.qml	unqualified	Unqualified access
+components/WelcomeStepIntro.qml	unqualified	Unqualified access
+components/WelcomeStepIntro.qml	unqualified	Unqualified access
+components/WelcomeStepIntro.qml	unqualified	Unqualified access
+components/WelcomeStepReady.qml	missing-property	Member "modelData" not found on type "QQuickItem"
+components/WelcomeStepReady.qml	missing-property	Member "modelData" not found on type "QQuickItem"
+components/WelcomeStepSddm.qml	missing-property	Member "surface1" not found on type "Theme"
+components/WelcomeStepSddm.qml	unqualified	Unqualified access
+components/WelcomeStepSddm.qml	unqualified	Unqualified access
+components/WelcomeStepShell.qml	missing-property	Member "clock12h" not found on type "qs::io::JsonObject"
+components/WelcomeStepShell.qml	missing-property	Member "clock12h" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::shell with type qs::io::JsonObject
+components/WelcomeStepShell.qml	missing-property	Member "enable" not found on type "qs::io::JsonObject"
+components/WelcomeStepShell.qml	missing-property	Member "enable" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::weather with type qs::io::JsonObject
+components/WelcomeStepShell.qml	missing-property	Member "pillMonitor" not found on type "qs::io::JsonObject"
+components/WelcomeStepShell.qml	missing-property	Member "pillMonitor" not found on type "qs::io::JsonObject"
+components/WelcomeStepShell.qml	missing-property	Member "pillMonitor" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::shell with type qs::io::JsonObject
+components/WelcomeStepShell.qml	missing-property	Member "pillMonitor" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::shell with type qs::io::JsonObject
+components/WelcomeStepShell.qml	missing-property	Member "workspaceCount" not found on type "qs::io::JsonObject"
+components/WelcomeStepShell.qml	missing-property	Member "workspaceCount" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::shell with type qs::io::JsonObject
+components/WelcomeStepWallpaper.qml	missing-property	Member "dynamicEnabled" not found on type "qs::io::JsonObject"
+components/WelcomeStepWallpaper.qml	missing-property	Member "lastWallpaper" not found on type "qs::io::JsonObject"
+components/WelcomeStepWallpaper.qml	missing-property	Member "lastWallpaper" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::colors with type qs::io::JsonObject
+components/WelcomeStepWallpaper.qml	missing-property	Member "wallpaperFolder" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::colors with type qs::io::JsonObject
+components/WifiView.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/WifiView.qml	Quick.layout-positioning	Detected height on an item that is managed by a layout. This is undefined behavior; use implictHeight or Layout.preferredHeight instead.
+components/WifiView.qml	Quick.layout-positioning	Detected width on an item that is managed by a layout. This is undefined behavior; use implicitWidth or Layout.preferredWidth instead.
+components/WifiView.qml	missing-property	Member "isExpanded" not found on type
+components/WifiView.qml	missing-property	Member "isExpanded" not found on type
+components/WifiView.qml	missing-property	Member "isExpanded" not found on type "Rectangle"
+components/WifiView.qml	missing-property	Member "networks" not found on type "QObject"
+components/WifiView.qml	missing-property	Member "networks" not found on type "QObject"
+components/WifiView.qml	missing-property	Member "scannerEnabled" not found on type WifiView::wifiDevice with type QObject
+components/WifiView.qml	missing-property	Member "scannerEnabled" not found on type WifiView::wifiDevice with type QObject
+components/WifiView.qml	missing-property	Member "scannerEnabled" not found on type WifiView::wifiDevice with type QObject
+components/WifiView.qml	missing-property	Member "scannerEnabled" not found on type WifiView::wifiDevice with type QObject
+components/WifiView.qml	missing-property	Member "values" not found on type "UntypedObjectModel"
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+components/WifiView.qml	unqualified	Unqualified access
+core/AppUsage.qml	import	Type AppUsage not declared as singleton in qmldir but using pragma Singleton
+core/Audio.qml	import	Type Audio not declared as singleton in qmldir but using pragma Singleton
+core/Audio.qml	missing-property	Member "values" not found on type "UntypedObjectModel"
+core/Audio.qml	missing-property	Member "values" not found on type "UntypedObjectModel"
+core/Battery.qml	import	Type Battery not declared as singleton in qmldir but using pragma Singleton
+core/Brightness.qml	import	Type Brightness not declared as singleton in qmldir but using pragma Singleton
+core/Discord.qml	import	Type Discord not declared as singleton in qmldir but using pragma Singleton
+core/Discord.qml	missing-property	Member "deafenKey" not found on type "qs::io::JsonObject"
+core/Discord.qml	missing-property	Member "leaveKey" not found on type "qs::io::JsonObject"
+core/Discord.qml	missing-property	Member "muteKey" not found on type "qs::io::JsonObject"
+core/Discord.qml	missing-property	Member "values" not found on type "UntypedObjectModel"
+core/Discord.qml	missing-property	Member "values" not found on type "UntypedObjectModel"
+core/Discord.qml	missing-property	Member "windowMatch" not found on type "qs::io::JsonObject"
+core/EventStore.qml	import	Type EventStore not declared as singleton in qmldir but using pragma Singleton
+core/EventStore.qml	unqualified	Unqualified access
+core/EventStore.qml	unqualified	Unqualified access
+core/EventStore.qml	unqualified	Unqualified access
+core/EventStore.qml	unqualified	Unqualified access
+core/EventStore.qml	unqualified	Unqualified access
+core/EventStore.qml	unqualified	Unqualified access
+core/EventStore.qml	unqualified	Unqualified access
+core/EventStore.qml	unqualified	Unqualified access
+core/EventStore.qml	unresolved-type	Property "adapter" has incomplete type "FileViewAdapter". You may be missing an import.
+core/FirstRun.qml	import	Type FirstRun not declared as singleton in qmldir but using pragma Singleton
+core/FirstRun.qml	missing-property	Member "welcomeSeen" not found on type "qs::io::JsonObject"
+core/FirstRun.qml	missing-property	Member "welcomeSeen" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::shell with type qs::io::JsonObject
+core/FirstRun.qml	missing-property	Member "welcomeSeen" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::shell with type qs::io::JsonObject
+core/Games.qml	import	Type Games not declared as singleton in qmldir but using pragma Singleton
+core/Games.qml	missing-property	Member "enable" not found on type "qs::io::JsonObject"
+core/Island.qml	import	Type Island not declared as singleton in qmldir but using pragma Singleton
+core/Island.qml	missing-property	Member "values" not found on type "UntypedObjectModel"
+core/Island.qml	missing-property	Member "values" not found on type "UntypedObjectModel"
+core/Island.qml	unresolved-type	Type "BluetoothAdapter" of property "defaultAdapter" not found. This is likely due to a missing dependency entry or a type not being exposed declaratively.
+core/Island.qml	unresolved-type	Type "BluetoothAdapter" of property "defaultAdapter" not found. This is likely due to a missing dependency entry or a type not being exposed declaratively.
+core/Island.qml	unresolved-type	Type "BluetoothAdapter" of property "defaultAdapter" not found. This is likely due to a missing dependency entry or a type not being exposed declaratively.
+core/Notifs.qml	import	Type Notifs not declared as singleton in qmldir but using pragma Singleton
+core/Notifs.qml	missing-property	Member "dnd" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::notifications with type qs::io::JsonObject
+core/Notifs.qml	unqualified	Unqualified access
+core/Notifs.qml	unresolved-type	Property "adapter" has incomplete type "FileViewAdapter". You may be missing an import.
+core/Notifs.qml	unresolved-type	Type "FileViewAdapter" of property "adapter" not found. This is likely due to a missing dependency entry or a type not being exposed declaratively.
+core/Osd.qml	import	Type Osd not declared as singleton in qmldir but using pragma Singleton
+core/Osu.qml	import	Type Osu not declared as singleton in qmldir but using pragma Singleton
+core/Paths.qml	import	Type Paths not declared as singleton in qmldir but using pragma Singleton
+core/Settings.qml	import	Type Settings not declared as singleton in qmldir but using pragma Singleton
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unqualified	Unqualified access
+core/Settings.qml	unresolved-type	Property "adapter" has incomplete type "FileViewAdapter". You may be missing an import.
+core/ShellState.qml	import	Type ShellState not declared as singleton in qmldir but using pragma Singleton
+core/Theme.qml	import	Type Theme not declared as singleton in qmldir but using pragma Singleton
+core/Theme.qml	missing-property	Member "dynamicEnabled" not found on type "qs::io::JsonObject"
+core/Theme.qml	missing-property	Member "panelAlpha" not found on type "qs::io::JsonObject"
+core/Theme.qml	missing-property	Member "panelAlpha" not found on type "qs::io::JsonObject"
+core/Theme.qml	missing-property	Member "panelAlpha" not found on type "qs::io::JsonObject"
+core/Usb.qml	import	Type Usb not declared as singleton in qmldir but using pragma Singleton
+launcher.qml	uncreatable-type	Type PanelWindow is not creatable.
+launcher.qml	unqualified	Unqualified access
+launcher.qml	unqualified	Unqualified access
+launcher.qml	unqualified	Unqualified access
+launcher.qml	unqualified	Unqualified access
+launcher.qml	unqualified	Unqualified access
+launcher.qml	unqualified	Unqualified access
+lock.qml	unqualified	Unqualified access
+lock.qml	unqualified	Unqualified access
+lock.qml	unqualified	Unqualified access
+lock.qml	unqualified	Unqualified access
+lock.qml	unqualified	Unqualified access
+lock.qml	unqualified	Unqualified access
+lock.qml	unqualified	Unqualified access
+lock.qml	unqualified	Unqualified access
+settings.qml	unqualified	Unqualified access
+settings.qml	unqualified	Unqualified access
+settings.qml	unqualified	Unqualified access
+settings.qml	unqualified	Unqualified access
+settings.qml	unqualified	Unqualified access
+settings.qml	unqualified	Unqualified access
+settings.qml	unqualified	Unqualified access
+settings.qml	unqualified	Unqualified access
+settings.qml	unqualified	Unqualified access
+shell.qml	missing-property	Could not find property "bottom".
+shell.qml	missing-property	Could not find property "top".
+shell.qml	missing-property	Member "dashboardStackRef" not found on type "PanelWindowInterface"
+shell.qml	missing-property	Member "dashboardStackRef" not found on type "PanelWindowInterface"
+shell.qml	missing-property	Member "isExpanded" not found on type "PanelWindowInterface"
+shell.qml	missing-property	Member "isExpanded" not found on type (component in shell.qml)::pill with type PanelWindowInterface
+shell.qml	missing-property	Member "pillMonitor" not found on type "qs::io::JsonObject"
+shell.qml	missing-property	Member "pillMonitor" not found on type "qs::io::JsonObject"
+shell.qml	uncreatable-type	Type PanelWindow is not creatable.
+shell.qml	unqualified	Unqualified access
+shell.qml	unresolved-type	Type "AuthFlow" of property "flow" not found. This is likely due to a missing dependency entry or a type not being exposed declaratively.
+wallpaper.qml	missing-property	Member "dynamicEnabled" not found on type "qs::io::JsonObject"
+wallpaper.qml	missing-property	Member "lastWallpaper" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::colors with type qs::io::JsonObject
+wallpaper.qml	uncreatable-type	Type PanelWindow is not creatable.
+wallpaper.qml	unqualified	Unqualified access
+wallpaper.qml	unqualified	Unqualified access
+wallpaper.qml	unqualified	Unqualified access
+wallpaper.qml	unqualified	Unqualified access
+wallpaper.qml	unqualified	Unqualified access
+wallpaper.qml	unqualified	Unqualified access
+wallpaper.qml	unqualified	Unqualified access
+wallpaper.qml	unqualified	Unqualified access
+wallpaper.qml	unqualified	Unqualified access
+wallpaper.qml	unqualified	Unqualified access
+wallpaper.qml	unqualified	Unqualified access
+wallpaper.qml	unqualified	Unqualified access
+wallpaper.qml	unqualified	Unqualified access
+wallpaper.qml	unqualified	Unqualified access
+wallpaper.qml	unqualified	Unqualified access
+wallpaper.qml	unqualified	Unqualified access
+wallpaper.qml	unqualified	Unqualified access
+wallpaper.qml	unqualified	Unqualified access
+wallpaper.qml	unqualified	Unqualified access
+wallpaper.qml	unqualified	Unqualified access
+wallpaper.qml	unqualified	Unqualified access
+wallpaper.qml	unqualified	Unqualified access
+wallpaper.qml	unqualified	Unqualified access
+welcome.qml	missing-property	Member "lastWallpaper" not found on type "qs::io::JsonObject"
+welcome.qml	uncreatable-type	Type PanelWindow is not creatable.
+welcome.qml	unqualified	Unqualified access
+welcome.qml	unqualified	Unqualified access
