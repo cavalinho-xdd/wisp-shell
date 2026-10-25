@@ -139,8 +139,11 @@ Scope {
                 collapsedWidth: activity.implicitWidth
                 readonly property bool launcherOpen: controller.launcherOpen
                 readonly property bool mediaOpen: controller.openIsland === "center" && !launcherOpen
-                openWidth: launcherOpen ? launcher.implicitWidth : (mediaOpen ? media.implicitWidth : notif.implicitWidth)
-                openHeight: launcherOpen ? launcher.implicitHeight : (mediaOpen ? media.implicitHeight : notif.implicitHeight)
+                // Nothing playing: the open centre shows the system instead
+                // of an empty player.
+                readonly property bool perfOpen: mediaOpen && !media.hasPlayer
+                openWidth: launcherOpen ? launcher.implicitWidth : (perfOpen ? perf.implicitWidth : (mediaOpen ? media.implicitWidth : notif.implicitWidth))
+                openHeight: launcherOpen ? launcher.implicitHeight : (perfOpen ? perf.implicitHeight : (mediaOpen ? media.implicitHeight : notif.implicitHeight))
                 open: launcherOpen || mediaOpen || root.flaring
                 // The launcher is opened by keyboard, often: its morph is
                 // short, and so is the close that follows. Anything else
@@ -156,7 +159,7 @@ Scope {
                 // The light follows the ember: the dot when collapsed, the
                 // one in the notification, the search glyph in the launcher, the
                 // progress head in the media view.
-                lit: mediaOpen ? media.emberVisible : true
+                lit: mediaOpen ? (!perfOpen && media.emberVisible) : true
                 lightX: launcherOpen ? launcher.emberPoint.x : (mediaOpen ? media.emberPoint.x : (root.flaring ? notif.emberPoint.x : activity.emberCentre.x))
                 lightY: launcherOpen ? launcher.emberPoint.y : (mediaOpen ? media.emberPoint.y : (root.flaring ? notif.emberPoint.y : activity.emberCentre.y))
                 onClicked: controller.toggle("center")
@@ -187,10 +190,16 @@ Scope {
                     onDismiss: controller.close()
                 }
 
+                PerformanceView {
+                    id: perf
+                    lit: center.perfOpen
+                    enabled: center.perfOpen
+                }
+
                 MediaView {
                     id: media
-                    lit: center.mediaOpen
-                    enabled: center.mediaOpen
+                    lit: center.mediaOpen && media.hasPlayer
+                    enabled: center.mediaOpen && media.hasPlayer
                 }
             }
 

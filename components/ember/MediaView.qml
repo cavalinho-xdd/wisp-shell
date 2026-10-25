@@ -4,7 +4,8 @@ import Quickshell.Services.Mpris
 import Quickshell.Widgets
 import "../../core"
 
-// Open activity island while media is around: art, title, artist, source,
+// Open activity island while a player exists (the centre island shows
+// PerformanceView instead when nothing plays): art, title, artist, source,
 // progress with the ember as its head, and controls. Each block kindles in
 // when `lit` turns on. Sized by its content; the island morphs to it.
 Item {
@@ -32,27 +33,13 @@ Item {
     }
 
     implicitWidth: Theme.mediaWidth
-    implicitHeight: hasPlayer
-        ? Theme.spaceLg * 2 + Math.max(Theme.artSize, info.implicitHeight)
-        : Theme.spaceLg * 2 + empty.implicitHeight
+    implicitHeight: Theme.spaceLg * 2 + Math.max(Theme.artSize, info.implicitHeight)
 
     // Mpris only reports position when asked; ask every frame while the
     // progress is on screen and moving.
     FrameAnimation {
         running: root.lit && root.playing && progress.visible
         onTriggered: root.player.positionChanged()
-    }
-
-    Kindle {
-        id: empty
-        lit: root.lit && !root.hasPlayer
-        anchors.centerIn: parent
-        Text {
-            text: "Nothing playing"
-            color: Theme.islandMuted
-            font.family: Theme.fontFamily
-            font.pixelSize: Theme.textBody
-        }
     }
 
     Kindle {

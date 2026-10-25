@@ -164,6 +164,8 @@ Singleton {
     readonly property int progressHeight: 4
     readonly property int controlSize: 36
     readonly property int controlSizeBig: 44
+    // Performance view in the centre island: a reading above this is "hot".
+    readonly property real perfHot: 0.8
     // Notification flare in the centre island.
     readonly property int flareWidth: 400
     readonly property int flareIcon: 44
