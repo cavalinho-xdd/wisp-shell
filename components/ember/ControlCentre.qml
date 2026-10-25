@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import Quickshell.Services.SystemTray
 import "../../core"
 
 // Open right island: today's date, the four switches, volume and, where the
@@ -10,7 +11,7 @@ Item {
 
     property bool lit: false
 
-    // Asks the island to show a detail view: "wifi", "bluetooth" or "sound".
+    // Asks the island to show a detail view: "wifi", "bluetooth", "sound" or "power".
     signal showView(string view)
     // Centre of the volume head, for the island's inner light.
     readonly property point emberPoint: Qt.point(
@@ -281,6 +282,39 @@ Item {
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.textBody
                     }
+                }
+            }
+        }
+
+        Kindle {
+            lit: root.lit
+            index: 5
+            width: column.width
+            height: Theme.controlSize
+
+            Item {
+                width: column.width
+                height: Theme.controlSize
+
+                // Tray icons; the count is index-based because modelData
+                // would resolve to the screen inside the per-screen Variants.
+                Row {
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: Theme.spaceXs / 2
+                    Repeater {
+                        model: SystemTray.items.values.length
+                        TrayIcon {
+                            required property int index
+                            trayItem: SystemTray.items.values[index]
+                        }
+                    }
+                }
+                EmberButton {
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    icon: "󰐥"
+                    label: "Power"
+                    onClicked: root.showView("power")
                 }
             }
         }
