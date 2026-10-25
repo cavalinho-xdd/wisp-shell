@@ -189,22 +189,31 @@ Singleton {
     readonly property int textMonoSmall: 12
 
     // Motion. Curves are BezierSpline control points (end point 1,1 included).
+    // Reduced motion (Settings → Shell) keeps what explains a change, a short
+    // fade, and drops what only moves: overshoot, scale, shifts, blur, the
+    // glow flare, breathing and hover/dim scaling.
+    readonly property bool reduceMotion: Settings.conf.shell.reduceMotion
     readonly property int motionFast: 150
-    readonly property int motionMorph: 620
-    readonly property var curveMorph: [0.22, 1.18, 0.36, 1, 1, 1]
-    readonly property int motionKindle: 550
-    readonly property int kindleDelay: 100
-    readonly property int kindleStagger: 50
+    // Opens by keyboard (launcher) happen often: short, no overshoot.
+    readonly property int motionQuick: 200
+    readonly property int motionMorph: reduceMotion ? motionFast : 620
+    readonly property var curveMorph: reduceMotion ? curveKindle : [0.22, 1.18, 0.36, 1, 1, 1]
+    readonly property int motionKindle: reduceMotion ? motionFast : 550
+    readonly property int kindleDelay: reduceMotion ? 0 : 100
+    readonly property int kindleStagger: reduceMotion ? 0 : 50
+    readonly property real kindleScale: reduceMotion ? 1 : 0.98
+    readonly property int kindleShift: reduceMotion ? 0 : 5
+    readonly property real kindleBlur: reduceMotion ? 0 : 0.5
     readonly property var curveKindle: [0.2, 0.8, 0.2, 1, 1, 1]
     readonly property int emberBreathe: 5000
     readonly property int emberBeat: 520
-    readonly property int emberFlare: 1100
+    readonly property int emberFlare: reduceMotion ? 0 : 1100
 
     // Islands other than the open one
     readonly property real dimOpacity: 0.35
-    readonly property real dimScale: 0.96
+    readonly property real dimScale: reduceMotion ? 1 : 0.96
     // Collapsed island under the pointer: hints that it opens.
-    readonly property real hoverScale: 1.04
+    readonly property real hoverScale: reduceMotion ? 1 : 1.04
 
     // Easing curve for fluid bounce
     readonly property var easeSpring: Easing.OutBack

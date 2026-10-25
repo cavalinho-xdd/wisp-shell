@@ -410,11 +410,14 @@ components/SettingsPageShell.qml	missing-property	Member "clock12h" not found on
 components/SettingsPageShell.qml	missing-property	Member "clock12h" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::shell with type qs::io::JsonObject
 components/SettingsPageShell.qml	missing-property	Member "ember" not found on type "qs::io::JsonObject"
 components/SettingsPageShell.qml	missing-property	Member "ember" not found on type "qs::io::JsonObject"
+components/SettingsPageShell.qml	missing-property	Member "ember" not found on type "qs::io::JsonObject"
 components/SettingsPageShell.qml	missing-property	Member "ember" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::shell with type qs::io::JsonObject
 components/SettingsPageShell.qml	missing-property	Member "enable" not found on type "qs::io::JsonObject"
 components/SettingsPageShell.qml	missing-property	Member "enable" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::weather with type qs::io::JsonObject
 components/SettingsPageShell.qml	missing-property	Member "glow" not found on type "qs::io::JsonObject"
 components/SettingsPageShell.qml	missing-property	Member "glow" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::shell with type qs::io::JsonObject
+components/SettingsPageShell.qml	missing-property	Member "reduceMotion" not found on type "qs::io::JsonObject"
+components/SettingsPageShell.qml	missing-property	Member "reduceMotion" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::shell with type qs::io::JsonObject
 components/SettingsPageShell.qml	missing-property	Member "workspaceCount" not found on type "qs::io::JsonObject"
 components/SettingsPageShell.qml	missing-property	Member "workspaceCount" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::shell with type qs::io::JsonObject
 components/StateLayer.qml	Quick.property-changes-parsed	Property "opacity" is custom-parsed in PropertyChanges. You should phrase this binding as "stateLayer.opacity: 0.15"
@@ -631,6 +634,7 @@ core/Theme.qml	missing-property	Member "glow" not found on type "qs::io::JsonObj
 core/Theme.qml	missing-property	Member "panelAlpha" not found on type "qs::io::JsonObject"
 core/Theme.qml	missing-property	Member "panelAlpha" not found on type "qs::io::JsonObject"
 core/Theme.qml	missing-property	Member "panelAlpha" not found on type "qs::io::JsonObject"
+core/Theme.qml	missing-property	Member "reduceMotion" not found on type "qs::io::JsonObject"
 core/Usb.qml	import	Type Usb not declared as singleton in qmldir but using pragma Singleton
 launcher.qml	uncreatable-type	Type PanelWindow is not creatable.
 launcher.qml	unqualified	Unqualified access

@@ -132,6 +132,16 @@ Scope {
                 openWidth: launcherOpen ? launcher.implicitWidth : (mediaOpen ? media.implicitWidth : notif.implicitWidth)
                 openHeight: launcherOpen ? launcher.implicitHeight : (mediaOpen ? media.implicitHeight : notif.implicitHeight)
                 open: launcherOpen || mediaOpen || root.flaring
+                // The launcher is opened by keyboard, often: its morph is
+                // short, and so is the close that follows. Anything else
+                // opening the island brings the full morph back.
+                quick: false
+                onLauncherOpenChanged: if (launcherOpen) quick = true
+                onMediaOpenChanged: if (mediaOpen) quick = false
+                Connections {
+                    target: root
+                    function onFlaringChanged() { if (root.flaring) center.quick = false; }
+                }
                 dimmed: controller.anyOpen && !open
                 // The light follows the ember: the dot when collapsed, the
                 // one in the notification, the search glyph in the launcher, the

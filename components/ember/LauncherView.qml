@@ -36,6 +36,7 @@ Item {
     Kindle {
         id: fieldBlock
         lit: root.lit
+        quick: true
         index: 0
         x: Theme.spaceMd
         y: Theme.spaceMd
@@ -100,6 +101,7 @@ Item {
     Kindle {
         id: listBlock
         lit: root.lit
+        quick: true
         index: 1
         x: Theme.spaceMd
         y: Theme.spaceMd + Theme.launcherField + Theme.spaceSm

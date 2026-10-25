@@ -20,6 +20,8 @@ Item {
     property bool lit: false
     // Another island is open: step back.
     property bool dimmed: false
+    // Opened by keyboard (launcher): morph short and without overshoot.
+    property bool quick: false
     property real lightX: width / 2
     property real lightY: Theme.islandHeight / 2
     readonly property bool hovered: mouse.containsMouse
@@ -46,8 +48,8 @@ Item {
 
     width: open ? openWidth : collapsedWidth
     height: open ? openHeight : Theme.islandHeight
-    Behavior on width { NumberAnimation { duration: Theme.motionMorph; easing.type: Easing.BezierSpline; easing.bezierCurve: Theme.curveMorph } }
-    Behavior on height { NumberAnimation { duration: Theme.motionMorph; easing.type: Easing.BezierSpline; easing.bezierCurve: Theme.curveMorph } }
+    Behavior on width { NumberAnimation { duration: island.quick ? Theme.motionQuick : Theme.motionMorph; easing.type: island.quick ? Easing.OutCubic : Easing.BezierSpline; easing.bezierCurve: Theme.curveMorph } }
+    Behavior on height { NumberAnimation { duration: island.quick ? Theme.motionQuick : Theme.motionMorph; easing.type: island.quick ? Easing.OutCubic : Easing.BezierSpline; easing.bezierCurve: Theme.curveMorph } }
 
     // Grows from the screen edge it hangs on; the owner sets the corner.
     transformOrigin: Item.Top

@@ -30,7 +30,12 @@ All notable changes to Wisp Shell. Format after
   notification for checking.
 - Launcher in the centre island: search field and the five best results
   (apps by name and frecency, `=` calc, `?` web, `$` shell), arrows, Enter,
-  Esc. `wisp launcher` opens it on the focused monitor only.
+  Esc. `wisp launcher` opens it on the focused monitor only. It opens and
+  closes in about 200 ms with no stagger or blur, since it is used by keyboard
+  all day.
+- *Settings → Shell → Reduce motion*: islands fade in about 150 ms instead of
+  springing and kindling; no overshoot, scale, blur, glow flare, breathing or
+  hover/dim scaling.
   Clicks inside an open island no longer close it.
 
 ### Changed

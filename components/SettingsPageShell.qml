@@ -41,6 +41,14 @@ CfgPage {
             ]
             onEdited: v => Settings.conf.shell.glow = v
         }
+        CfgSwitch {
+            icon: "󰜺"
+            text: "Reduce motion"
+            hint: "Islands fade instead of springing, no flare, breathing or blur"
+            enabled: Settings.conf.shell.ember
+            checked: Settings.conf.shell.reduceMotion
+            onToggled: value => Settings.conf.shell.reduceMotion = value
+        }
     }
 
     CfgSection {

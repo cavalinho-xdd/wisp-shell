@@ -38,7 +38,7 @@ Item {
 
     // Idle: opacity 0.55 <-> 1, scale 0.85 <-> 1 over one breath.
     ParallelAnimation {
-        running: dot.running && !dot.playing
+        running: dot.running && !dot.playing && !Theme.reduceMotion
         loops: Animation.Infinite
         SequentialAnimation {
             OpacityAnimator { target: light; to: 0.55; duration: Theme.emberBreathe / 2; easing.type: Easing.InOutSine }
@@ -52,7 +52,7 @@ Item {
 
     // Playing: a quicker beat, always bright.
     SequentialAnimation {
-        running: dot.running && dot.playing
+        running: dot.running && dot.playing && !Theme.reduceMotion
         loops: Animation.Infinite
         ParallelAnimation {
             OpacityAnimator { target: light; to: 1; duration: Theme.emberBeat; easing.type: Easing.OutSine }
