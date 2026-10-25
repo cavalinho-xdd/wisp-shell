@@ -26,7 +26,7 @@ that finishes a milestone.
 | M0 | Ember tokens in `core/Theme.qml` | ✅ done (c13f482) |
 | M1 | Development basics | ✅ done |
 | M2 | Island skeleton | ✅ done (e43fe9d) |
-| M3 | Activity island, collapsed | ⬜ |
+| M3 | Activity island, collapsed | 🔄 in progress |
 | M4 | Activity island, open (media) | ⬜ |
 | M5 | Notifications and launcher | ⬜ |
 | M6 | Workspaces island (left) | ⬜ |

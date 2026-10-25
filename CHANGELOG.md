@@ -16,6 +16,10 @@ All notable changes to Wisp Shell. Format after
   ember glow, shown instead of the pill by *Settings → Shell → Ember islands
   (preview)*; one open at a time, closed by click outside or Esc; IPC target
   `ember-<monitor>` for opening islands from the command line.
+- Collapsed activity island: breathing ember (beats while media plays), clock
+  in Monaspace, track title elided at 120 px; inner ember light inside every
+  island; islands swell slightly on hover. Glow strength setting
+  (soft / medium / strong).
 
 ### Changed
 - `PRODUCT.md` and `DESIGN.md` rewritten for the Wisp Ember direction.

@@ -84,12 +84,13 @@ Scope {
             opacity: root.fullscreen ? 0 : 1
             Behavior on opacity { NumberAnimation { duration: Theme.motionFast; easing.type: Easing.OutCubic } }
 
-            // Sizes are the prototype's placeholders until each island gets
-            // its content and takes its size from it (M3, M6, M7).
+            // Fixed sizes are the prototype's placeholders until each island
+            // gets its content and takes its size from it (M4, M6, M7).
             EmberIsland {
                 id: left
                 x: Theme.islandMargin
                 y: Theme.islandMargin
+                transformOrigin: Item.TopLeft
                 collapsedWidth: 124
             }
 
@@ -97,11 +98,21 @@ Scope {
                 id: center
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: Theme.islandMargin
-                collapsedWidth: 110
+                collapsedWidth: activity.implicitWidth
                 openWidth: 440
                 openHeight: 172
                 open: controller.openIsland === "center"
+                lightX: activity.emberCentre.x
+                lightY: activity.emberCentre.y
                 onClicked: controller.toggle("center")
+
+                ActivityCollapsed {
+                    id: activity
+                    running: !root.fullscreen
+                    opacity: center.open ? 0 : 1
+                    visible: opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: Theme.motionFast; easing.type: Easing.OutCubic } }
+                }
             }
 
             EmberIsland {
@@ -109,6 +120,7 @@ Scope {
                 anchors.right: parent.right
                 anchors.rightMargin: Theme.islandMargin
                 y: Theme.islandMargin
+                transformOrigin: Item.TopRight
                 collapsedWidth: 118
                 openWidth: 380
                 openHeight: 318

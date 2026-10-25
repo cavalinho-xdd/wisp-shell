@@ -155,6 +155,9 @@ Singleton {
     readonly property int radiusArt: 16
     readonly property int radiusRow: 14
     readonly property int emberSize: 8
+    // Longest track title shown in the collapsed activity island before it
+    // elides, so the island doesn't sprawl.
+    readonly property int trackMaxWidth: 120
 
     readonly property int spaceXs: 6
     readonly property int spaceSm: 10
@@ -165,6 +168,7 @@ Singleton {
     // rounds to 14.
     readonly property int textTitle: 17
     readonly property int textBody: 14
+    readonly property int textCaption: 13
     readonly property int textLabel: 11
     readonly property int textMono: 14
     readonly property int textMonoSmall: 12
@@ -184,6 +188,8 @@ Singleton {
     // Islands other than the open one
     readonly property real dimOpacity: 0.35
     readonly property real dimScale: 0.96
+    // Collapsed island under the pointer: hints that it opens.
+    readonly property real hoverScale: 1.04
 
     // Easing curve for fluid bounce
     readonly property var easeSpring: Easing.OutBack

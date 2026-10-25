@@ -1,10 +1,12 @@
 import QtQuick
 import QtQuick.Effects
+import QtQuick.Shapes
 import "../../core"
 
-// One island: opaque smoke fill lit by the ember glow around it, no outline
-// (DESIGN.md). Collapsed it is islandHeight tall and collapsedWidth wide; open
-// it morphs to openWidth x openHeight. Content arrives in M3+.
+// One island: opaque smoke fill lit by the ember glow around it and a soft
+// light inside it, no outline (DESIGN.md). Collapsed it is islandHeight tall
+// and collapsedWidth wide; open it morphs to openWidth x openHeight.
+// Children go into the content area, which matches the island's shape.
 Item {
     id: island
 
@@ -12,6 +14,12 @@ Item {
     property real collapsedWidth: Theme.islandHeight
     property real openWidth: collapsedWidth
     property real openHeight: Theme.islandHeight
+    // Where the inner light sits, in island coordinates (on the ember).
+    property real lightX: width / 2
+    property real lightY: Theme.islandHeight / 2
+    readonly property bool hovered: mouse.containsMouse
+
+    default property alias content: contentArea.data
 
     signal clicked()
 
@@ -19,6 +27,11 @@ Item {
     height: open ? openHeight : Theme.islandHeight
     Behavior on width { NumberAnimation { duration: Theme.motionMorph; easing.type: Easing.BezierSpline; easing.bezierCurve: Theme.curveMorph } }
     Behavior on height { NumberAnimation { duration: Theme.motionMorph; easing.type: Easing.BezierSpline; easing.bezierCurve: Theme.curveMorph } }
+
+    // Grows from the screen edge it hangs on; the owner sets the corner.
+    transformOrigin: Item.Top
+    scale: hovered && !open ? Theme.hoverScale : 1
+    Behavior on scale { NumberAnimation { duration: Theme.motionFast; easing.type: Easing.OutCubic } }
 
     Accessible.role: Accessible.Button
     Accessible.name: "Wisp island"
@@ -40,8 +53,37 @@ Item {
         Behavior on radius { NumberAnimation { duration: Theme.motionMorph; easing.type: Easing.OutCubic } }
     }
 
-    MouseArea {
+    // The light living inside the island: a radial ember glow drawn in the
+    // island's own rounded shape, so it never spills past the corners.
+    Shape {
         anchors.fill: parent
+        preferredRendererType: Shape.CurveRenderer
+        ShapePath {
+            strokeWidth: -1
+            fillGradient: RadialGradient {
+                centerX: island.lightX; centerY: island.lightY
+                focalX: island.lightX; focalY: island.lightY
+                centerRadius: Theme.islandHeight * 2
+                GradientStop { position: 0; color: Qt.alpha(Theme.ember, Theme.innerLightAlpha * Theme.glow) }
+                GradientStop { position: 1; color: "transparent" }
+            }
+            PathRectangle {
+                width: island.width
+                height: island.height
+                radius: fill.radius
+            }
+        }
+    }
+
+    MouseArea {
+        id: mouse
+        anchors.fill: parent
+        hoverEnabled: true
         onClicked: island.clicked()
+    }
+
+    Item {
+        id: contentArea
+        anchors.fill: parent
     }
 }
