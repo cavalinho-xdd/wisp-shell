@@ -321,6 +321,9 @@ Singleton {
                 property string glow: "medium"
                 // Fewer, gentler Ember animations (Theme.reduceMotion).
                 property bool reduceMotion: false
+                // Where the three islands sit: "spread" | "cluster" | "quarters"
+                // (components/ember/layout.js). Dragging an island sets it.
+                property string emberLayout: "spread"
                 // First-run gate. False (the default, and therefore what a
                 // machine with no settings.json at all reads) launches
                 // welcome.qml once at shell startup — see core/FirstRun.qml.

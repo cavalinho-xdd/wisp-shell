@@ -4,6 +4,7 @@ import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Hyprland
 import "../../core"
+import "layout.js" as IslandLayout
 
 // The Ember UI for one screen (ADR 0002): three islands at the top edge plus
 // a click catcher that closes the open one. shell.qml loads it instead of the
@@ -50,6 +51,10 @@ Scope {
         // Shows a detail view of the open right island: cc, wifi, bluetooth.
         function view(name: string): void { controller.rightView = name; }
         function launcher(): void { controller.toggleLauncher(); }
+        // Island layout of the whole bar: spread, cluster or quarters.
+        function layout(name: string): void {
+            if (IslandLayout.NAMES.indexOf(name) >= 0) Settings.conf.shell.emberLayout = name;
+        }
         // Fills the notification list with n made-up records (the first two
         // live) without touching the saved history; 0 empties it.
         function notifs(n: int): void {
@@ -116,6 +121,7 @@ Scope {
         }
 
         Item {
+            id: bar
             anchors.fill: parent
             focus: true
             Keys.onEscapePressed: controller.close()
@@ -123,13 +129,38 @@ Scope {
             opacity: root.fullscreen ? 0 : 1
             Behavior on opacity { NumberAnimation { duration: Theme.motionFast; easing.type: Easing.OutCubic } }
 
+            // Left edges of the three islands for the saved layout, from where
+            // the islands are going (target widths), so neighbours start to
+            // step aside the moment one opens.
+            readonly property var slots: IslandLayout.place(Settings.conf.shell.emberLayout, bar.width,
+                [left.targetWidth, center.targetWidth, right.targetWidth], center.open ? 1 : (right.open ? 2 : -1), Theme.islandMargin, Theme.islandGap)
+
+            // A dropped island picks the layout whose spot for it is nearest
+            // to where it would have coasted to (decelerating at 0.998 per
+            // ms, as scrolling does). The centre island sits in the middle
+            // in every layout, so dragging it picks nothing: it springs back.
+            function drop(index: int, centerX: real, velocityX: real): void {
+                if (index === 1) return;
+                const reach = centerX + velocityX / 1000 * 0.998 / (1 - 0.998);
+                const closed = [left.collapsedWidth, center.collapsedWidth, right.collapsedWidth];
+                let best = Settings.conf.shell.emberLayout, bestDistance = Infinity;
+                for (const name of IslandLayout.NAMES) {
+                    const x = IslandLayout.place(name, bar.width, closed, -1, Theme.islandMargin, Theme.islandGap);
+                    const distance = Math.abs(x[index] + closed[index] / 2 - reach);
+                    if (distance < bestDistance) { best = name; bestDistance = distance; }
+                }
+                Settings.conf.shell.emberLayout = best;
+            }
+
             // Fixed sizes are the prototype's placeholders until each island
             // gets its content and takes its size from it (M4, M6, M7).
             EmberIsland {
                 id: left
-                x: Theme.islandMargin
-                y: Theme.islandMargin
+                x: bar.slots[0] + dragDx
+                y: Theme.islandMargin + dragDy
                 transformOrigin: Item.TopLeft
+                draggable: true
+                onReleased: (centerX, velocityX) => bar.drop(0, centerX, velocityX)
                 dimmed: controller.anyOpen
                 collapsedWidth: workspaces.implicitWidth
                 lit: workspaces.shown.length > 0
@@ -144,8 +175,10 @@ Scope {
 
             EmberIsland {
                 id: center
-                anchors.horizontalCenter: parent.horizontalCenter
-                y: Theme.islandMargin
+                x: bar.slots[1] + dragDx
+                y: Theme.islandMargin + dragDy
+                draggable: true
+                onReleased: (centerX, velocityX) => bar.drop(1, centerX, velocityX)
                 collapsedWidth: activity.implicitWidth
                 readonly property bool launcherOpen: controller.launcherOpen
                 readonly property bool mediaOpen: controller.openIsland === "center" && !launcherOpen
@@ -215,10 +248,11 @@ Scope {
 
             EmberIsland {
                 id: right
-                anchors.right: parent.right
-                anchors.rightMargin: Theme.islandMargin
-                y: Theme.islandMargin
+                x: bar.slots[2] + dragDx
+                y: Theme.islandMargin + dragDy
                 transformOrigin: Item.TopRight
+                draggable: true
+                onReleased: (centerX, velocityX) => bar.drop(2, centerX, velocityX)
                 dimmed: controller.anyOpen && !open
                 collapsedWidth: status.implicitWidth
                 readonly property string view: controller.rightView

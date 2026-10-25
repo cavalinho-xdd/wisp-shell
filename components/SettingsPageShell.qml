@@ -41,6 +41,18 @@ CfgPage {
             ]
             onEdited: v => Settings.conf.shell.glow = v
         }
+        CfgChoice {
+            icon: "󰕮"
+            text: "Island layout"
+            enabled: Settings.conf.shell.ember
+            value: Settings.conf.shell.emberLayout
+            options: [
+                { value: "spread", label: "Spread" },
+                { value: "cluster", label: "Cluster" },
+                { value: "quarters", label: "Quarters" }
+            ]
+            onEdited: v => Settings.conf.shell.emberLayout = v
+        }
         CfgSwitch {
             icon: "󰜺"
             text: "Reduce motion"

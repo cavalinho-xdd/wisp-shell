@@ -149,6 +149,8 @@ Singleton {
     // Geometry
     readonly property int islandHeight: 40
     readonly property int islandMargin: 12
+    // Space between islands that sit side by side (cluster layout, neighbours stepping aside).
+    readonly property int islandGap: 8
     readonly property int radiusIsland: 20
     readonly property int radiusIslandOpen: 30
     readonly property int radiusTile: 18
@@ -216,7 +218,20 @@ Singleton {
     // Opens by keyboard (launcher) happen often: short, no overshoot.
     readonly property int motionQuick: 200
     readonly property int motionMorph: reduceMotion ? motionFast : 620
-    readonly property var curveMorph: reduceMotion ? curveKindle : [0.22, 1.18, 0.36, 1, 1, 1]
+    // Island morph is a SpringAnimation, so a click in mid-flight keeps the
+    // velocity. Qt's damping is no ratio; measured on a 100 -> 400 px
+    // morph: 5/0.55 settles in ~490 ms, 20/0.9 in ~200 ms (keyboard opens),
+    // 30/1.0 in ~140 ms (reduced motion). None of them overshoots.
+    readonly property real springMorph: reduceMotion ? 30 : 5
+    readonly property real dampingMorph: reduceMotion ? 1.0 : 0.55
+    readonly property real springQuick: reduceMotion ? 30 : 20
+    readonly property real dampingQuick: reduceMotion ? 1.0 : 0.9
+    // Islands finding their place in the bar (layout change, neighbours
+    // stepping aside, drop after a drag). Measured on a 0 -> 400 px move:
+    // 4/0.30 overshoots ~7 % and is within 1 px after ~540 ms; 8/0.35 was
+    // too quick and twitchy (~14 %, ~370 ms).
+    readonly property real springMove: reduceMotion ? 30 : 4
+    readonly property real dampingMove: reduceMotion ? 1.0 : 0.30
     readonly property int motionKindle: reduceMotion ? motionFast : 550
     readonly property int kindleDelay: reduceMotion ? 0 : 100
     readonly property int kindleStagger: reduceMotion ? 0 : 50
@@ -233,6 +248,8 @@ Singleton {
     readonly property real dimScale: reduceMotion ? 1 : 0.96
     // Collapsed island under the pointer: hints that it opens.
     readonly property real hoverScale: reduceMotion ? 1 : 1.04
+    // Collapsed island while the button is down: feedback on press, not release.
+    readonly property real pressScale: reduceMotion ? 1 : 0.97
 
     // Easing curve for fluid bounce
     readonly property var easeSpring: Easing.OutBack
