@@ -18,3 +18,4 @@ singleton Usb Usb.qml
 singleton Brightness Brightness.qml
 singleton Connectivity Connectivity.qml
 singleton QuickToggles QuickToggles.qml
+singleton Weather Weather.qml

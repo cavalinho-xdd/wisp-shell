@@ -176,6 +176,9 @@ Singleton {
     readonly property int orbSize: 210
     readonly property int listRow: 44
     readonly property int listRows: 6
+    // Calendar and weather view of the control centre: wider than the rest.
+    readonly property int ccWideWidth: 640
+    readonly property int calCell: 36
     readonly property int notifRow: 48
     readonly property int notifIcon: 30
     // Notification rows visible at once in the list; more scroll.

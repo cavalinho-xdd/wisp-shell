@@ -11,7 +11,7 @@ Item {
 
     property bool lit: false
 
-    // Asks the island to show a detail view: "wifi", "bluetooth", "sound" or "power".
+    // Asks the island to show a detail view: "wifi", "bluetooth", "sound", "power" or "calendar".
     signal showView(string view)
     // Centre of the volume head, for the island's inner light.
     readonly property point emberPoint: Qt.point(
@@ -40,16 +40,31 @@ Item {
             index: 0
             width: column.width
 
-            Text {
+            Item {
                 width: column.width
-                text: Qt.formatDate(clock.date, "dddd d. MMMM")
-                elide: Text.ElideRight
-                color: Theme.islandText
-                font.family: Theme.fontFamily
-                font.pixelSize: Theme.textTitle
-                font.weight: Font.DemiBold
-                topPadding: Theme.spaceXs / 2
-                bottomPadding: Theme.spaceXs / 2
+                implicitHeight: dateText.implicitHeight
+                Text {
+                    id: dateText
+                    width: parent.width
+                    text: Qt.formatDate(clock.date, "dddd d. MMMM")
+                    elide: Text.ElideRight
+                    color: dateMouse.containsMouse ? Theme.ember : Theme.islandText
+                    Behavior on color { ColorAnimation { duration: Theme.motionFast } }
+                    font.family: Theme.fontFamily
+                    font.pixelSize: Theme.textTitle
+                    font.weight: Font.DemiBold
+                    topPadding: Theme.spaceXs / 2
+                    bottomPadding: Theme.spaceXs / 2
+                }
+                Accessible.role: Accessible.Button
+                Accessible.name: "Calendar and weather"
+                MouseArea {
+                    id: dateMouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: root.showView("calendar")
+                }
             }
         }
 
