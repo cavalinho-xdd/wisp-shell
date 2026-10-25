@@ -26,7 +26,7 @@ that finishes a milestone.
 | M0 | Ember tokens in `core/Theme.qml` | ✅ done (c13f482) |
 | M1 | Development basics | ✅ done |
 | M2 | Island skeleton | ✅ done (e43fe9d) |
-| M3 | Activity island, collapsed | 🔄 in progress |
+| M3 | Activity island, collapsed | ✅ done (db0e752) |
 | M4 | Activity island, open (media) | ⬜ |
 | M5 | Notifications and launcher | ⬜ |
 | M6 | Workspaces island (left) | ⬜ |
@@ -71,6 +71,9 @@ monitors; clicks pass through between islands; fullscreen hides them.
 ### M3 — Activity island, collapsed
 Ember dot (breathing), clock in mono, track title when media plays, hover
 scale. Glow and inner light tuned live against two very different wallpapers.
+
+Left over from M3: glow strength not yet judged against two very different
+wallpapers; do it whenever the wallpaper changes, adjust `Theme.glow*`.
 
 ### M4 — Activity island, open (media)
 Morph (geometry spring), kindle reveal of content, dimming of the other two
