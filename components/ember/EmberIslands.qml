@@ -106,7 +106,7 @@ Scope {
                 dimmed: controller.anyOpen && !open
                 // The light follows the ember: the dot when collapsed, the
                 // progress head when open.
-                lit: open ? media.hasPlayer : true
+                lit: open ? media.emberVisible : true
                 lightX: open ? media.emberPoint.x : activity.emberCentre.x
                 lightY: open ? media.emberPoint.y : activity.emberCentre.y
                 onClicked: controller.toggle("center")

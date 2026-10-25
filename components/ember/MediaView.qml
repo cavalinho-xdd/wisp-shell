@@ -15,6 +15,9 @@ Item {
     readonly property var player: Island.player
     readonly property bool hasPlayer: !!player
     readonly property bool playing: Island.playing
+    // The progress (and so the ember head) only exists when the player
+    // reports a length; live streams have none.
+    readonly property bool emberVisible: hasPlayer && barBlock.visible
     // Centre of the progress head, for the island's inner light.
     readonly property point emberPoint: Qt.point(
         info.x + progress.x + head.x + head.width / 2,
