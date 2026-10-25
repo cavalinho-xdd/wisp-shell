@@ -91,6 +91,7 @@ Scope {
                 x: Theme.islandMargin
                 y: Theme.islandMargin
                 transformOrigin: Item.TopLeft
+                dimmed: controller.anyOpen
                 collapsedWidth: 124
             }
 
@@ -99,12 +100,15 @@ Scope {
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: Theme.islandMargin
                 collapsedWidth: activity.implicitWidth
-                openWidth: 440
-                openHeight: 172
+                openWidth: media.implicitWidth
+                openHeight: media.implicitHeight
                 open: controller.openIsland === "center"
-                lit: !open
-                lightX: activity.emberCentre.x
-                lightY: activity.emberCentre.y
+                dimmed: controller.anyOpen && !open
+                // The light follows the ember: the dot when collapsed, the
+                // progress head when open.
+                lit: open ? media.hasPlayer : true
+                lightX: open ? media.emberPoint.x : activity.emberCentre.x
+                lightY: open ? media.emberPoint.y : activity.emberCentre.y
                 onClicked: controller.toggle("center")
 
                 ActivityCollapsed {
@@ -114,6 +118,12 @@ Scope {
                     visible: opacity > 0
                     Behavior on opacity { NumberAnimation { duration: Theme.motionFast; easing.type: Easing.OutCubic } }
                 }
+
+                MediaView {
+                    id: media
+                    lit: center.open
+                    enabled: center.open
+                }
             }
 
             EmberIsland {
@@ -122,6 +132,7 @@ Scope {
                 anchors.rightMargin: Theme.islandMargin
                 y: Theme.islandMargin
                 transformOrigin: Item.TopRight
+                dimmed: controller.anyOpen && !open
                 collapsedWidth: 118
                 openWidth: 380
                 openHeight: 318

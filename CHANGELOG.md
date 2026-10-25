@@ -20,6 +20,10 @@ All notable changes to Wisp Shell. Format after
   in Monaspace, track title elided at 120 px; inner ember light inside every
   island; islands swell slightly on hover. Glow strength setting
   (soft / medium / strong).
+- Open activity island: media view (art, title, artist, source, progress with
+  the ember as its head, controls) that kindles in block by block while the
+  island morphs; the other islands dim; the inner light follows the ember.
+  Clicks inside an open island no longer close it.
 
 ### Changed
 - `PRODUCT.md` and `DESIGN.md` rewritten for the Wisp Ember direction.

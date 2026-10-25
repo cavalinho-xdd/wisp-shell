@@ -18,6 +18,8 @@ Item {
     // is only on while the island shows the ember (or another ember-coloured
     // element) at lightX/lightY, in island coordinates.
     property bool lit: false
+    // Another island is open: step back.
+    property bool dimmed: false
     property real lightX: width / 2
     property real lightY: Theme.islandHeight / 2
     readonly property bool hovered: mouse.containsMouse
@@ -33,8 +35,10 @@ Item {
 
     // Grows from the screen edge it hangs on; the owner sets the corner.
     transformOrigin: Item.Top
-    scale: hovered && !open ? Theme.hoverScale : 1
+    scale: dimmed ? Theme.dimScale : (hovered && !open ? Theme.hoverScale : 1)
     Behavior on scale { NumberAnimation { duration: Theme.motionFast; easing.type: Easing.OutCubic } }
+    opacity: dimmed ? Theme.dimOpacity : 1
+    Behavior on opacity { NumberAnimation { duration: Theme.motionMorph; easing.type: Easing.OutCubic } }
 
     Accessible.role: Accessible.Button
     Accessible.name: "Wisp island"
@@ -85,11 +89,15 @@ Item {
         id: mouse
         anchors.fill: parent
         hoverEnabled: true
-        onClicked: island.clicked()
+        // An open island is a surface, not a button: clicks inside it stay
+        // there. Click outside or Esc closes it.
+        onClicked: if (!island.open) island.clicked()
     }
 
+    // Clipped so content bigger than the island mid-morph stays inside.
     Item {
         id: contentArea
         anchors.fill: parent
+        clip: true
     }
 }

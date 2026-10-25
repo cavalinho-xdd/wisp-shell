@@ -27,7 +27,7 @@ that finishes a milestone.
 | M1 | Development basics | ✅ done |
 | M2 | Island skeleton | ✅ done (e43fe9d) |
 | M3 | Activity island, collapsed | ✅ done (db0e752) |
-| M4 | Activity island, open (media) | ⬜ |
+| M4 | Activity island, open (media) | 🔄 in progress |
 | M5 | Notifications and launcher | ⬜ |
 | M6 | Workspaces island (left) | ⬜ |
 | M7 | Status island and control centre (right) | ⬜ |

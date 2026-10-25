@@ -533,6 +533,8 @@ components/WifiView.qml	unqualified	Unqualified access
 components/ember/ActivityCollapsed.qml	missing-property	Member "clock12h" not found on type "qs::io::JsonObject"
 components/ember/EmberIslands.qml	uncreatable-type	Type PanelWindow is not creatable.
 components/ember/EmberIslands.qml	uncreatable-type	Type PanelWindow is not creatable.
+components/ember/Kindle.qml	unqualified	Unqualified access
+components/ember/Kindle.qml	unqualified	Unqualified access
 core/AppUsage.qml	import	Type AppUsage not declared as singleton in qmldir but using pragma Singleton
 core/Audio.qml	import	Type Audio not declared as singleton in qmldir but using pragma Singleton
 core/Audio.qml	missing-property	Member "values" not found on type "UntypedObjectModel"

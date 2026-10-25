@@ -158,6 +158,12 @@ Singleton {
     // Longest track title shown in the collapsed activity island before it
     // elides, so the island doesn't sprawl.
     readonly property int trackMaxWidth: 120
+    // Open activity island, media view.
+    readonly property int mediaWidth: 440
+    readonly property int artSize: 112
+    readonly property int progressHeight: 4
+    readonly property int controlSize: 36
+    readonly property int controlSizeBig: 44
 
     readonly property int spaceXs: 6
     readonly property int spaceSm: 10
