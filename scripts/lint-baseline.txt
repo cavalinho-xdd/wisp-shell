@@ -65,6 +65,8 @@ components/CalendarCard.qml	unqualified	Unqualified access
 components/CalendarCard.qml	unqualified	Unqualified access
 components/CalendarCard.qml	unqualified	Unqualified access
 components/CalendarCard.qml	unqualified	Unqualified access
+components/CfgChoice.qml	unqualified	Unqualified access
+components/CfgChoice.qml	unqualified	Unqualified access
 components/CircularProgress.qml	block-scope-var-declaration	var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning 
 components/CircularProgress.qml	block-scope-var-declaration	var declaration in block scope is hoisted to function scope Replace it with const or let to silence the warning 
 components/CollapsedBar.qml	missing-property	Member "clock12h" not found on type "qs::io::JsonObject"
@@ -407,9 +409,12 @@ components/SettingsPageNotifications.qml	unresolved-type	Property "adapter" has 
 components/SettingsPageShell.qml	missing-property	Member "clock12h" not found on type "qs::io::JsonObject"
 components/SettingsPageShell.qml	missing-property	Member "clock12h" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::shell with type qs::io::JsonObject
 components/SettingsPageShell.qml	missing-property	Member "ember" not found on type "qs::io::JsonObject"
+components/SettingsPageShell.qml	missing-property	Member "ember" not found on type "qs::io::JsonObject"
 components/SettingsPageShell.qml	missing-property	Member "ember" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::shell with type qs::io::JsonObject
 components/SettingsPageShell.qml	missing-property	Member "enable" not found on type "qs::io::JsonObject"
 components/SettingsPageShell.qml	missing-property	Member "enable" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::weather with type qs::io::JsonObject
+components/SettingsPageShell.qml	missing-property	Member "glow" not found on type "qs::io::JsonObject"
+components/SettingsPageShell.qml	missing-property	Member "glow" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::shell with type qs::io::JsonObject
 components/SettingsPageShell.qml	missing-property	Member "workspaceCount" not found on type "qs::io::JsonObject"
 components/SettingsPageShell.qml	missing-property	Member "workspaceCount" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::shell with type qs::io::JsonObject
 components/StateLayer.qml	Quick.property-changes-parsed	Property "opacity" is custom-parsed in PropertyChanges. You should phrase this binding as "stateLayer.opacity: 0.15"
@@ -614,6 +619,7 @@ core/Settings.qml	unresolved-type	Property "adapter" has incomplete type "FileVi
 core/ShellState.qml	import	Type ShellState not declared as singleton in qmldir but using pragma Singleton
 core/Theme.qml	import	Type Theme not declared as singleton in qmldir but using pragma Singleton
 core/Theme.qml	missing-property	Member "dynamicEnabled" not found on type "qs::io::JsonObject"
+core/Theme.qml	missing-property	Member "glow" not found on type "qs::io::JsonObject"
 core/Theme.qml	missing-property	Member "panelAlpha" not found on type "qs::io::JsonObject"
 core/Theme.qml	missing-property	Member "panelAlpha" not found on type "qs::io::JsonObject"
 core/Theme.qml	missing-property	Member "panelAlpha" not found on type "qs::io::JsonObject"

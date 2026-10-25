@@ -29,6 +29,18 @@ CfgPage {
             checked: Settings.conf.shell.ember
             onToggled: value => Settings.conf.shell.ember = value
         }
+        CfgChoice {
+            icon: "󰛨"
+            text: "Ember glow"
+            enabled: Settings.conf.shell.ember
+            value: Settings.conf.shell.glow
+            options: [
+                { value: "soft", label: "Soft" },
+                { value: "medium", label: "Medium" },
+                { value: "strong", label: "Strong" }
+            ]
+            onEdited: v => Settings.conf.shell.glow = v
+        }
     }
 
     CfgSection {

@@ -138,8 +138,8 @@ Singleton {
     property color ember: c("primary", "#8fd3ff")
     Behavior on ember { ColorAnimation { duration: 600; easing.type: Easing.OutCubic } }
 
-    // Multiplies glow alpha and blur; soft 0.6 / medium 1.0 / strong 1.6.
-    readonly property real glow: 1.0
+    // Multiplies glow alpha and blur; set by Settings.conf.shell.glow (D3).
+    readonly property real glow: ({ soft: 0.6, strong: 1.6 })[Settings.conf.shell.glow] ?? 1.0
     readonly property real glowAlpha: 0.22
     readonly property real glowBlur: 22
     readonly property real glowAlphaOpen: 0.26
