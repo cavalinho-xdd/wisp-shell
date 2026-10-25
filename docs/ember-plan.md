@@ -13,8 +13,9 @@ that finishes a milestone.
   setting; the old pill keeps working until M9 (ADR 0002).
 - **One island end-to-end before the next.** Collapsed → open → interrupted →
   closed, shown live, then move on.
-- **Small milestones, each shippable.** Every milestone ends on `main` via a
-  PR and leaves the shell usable with the setting both on and off.
+- **Small milestones, each shippable.** Work goes straight to `main` in small
+  commits (single developer, no PRs); every commit leaves the shell usable
+  with the setting both on and off.
 - **Decide before building.** Open questions block the milestone that needs
   them, not the whole project (see *Open decisions*).
 
@@ -41,16 +42,16 @@ Goal: make every later milestone cheaper to build and check.
 - `scripts/lint.py`: Qt 6 qmllint over every `.qml` with a baseline of
   today's warnings (681, `scripts/lint-baseline.txt`); fails only on new ones.
 - `scripts/shot.sh <name>`: grim screenshot of the island area of every
-  monitor into `docs/screens/` (git-ignored) — the before/after evidence for PRs.
+  monitor into `docs/screens/` (git-ignored) — before/after evidence for a
+  visible change.
 - `probes/` folder for probe files worth re-running (tracked, left out of the
   package); the stray `test_*` files from the root moved there.
-- PR template with the Definition of Done checklist below.
 - `CHANGELOG.md` (Keep a Changelog), section *Unreleased*.
-- GitHub milestones M1–M9 mirror the table above (D4); PRs are assigned to
-  one. Tasks stay in this file.
+- GitHub milestones M1–M9 mirror the table above (D4); a milestone is closed
+  when it is done. Tasks stay in this file.
 
 Done when: lint and screenshot scripts run on this machine, the root holds no
-stray test files, the PR template is used by the M2 PR.
+stray test files.
 
 ### M2 — Island skeleton
 Goal: the frame every island lives in.
@@ -98,7 +99,7 @@ Islands become the default, the setting is removed, the old pill files are
 deleted, unused old tokens removed from `Theme.qml`, `DESIGN.md` refreshed
 (`impeccable document`), release tagged.
 
-## Definition of Done (every milestone and PR)
+## Definition of Done (every milestone)
 
 - [ ] Ran under `qs`; `qs log` has no new warnings or errors.
 - [ ] `scripts/lint.py` adds no new qmllint warnings (from M1 on).
@@ -106,8 +107,8 @@ deleted, unused old tokens removed from `Theme.qml`, `DESIGN.md` refreshed
 - [ ] No raw durations, radii, spacing or font sizes — tokens only.
 - [ ] Every animation survives being interrupted halfway.
 - [ ] Worst-case data tried where the view shows outside data (`break-ui`).
-- [ ] Before/after screenshot in the PR.
-- [ ] `qt-qml-review` findings fixed or explained in the PR.
+- [ ] Before/after screenshot (`scripts/shot.sh`) compared.
+- [ ] `qt-qml-review` findings fixed or noted in the commit message.
 - [ ] CHANGELOG and the status column above updated.
 
 ## Inventory: what the old pill does today

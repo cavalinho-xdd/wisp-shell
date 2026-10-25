@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # Screenshot of the island area (top strip of every monitor) for before/after
-# evidence in PRs. Saves docs/screens/<name>-<monitor>.png (git-ignored;
-# drag the files into the PR description).
+# checks. Saves docs/screens/<name>-<monitor>.png (git-ignored).
 #
 #   scripts/shot.sh <name> [height]    # height of the strip, default 520
 set -euo pipefail
