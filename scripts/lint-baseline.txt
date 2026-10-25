@@ -406,6 +406,8 @@ components/SettingsPageNotifications.qml	unqualified	Unqualified access
 components/SettingsPageNotifications.qml	unresolved-type	Property "adapter" has incomplete type "FileViewAdapter". You may be missing an import.
 components/SettingsPageShell.qml	missing-property	Member "clock12h" not found on type "qs::io::JsonObject"
 components/SettingsPageShell.qml	missing-property	Member "clock12h" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::shell with type qs::io::JsonObject
+components/SettingsPageShell.qml	missing-property	Member "ember" not found on type "qs::io::JsonObject"
+components/SettingsPageShell.qml	missing-property	Member "ember" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::shell with type qs::io::JsonObject
 components/SettingsPageShell.qml	missing-property	Member "enable" not found on type "qs::io::JsonObject"
 components/SettingsPageShell.qml	missing-property	Member "enable" not found on type (component in /home/dzejkop/.local/share/wisp-shell/core/Settings.qml)::weather with type qs::io::JsonObject
 components/SettingsPageShell.qml	missing-property	Member "workspaceCount" not found on type "qs::io::JsonObject"
@@ -523,6 +525,8 @@ components/WifiView.qml	unqualified	Unqualified access
 components/WifiView.qml	unqualified	Unqualified access
 components/WifiView.qml	unqualified	Unqualified access
 components/WifiView.qml	unqualified	Unqualified access
+components/ember/EmberIslands.qml	uncreatable-type	Type PanelWindow is not creatable.
+components/ember/EmberIslands.qml	uncreatable-type	Type PanelWindow is not creatable.
 core/AppUsage.qml	import	Type AppUsage not declared as singleton in qmldir but using pragma Singleton
 core/Audio.qml	import	Type Audio not declared as singleton in qmldir but using pragma Singleton
 core/Audio.qml	missing-property	Member "values" not found on type "UntypedObjectModel"
@@ -642,11 +646,15 @@ shell.qml	missing-property	Could not find property "bottom".
 shell.qml	missing-property	Could not find property "top".
 shell.qml	missing-property	Member "dashboardStackRef" not found on type "PanelWindowInterface"
 shell.qml	missing-property	Member "dashboardStackRef" not found on type "PanelWindowInterface"
+shell.qml	missing-property	Member "ember" not found on type "qs::io::JsonObject"
+shell.qml	missing-property	Member "ember" not found on type "qs::io::JsonObject"
+shell.qml	missing-property	Member "ember" not found on type "qs::io::JsonObject"
 shell.qml	missing-property	Member "isExpanded" not found on type "PanelWindowInterface"
 shell.qml	missing-property	Member "isExpanded" not found on type (component in shell.qml)::pill with type PanelWindowInterface
 shell.qml	missing-property	Member "pillMonitor" not found on type "qs::io::JsonObject"
 shell.qml	missing-property	Member "pillMonitor" not found on type "qs::io::JsonObject"
 shell.qml	uncreatable-type	Type PanelWindow is not creatable.
+shell.qml	unqualified	Unqualified access
 shell.qml	unqualified	Unqualified access
 shell.qml	unresolved-type	Type "AuthFlow" of property "flow" not found. This is likely due to a missing dependency entry or a type not being exposed declaratively.
 wallpaper.qml	missing-property	Member "dynamicEnabled" not found on type "qs::io::JsonObject"

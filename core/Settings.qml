@@ -313,6 +313,9 @@ Singleton {
                 // just that one screen. Matches iNiR's "restrict to primary
                 // monitor" settings pattern.
                 property string pillMonitor: ""
+                // Wisp Ember islands instead of the pill (ADR 0002). Off until
+                // the islands can replace it; removed in M9.
+                property bool ember: false
                 // First-run gate. False (the default, and therefore what a
                 // machine with no settings.json at all reads) launches
                 // welcome.qml once at shell startup — see core/FirstRun.qml.

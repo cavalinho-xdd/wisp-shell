@@ -83,12 +83,13 @@ def main():
     fixed = baseline - current
 
     if new:
-        left = Counter(new)
+        # The baseline has no line numbers, so when a file already had this
+        # warning, every occurrence is listed and the new one is among them.
         for key, line, col in found:
-            if left[key]:
-                left[key] -= 1
+            if new[key]:
                 file, cat, msg = key.split("\t")
-                print(f"{file}:{line}:{col}: [{cat}] {msg}")
+                note = f"  ({new[key]} new of {current[key]})" if current[key] > new[key] else ""
+                print(f"{file}:{line}:{col}: [{cat}] {msg}{note}")
         print(f"lint: {sum(new.values())} new warning(s)")
         return 1
 

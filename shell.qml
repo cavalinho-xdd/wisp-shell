@@ -12,6 +12,7 @@ import Quickshell.Bluetooth
 import Quickshell.Io
 import "core"
 import "components"
+import "components/ember"
 
 ShellRoot {
     // One-time, compositor-global init — must run exactly once regardless of
@@ -156,7 +157,7 @@ ShellRoot {
                         top: true; bottom: true; left: true; right: true
                     }
                     color: "transparent"
-                    visible: screenRoot.pill.isExpanded
+                    visible: screenRoot.pill.isExpanded && !Settings.conf.shell.ember
                     exclusionMode: ExclusionMode.Ignore
                     WlrLayershell.namespace: "wisp-catcher"
 
@@ -217,9 +218,18 @@ ShellRoot {
                     OsdPopup {}
                 }
 
+                // Wisp Ember islands (ADR 0002): built beside the pill and
+                // shown instead of it while the setting is on. Not created at
+                // all while it is off.
+                property LazyLoader ember: LazyLoader {
+                    active: Settings.conf.shell.ember
+                    EmberIslands { screen: screenRoot.modelData }
+                }
+
                 property PanelWindow pill: PanelWindow {
                     id: floatingPill
                     screen: screenRoot.modelData
+                    visible: !Settings.conf.shell.ember
 
                     property alias dashboardStackRef: dashboardStack
 

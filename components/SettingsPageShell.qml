@@ -22,6 +22,13 @@ CfgPage {
             checked: Settings.conf.shell.clock12h
             onToggled: value => Settings.conf.shell.clock12h = value
         }
+        CfgSwitch {
+            icon: "󰈸"
+            text: "Ember islands (preview)"
+            hint: "The new Wisp Ember islands instead of the pill. Unfinished"
+            checked: Settings.conf.shell.ember
+            onToggled: value => Settings.conf.shell.ember = value
+        }
     }
 
     CfgSection {
