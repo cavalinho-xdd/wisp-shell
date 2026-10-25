@@ -15,17 +15,20 @@ generated/
 .GEMINI.md
 CLAUDE.md
 plan.md
-# Ignore stray markdown notes; project docs are listed explicitly.
+# The repo holds what the shell needs to run. Plans, design notes, changelog,
+# probes and dev tooling stay on the developer's machine.
 *.md
 !README.md
-!PRODUCT.md
-!DESIGN.md
-!CHANGELOG.md
-!docs/**/*.md
 !.github/**/*.md
+docs/
+probes/
+scripts/lint.py
+scripts/lint-baseline.txt
+scripts/shot.sh
+scripts/test_notif_rules.js
+scripts/docker-test/
 
-# Throwaway API probes belong in probes/ (tracked, left out of the package by
-# PKGBUILD). Quick ones dropped in the repo root stay out of git.
+# Throwaway API probes (probes/ is local too).
 /test*.qml
 /probe*.qml
 scripts/docker-test/logs/
@@ -35,5 +38,3 @@ skills-lock.json
 # Quickshell points this at its tooling VFS; machine-specific.
 .qmlls.ini
 
-# Before/after screenshots from scripts/shot.sh go into the PR, not git.
-docs/screens/
