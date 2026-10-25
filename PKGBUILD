@@ -31,6 +31,9 @@ package() {
   install -d "$pkgdir/usr/share/wisp-shell"
   cp -a * "$pkgdir/usr/share/wisp-shell/"
   rm -rf "$pkgdir/usr/share/wisp-shell/probes"
+  # Assistant skill; never part of the package (the `*` glob skips dotfiles
+  # today, this keeps it that way if the copy changes).
+  rm -rf "$pkgdir/usr/share/wisp-shell/.claude"
   
   install -d "$pkgdir/usr/bin"
   ln -s /usr/share/wisp-shell/wisp "$pkgdir/usr/bin/wisp"

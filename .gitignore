@@ -6,7 +6,9 @@ events.json
 app_usage.json
 generated/
 
-# Editor / assistant scratch
+# Editor / assistant scratch. .claude/ (the project skill) lives on the
+# developer's machines only; the repo holds what the shell needs to run.
+.claude/
 .impeccable
 .tokensave
 *.original.md
@@ -21,7 +23,6 @@ plan.md
 !CHANGELOG.md
 !docs/**/*.md
 !.github/**/*.md
-!.claude/skills/**/*.md
 
 # Throwaway API probes belong in probes/ (tracked, left out of the package by
 # PKGBUILD). Quick ones dropped in the repo root stay out of git.
