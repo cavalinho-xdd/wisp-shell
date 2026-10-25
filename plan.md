@@ -1,5 +1,7 @@
 # Wisp — Plan & Progress Tracker
 
+> **Current work:** the Wisp Ember redesign is tracked in `docs/ember-plan.md` (milestones) and `docs/decisions/` (decision records). This file is the history of earlier work.
+
 Project named **Wisp** 2026-07-28 (dir renamed `qmlshell` → `wisp-shell`) — every other reference dotfiles project has a name (illogical-impulse, caelestia, Serpentinum, Noctalia, DankMaterialShell, ML4W); this one didn't. "Wisp": small glowing thing that floats — matches the floating pill's own morph/glow identity directly.
 
 **Rename fallout, fixed**: grepped the whole tree for `coding/qmlshell` after the `mv` — found and fixed one real functional breakage (`hypridle.conf`'s `$lock_cmd` had a hardcoded `qs -p ~/coding/qmlshell/lock.qml`, would have silently failed to find the file if idle takeover were ever run) plus stale pointers in `.tokensave/config.json`'s `root_dir` and this file's own architecture-summary tree. Verified `qs -p shell.qml`/`settings.qml` both still load clean from the new path.
