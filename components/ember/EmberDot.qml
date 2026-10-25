@@ -3,8 +3,8 @@ import QtQuick.Effects
 import "../../core"
 
 // The ember: the one light in the shell (DESIGN.md). Breathes slowly while
-// idle and beats while media plays. Animators run on the render thread, and
-// `running` lets the owner stop them while the islands are hidden.
+// idle and beats while media plays. `running` lets the owner stop it while
+// the islands are hidden.
 Item {
     id: dot
 
@@ -36,28 +36,30 @@ Item {
         }
     }
 
-    // Idle: opacity 0.55 <-> 1, scale 0.85 <-> 1 over one breath.
-    ParallelAnimation {
-        running: dot.running && !dot.playing && !Theme.reduceMotion
-        loops: Animation.Infinite
-        SequentialAnimation {
-            OpacityAnimator { target: light; to: 0.55; duration: Theme.emberBreathe / 2; easing.type: Easing.InOutSine }
-            OpacityAnimator { target: light; to: 1; duration: Theme.emberBreathe / 2; easing.type: Easing.InOutSine }
-        }
-        SequentialAnimation {
-            ScaleAnimator { target: light; to: 0.85; duration: Theme.emberBreathe / 2; easing.type: Easing.InOutSine }
-            ScaleAnimator { target: light; to: 1; duration: Theme.emberBreathe / 2; easing.type: Easing.InOutSine }
-        }
-    }
+    // Idle: opacity 0.55 <-> 1, scale 0.85 <-> 1 over one breath. Playing:
+    // always bright, scale 0.9 <-> 1.15 over two beats. Stepped at 20 fps
+    // instead of animated per frame: each frame redraws the whole island
+    // window, and the motion is too slow to show the steps.
+    property real phase: 0
+    readonly property real wave: Math.cos(phase * 2 * Math.PI)
 
-    // Playing: a quicker beat, always bright.
-    SequentialAnimation {
-        running: dot.running && dot.playing && !Theme.reduceMotion
-        loops: Animation.Infinite
-        ParallelAnimation {
-            OpacityAnimator { target: light; to: 1; duration: Theme.emberBeat; easing.type: Easing.OutSine }
-            ScaleAnimator { target: light; to: 1.15; duration: Theme.emberBeat; easing.type: Easing.OutSine }
-        }
-        ScaleAnimator { target: light; to: 0.9; duration: Theme.emberBeat; easing.type: Easing.InOutSine }
+    Timer {
+        interval: 50
+        repeat: true
+        running: dot.running && !Theme.reduceMotion
+        onTriggered: dot.phase = (dot.phase + interval / (dot.playing ? Theme.emberBeat * 2 : Theme.emberBreathe)) % 1
+        onRunningChanged: if (!running) dot.phase = 0
+    }
+    Binding {
+        target: light
+        property: "opacity"
+        value: dot.playing ? 1 : 0.775 + 0.225 * dot.wave
+        when: !Theme.reduceMotion
+    }
+    Binding {
+        target: light
+        property: "scale"
+        value: dot.playing ? 1.025 - 0.125 * dot.wave : 0.925 + 0.075 * dot.wave
+        when: !Theme.reduceMotion
     }
 }

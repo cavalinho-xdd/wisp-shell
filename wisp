@@ -53,6 +53,19 @@ run_entry() {
 
 running_pids() { pgrep -f "$SHELL_DIR/shell.qml" 2>/dev/null || true; }
 
+# Helper scripts the shell starts (osu_connect.js, usb_watch.sh, ...) are not
+# killed with it: they outlive every restart as orphans, each holding ~80 MB.
+# Stop them, and their pipeline children (udevadm), by script path.
+reap_helpers() {
+    local pid
+    for pid in $(pgrep -f "$SHELL_DIR/scripts/(osu_connect\.js|usb_watch\.sh|game_watch\.sh|sysmon_snapshot\.sh)" 2>/dev/null); do
+        pkill -P "$pid" 2>/dev/null || true
+        kill "$pid" 2>/dev/null || true
+    done
+    # Left behind by earlier restarts, before usb_watch.sh cleaned up after itself.
+    pkill -P 1 -f "udevadm monitor --udev --subsystem-match=usb --property" 2>/dev/null || true
+}
+
 # SUPER+Space calls this every time (both the fresh-open and the "press
 # again to close" case) — toggle, not just launch. A second instance can't
 # just be launched over the first (two overlapping layer-shell surfaces,
@@ -213,9 +226,11 @@ case "${1:-}" in
         pids="$(running_pids)"
         [ -n "$pids" ] || die "not running"
         echo "$pids" | xargs -r kill
+        sleep 0.2; reap_helpers
         echo "stopped" ;;
     restart)
         pids="$(running_pids)"; [ -n "$pids" ] && echo "$pids" | xargs -r kill && sleep 0.5
+        reap_helpers
         exec "$0" start ;;
 
     status)  status ;;

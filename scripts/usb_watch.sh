@@ -1,6 +1,9 @@
 #!/bin/bash
 # Monitor udev for USB connects/disconnects (devices only, ignore interfaces).
 
+# The pipeline below outlives this script when it is killed; take it along.
+trap 'pkill -P $$' EXIT TERM
+
 stdbuf -oL udevadm monitor --udev --subsystem-match=usb --property | awk '
 /^ACTION=add/ { action="add" }
 /^ACTION=remove/ { action="remove" }
