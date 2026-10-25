@@ -146,6 +146,7 @@ Singleton {
     readonly property real glowBlurOpen: 46
     readonly property real innerLightAlpha: 0.16
 
+
     // Geometry
     readonly property int islandHeight: 40
     readonly property int islandMargin: 12
@@ -250,6 +251,15 @@ Singleton {
     readonly property real hoverScale: reduceMotion ? 1 : 1.04
     // Collapsed island while the button is down: feedback on press, not release.
     readonly property real pressScale: reduceMotion ? 1 : 0.97
+
+    // Volume / mic / brightness popup: an island-high pill with room around it
+    // for its glow (the window is the pill plus osdGlowRoom on every side).
+    readonly property int osdWidth: 240
+    readonly property int osdIconSize: 20
+    readonly property int osdTrackHeight: 6
+    readonly property int osdReadoutWidth: 28
+    readonly property real osdScale: reduceMotion ? 1 : 0.96
+    readonly property int osdGlowRoom: Math.ceil(glowBlur * glow) + 8
 
     // Easing curve for fluid bounce
     readonly property var easeSpring: Easing.OutBack

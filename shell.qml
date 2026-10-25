@@ -214,9 +214,11 @@ ShellRoot {
                     WlrLayershell.layer: WlrLayer.Overlay
 
                     anchors { bottom: true }
-                    margins { bottom: 140 }
-                    implicitWidth: 220
-                    implicitHeight: 64
+                    // The window holds the pill and its glow; the margin keeps
+                    // the pill where it always was (140 px above the edge).
+                    margins { bottom: 140 - Theme.osdGlowRoom }
+                    implicitWidth: Theme.osdWidth + Theme.osdGlowRoom * 2
+                    implicitHeight: Theme.islandHeight + Theme.osdGlowRoom * 2
 
                     OsdPopup {}
                 }
