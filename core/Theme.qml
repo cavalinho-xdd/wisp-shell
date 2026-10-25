@@ -172,6 +172,10 @@ Singleton {
     readonly property real flareGlowBoost: 1.5
     // Control centre in the right island.
     readonly property int ccWidth: 400
+    // Wi-Fi / Bluetooth orb.
+    readonly property int orbSize: 210
+    readonly property int listRow: 44
+    readonly property int listRows: 6
     readonly property int notifRow: 48
     readonly property int notifIcon: 30
     // Notification rows visible at once in the list; more scroll.

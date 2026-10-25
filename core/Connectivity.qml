@@ -21,9 +21,15 @@ Singleton {
         return wifiDevice.networks.values.find(n => n.connected) ?? null;
     }
     readonly property bool wifiConnected: !!network
+    // Visible networks, strongest first.
+    readonly property var networks: wifiEnabled && wifiDevice
+        ? wifiDevice.networks.values.slice().sort((a, b) => b.signalStrength - a.signalStrength) : []
 
     readonly property var btAdapter: Bluetooth.defaultAdapter
     readonly property bool btEnabled: !!btAdapter && btAdapter.enabled
+    // Paired devices first, connected ones on top of those.
+    readonly property var btDevices: btEnabled
+        ? btAdapter.devices.values.slice().sort((a, b) => (b.connected - a.connected) || (b.paired - a.paired)) : []
     readonly property var btConnected: btEnabled ? btAdapter.devices.values.filter(d => d.connected) : []
 
     function toggleWifi(): void {

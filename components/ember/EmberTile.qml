@@ -12,7 +12,11 @@ Item {
     property string subtitle: ""
     property bool checked: false
 
+    // A chevron that opens the detail view of this tile.
+    property bool hasMore: false
+
     signal clicked()
+    signal moreClicked()
 
     implicitHeight: Theme.controlSizeBig + Theme.spaceMd
     activeFocusOnTab: true
@@ -58,7 +62,7 @@ Item {
     Column {
         anchors.verticalCenter: parent.verticalCenter
         x: well.x + well.width + Theme.spaceSm
-        width: parent.width - x - Theme.spaceSm
+        width: parent.width - x - Theme.spaceSm - (tile.hasMore ? more.width : 0)
 
         Text {
             width: parent.width
@@ -79,9 +83,39 @@ Item {
         }
     }
 
+    Item {
+        id: more
+        visible: tile.hasMore
+        anchors.verticalCenter: parent.verticalCenter
+        x: parent.width - width - Theme.spaceXs
+        width: Theme.controlSize - Theme.spaceXs
+        height: width
+        Accessible.role: Accessible.Button
+        Accessible.name: tile.title + " details"
+        activeFocusOnTab: tile.hasMore
+        Keys.onReturnPressed: tile.moreClicked()
+
+        Text {
+            anchors.centerIn: parent
+            text: "󰅂"
+            color: moreMouse.containsMouse ? Theme.islandText : Theme.islandMuted
+            font.family: Theme.fontIcon
+            font.pixelSize: Theme.textBody
+            Behavior on color { ColorAnimation { duration: Theme.motionFast } }
+        }
+        MouseArea {
+            id: moreMouse
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: tile.moreClicked()
+        }
+    }
+
     MouseArea {
         id: mouse
         anchors.fill: parent
+        z: -1
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onClicked: tile.clicked()

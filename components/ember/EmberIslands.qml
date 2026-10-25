@@ -47,6 +47,8 @@ Scope {
         target: "ember-" + root.screen.name
         function toggle(island: string): void { controller.toggle(island); }
         function close(): void { controller.close(); }
+        // Shows a detail view of the open right island: cc, wifi, bluetooth.
+        function view(name: string): void { controller.rightView = name; }
         function launcher(): void { controller.toggleLauncher(); }
         // Fills the notification list with n made-up records (the first two
         // live) without touching the saved history; 0 empties it.
@@ -88,7 +90,7 @@ Scope {
         // Fixed at the tallest open island plus room for its glow: resizing
         // the surface per frame flashes grey (references/gotchas.md). Only the
         // islands inside animate; the mask keeps clicks on them.
-        implicitHeight: Theme.islandMargin + Math.max(launcher.implicitHeight, cc.implicitHeight) + Theme.glowBlurOpen * Theme.glow
+        implicitHeight: Theme.islandMargin + Math.max(launcher.implicitHeight, cc.implicitHeight, wifiOrb.implicitHeight, btOrb.implicitHeight) + Theme.glowBlurOpen * Theme.glow
 
         WlrLayershell.layer: WlrLayer.Overlay
         WlrLayershell.namespace: "wisp-ember"
@@ -219,18 +221,34 @@ Scope {
                 transformOrigin: Item.TopRight
                 dimmed: controller.anyOpen && !open
                 collapsedWidth: status.implicitWidth
+                readonly property string view: controller.rightView
                 openWidth: cc.implicitWidth
-                openHeight: cc.implicitHeight
+                openHeight: view === "wifi" ? wifiOrb.implicitHeight : (view === "bluetooth" ? btOrb.implicitHeight : cc.implicitHeight)
                 open: controller.openIsland === "right"
-                lit: open
+                lit: open && view === "cc"
                 lightX: cc.emberPoint.x
                 lightY: cc.emberPoint.y
                 onClicked: controller.toggle("right")
 
                 ControlCentre {
                     id: cc
-                    lit: right.open
-                    enabled: right.open
+                    lit: right.open && right.view === "cc"
+                    enabled: lit
+                    onShowView: view => controller.rightView = view
+                }
+
+                WifiOrb {
+                    id: wifiOrb
+                    lit: right.open && right.view === "wifi"
+                    enabled: lit
+                    onBack: controller.rightView = "cc"
+                }
+
+                BluetoothOrb {
+                    id: btOrb
+                    lit: right.open && right.view === "bluetooth"
+                    enabled: lit
+                    onBack: controller.rightView = "cc"
                 }
 
                 StatusCollapsed {

@@ -8,10 +8,14 @@ QtObject {
     readonly property bool anyOpen: openIsland !== "none"
     // What the open centre island shows: "media" or "launcher".
     property string centerView: "media"
+    // What the open right island shows: "cc", "wifi", "wifi-list", "bluetooth"
+    // or "bluetooth-list".
+    property string rightView: "cc"
     readonly property bool launcherOpen: openIsland === "center" && centerView === "launcher"
 
     function toggle(name: string): void {
         if (name === "center" && openIsland !== "center") centerView = "media";
+        if (name === "right" && openIsland !== "right") rightView = "cc";
         openIsland = openIsland === name ? "none" : name;
     }
 

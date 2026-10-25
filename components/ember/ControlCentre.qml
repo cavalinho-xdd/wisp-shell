@@ -9,6 +9,9 @@ Item {
     id: root
 
     property bool lit: false
+
+    // Asks the island to show a detail view: "wifi" or "bluetooth".
+    signal showView(string view)
     // Centre of the volume head, for the island's inner light.
     readonly property point emberPoint: Qt.point(
         column.x + volumeRow.x + volumeSlider.x + volumeSlider.headX,
@@ -64,7 +67,9 @@ Item {
                     title: "Wi‑Fi"
                     subtitle: !Connectivity.wifiEnabled ? "Off" : (Connectivity.network ? Connectivity.network.name : "Not connected")
                     checked: Connectivity.wifiEnabled
+                    hasMore: true
                     onClicked: Connectivity.toggleWifi()
+                    onMoreClicked: root.showView("wifi")
                 }
                 EmberTile {
                     width: root.tileWidth
@@ -72,7 +77,9 @@ Item {
                     title: "Bluetooth"
                     subtitle: !Connectivity.btEnabled ? "Off" : (Connectivity.btConnected.length > 0 ? Connectivity.btConnected[0].name : "On")
                     checked: Connectivity.btEnabled
+                    hasMore: true
                     onClicked: Connectivity.toggleBluetooth()
+                    onMoreClicked: root.showView("bluetooth")
                 }
                 EmberTile {
                     width: root.tileWidth
