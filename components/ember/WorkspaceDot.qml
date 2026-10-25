@@ -4,23 +4,28 @@ import Quickshell.Hyprland
 import "../../core"
 
 // One workspace in the left island: a dot, or for the active one a longer
-// ember pill with a glow. The delegate gets its HyprlandWorkspace as modelData
-// from WorkspacesView; clicking it switches to that workspace.
+// ember pill with a glow. The delegate gets its HyprlandWorkspace from
+// WorkspacesView; clicking it switches to that workspace.
 Item {
     id: dot
 
-    required property var modelData
-    readonly property bool isActive: modelData.active
+    // This slot's HyprlandWorkspace; the slot lives on while the workspace
+    // behind it changes, so the pill slides instead of being rebuilt.
+    property var workspace: null
+    readonly property bool isActive: !!workspace && workspace.active
+    // False for the first frame, so a new dot grows in from nothing.
+    property bool present: false
+    Component.onCompleted: present = true
 
     implicitWidth: pill.width
     implicitHeight: Theme.islandHeight
 
     Accessible.role: Accessible.Button
-    Accessible.name: "Workspace " + modelData.name
+    Accessible.name: "Workspace " + (workspace ? workspace.name : "")
     Accessible.onPressAction: dot.activate()
 
     function activate(): void {
-        Hyprland.dispatch("hl.dsp.focus({ workspace = " + modelData.id + " })");
+        Hyprland.dispatch("hl.dsp.focus({ workspace = " + (workspace ? workspace.id : 0) + " })");
     }
 
     RectangularShadow {
@@ -35,8 +40,10 @@ Item {
     Rectangle {
         id: pill
         anchors.verticalCenter: parent.verticalCenter
-        width: dot.isActive ? Theme.workspaceActiveWidth : Theme.workspaceDot
+        width: !dot.present ? 0 : (dot.isActive ? Theme.workspaceActiveWidth : Theme.workspaceDot)
         height: Theme.workspaceDot
+        opacity: dot.present ? 1 : 0
+        Behavior on opacity { NumberAnimation { duration: Theme.motionQuick; easing.type: Easing.OutCubic } }
         radius: height / 2
         color: dot.isActive ? Theme.ember : (mouse.containsMouse ? Theme.islandText : Theme.islandMuted)
         Behavior on width { NumberAnimation { duration: Theme.motionQuick; easing.type: Easing.OutCubic } }

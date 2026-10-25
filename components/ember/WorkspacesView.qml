@@ -12,7 +12,7 @@ Item {
     // This screen's HyprlandMonitor.
     required property var monitor
 
-    readonly property var shown: {
+    readonly property var wanted: {
         if (!monitor) return [];
         const mine = Hyprland.workspaces.values
             .filter(w => w.id > 0 && !!w.monitor && w.monitor.name === monitor.name);
@@ -20,6 +20,20 @@ Item {
         if (active && !mine.includes(active)) mine.push(active);
         return mine.sort((a, b) => a.id - b.id);
     }
+    // Hyprland briefly reports no workspaces while one is created or
+    // destroyed; keep the last real list so the dots do not vanish and grow
+    // back in.
+    property var shown: []
+    onWantedChanged: if (wanted.length > 0) shown = wanted
+    Component.onCompleted: if (wanted.length > 0) shown = wanted
+    // One row per dot, only ever added or removed at the end. A Repeater
+    // given a plain number rebuilds every delegate when it changes.
+    ListModel { id: slots }
+    onShownChanged: {
+        while (slots.count < shown.length) slots.append({});
+        while (slots.count > shown.length) slots.remove(slots.count - 1);
+    }
+
     readonly property int activeIndex: shown.findIndex(w => w.active)
     // Centre of the active pill, for the island's inner light.
     readonly property point emberPoint: Qt.point(
@@ -43,9 +57,13 @@ Item {
         x: Theme.spaceMd
         spacing: Theme.workspaceGap
 
+        // A rebuilt dot has nothing to animate from, so the slots stay put.
         Repeater {
-            model: root.shown
-            WorkspaceDot {}
+            model: slots
+            WorkspaceDot {
+                required property int index
+                workspace: root.shown[index]
+            }
         }
     }
 
