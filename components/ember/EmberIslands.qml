@@ -210,11 +210,18 @@ Scope {
                 y: Theme.islandMargin
                 transformOrigin: Item.TopRight
                 dimmed: controller.anyOpen && !open
-                collapsedWidth: 118
+                collapsedWidth: status.implicitWidth
                 openWidth: 380
                 openHeight: 318
                 open: controller.openIsland === "right"
                 onClicked: controller.toggle("right")
+
+                StatusCollapsed {
+                    id: status
+                    opacity: right.open ? 0 : 1
+                    visible: opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: Theme.motionFast; easing.type: Easing.OutCubic } }
+                }
             }
         }
     }
