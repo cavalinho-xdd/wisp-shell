@@ -220,11 +220,12 @@ Item {
             index: 4
             width: column.width
 
-            Rectangle {
+            // The list sits quietly on the card: a fill barely lighter than it.
+            EmberSurface {
                 width: column.width
                 implicitHeight: Theme.spaceSm * 2 + headerRow.implicitHeight + Theme.spaceXs + Theme.notifRow * Theme.ccNotifRows
                 radius: Theme.radiusTile
-                color: Theme.ash
+                base: Qt.alpha(Theme.ash, 0.55)
 
                 Item {
                     id: headerRow

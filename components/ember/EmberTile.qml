@@ -29,33 +29,49 @@ Item {
     Keys.onReturnPressed: tile.clicked()
     Keys.onSpacePressed: tile.clicked()
 
+    // Raised plate; while on, the whole tile is lit by the ember from the icon.
+    EmberSurface {
+        id: plate
+        anchors.fill: parent
+        lit: tile.checked
+        base: mouse.containsMouse ? Theme.ashHi : Theme.ash
+        radius: Theme.radiusTile
+        lightX: well.x + well.width / 2
+        lightY: height / 2
+        scale: mouse.pressed ? Theme.pressScale : 1
+        Behavior on base { ColorAnimation { duration: Theme.motionFast } }
+        Behavior on scale { NumberAnimation { duration: Theme.motionFast; easing.type: Easing.OutCubic } }
+    }
+
+    // Keyboard focus ring, outside the plate so it never reads as depth.
     Rectangle {
         anchors.fill: parent
         radius: Theme.radiusTile
-        color: mouse.containsMouse ? Theme.ashHi : Theme.ash
-        scale: mouse.pressed ? 0.97 : 1
-        Behavior on color { ColorAnimation { duration: Theme.motionFast } }
-        Behavior on scale { NumberAnimation { duration: Theme.motionFast; easing.type: Easing.OutCubic } }
-        border.width: tile.activeFocus ? 1.5 : 0
+        color: "transparent"
+        visible: tile.activeFocus
+        border.width: 1.5
         border.color: Theme.ember
     }
 
-    Rectangle {
+    // The well: dark, the icon is the ember when on.
+    EmberSurface {
         id: well
         x: Theme.spaceSm
         anchors.verticalCenter: parent.verticalCenter
         width: Theme.controlSize
         height: width
         radius: width / 2
-        color: tile.checked ? Theme.ember : Theme.ashHi
-        Behavior on color { ColorAnimation { duration: Theme.motionFast } }
+        base: tile.checked ? Theme.smoke : Theme.ashHi
+        scale: plate.scale
+        Behavior on base { ColorAnimation { duration: Theme.motionFast } }
 
         Text {
             anchors.centerIn: parent
             text: tile.icon
-            color: tile.checked ? Theme.smoke : Theme.islandMuted
+            color: tile.checked ? Theme.ember : Theme.islandMuted
             font.family: Theme.fontIcon
             font.pixelSize: Theme.textTitle
+            Behavior on color { ColorAnimation { duration: Theme.motionFast } }
         }
     }
 

@@ -146,6 +146,16 @@ Singleton {
     readonly property real glowBlurOpen: 46
     readonly property real innerLightAlpha: 0.16
 
+    // Depth: layers of fill (smoke, ash, ash-high), one real shadow under an
+    // open card, a 1 px crescent of light on the top edge of islands, and the
+    // ember lighting an active surface from inside. No edges round a shape.
+    readonly property color edgeLight: Qt.rgba(1, 1, 1, 0.06)
+    readonly property real litFill: 0.06
+    readonly property real litHalo: 0.30
+    // The shadow of an open card: offset down, soft, black.
+    readonly property color cardShadow: Qt.rgba(0, 0, 0, 0.55)
+    readonly property real cardShadowBlur: 36
+    readonly property int cardShadowOffset: 12
 
     // Geometry
     readonly property int islandHeight: 40

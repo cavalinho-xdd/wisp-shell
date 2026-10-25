@@ -82,6 +82,18 @@ Item {
     Accessible.role: Accessible.Button
     Accessible.name: "Wisp island"
 
+    // An open island floats above the desktop: a real shadow, offset down.
+    RectangularShadow {
+        anchors.fill: fill
+        radius: fill.radius
+        offset: Qt.vector2d(0, Theme.cardShadowOffset)
+        color: Theme.cardShadow
+        blur: Theme.cardShadowBlur
+        opacity: island.open ? 1 : 0
+        visible: opacity > 0
+        Behavior on opacity { NumberAnimation { duration: Theme.motionMorph; easing.type: Easing.OutCubic } }
+    }
+
     RectangularShadow {
         anchors.fill: fill
         radius: fill.radius
@@ -91,10 +103,11 @@ Item {
         Behavior on color { ColorAnimation { duration: Theme.motionMorph } }
     }
 
-    Rectangle {
+    EmberSurface {
         id: fill
         anchors.fill: parent
-        color: Theme.smoke
+        base: Theme.smoke
+        topLight: true
         radius: island.open ? Theme.radiusIslandOpen : Theme.radiusIsland
         Behavior on radius { NumberAnimation { duration: Theme.motionMorph; easing.type: Easing.OutCubic } }
     }
