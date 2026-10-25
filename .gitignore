@@ -33,3 +33,6 @@ skills-lock.json
 
 # Quickshell points this at its tooling VFS; machine-specific.
 .qmlls.ini
+
+# Before/after screenshots from scripts/shot.sh go into the PR, not git.
+docs/screens/
