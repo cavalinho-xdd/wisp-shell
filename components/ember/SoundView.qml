@@ -8,6 +8,8 @@ Item {
     id: root
 
     property bool lit: false
+    // Set once the island has settled; switching views then skips the stagger.
+    property bool quick: false
 
     readonly property int maxDevices: 3
     readonly property int maxApps: 4
@@ -48,6 +50,7 @@ Item {
         spacing: Theme.spaceXs
 
         Kindle {
+            quick: root.quick
             lit: root.lit
             index: 0
             width: column.width
@@ -73,6 +76,7 @@ Item {
         }
 
         Kindle {
+            quick: root.quick
             lit: root.lit
             index: 1
             width: column.width
@@ -95,6 +99,7 @@ Item {
         }
 
         Kindle {
+            quick: root.quick
             lit: root.lit
             index: 2
             width: column.width
@@ -117,6 +122,7 @@ Item {
         }
 
         Kindle {
+            quick: root.quick
             lit: root.lit
             index: 3
             width: column.width

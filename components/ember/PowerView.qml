@@ -9,6 +9,8 @@ Item {
     id: root
 
     property bool lit: false
+    // Set once the island has settled; switching views then skips the stagger.
+    property bool quick: false
     // Index of the row waiting for its confirming click, -1 for none.
     property int armed: -1
 
@@ -53,6 +55,7 @@ Item {
         spacing: Theme.spaceXs
 
         Kindle {
+            quick: root.quick
             lit: root.lit
             index: 0
             width: column.width
@@ -80,6 +83,7 @@ Item {
         Repeater {
             model: root.actions.length
             Kindle {
+                quick: root.quick
                 id: kin
                 required property int modelData
                 readonly property int slot: modelData

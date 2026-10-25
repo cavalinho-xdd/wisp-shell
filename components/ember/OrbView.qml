@@ -9,6 +9,8 @@ Item {
     id: root
 
     property bool lit: false
+    // Set once the island has settled; switching views then skips the stagger.
+    property bool quick: false
     property string title: ""
     property bool on: false
     property string icon: ""
@@ -34,6 +36,7 @@ Item {
         spacing: Theme.spaceSm
 
         Kindle {
+            quick: root.quick
             lit: root.lit
             index: 0
             width: column.width
@@ -68,6 +71,7 @@ Item {
         }
 
         Kindle {
+            quick: root.quick
             lit: root.lit
             index: 1
             width: column.width
@@ -88,7 +92,7 @@ Item {
                     color: "transparent"
                     border.width: 1.5
                     border.color: root.on ? Qt.tint(Theme.ashHi, Qt.alpha(Theme.ember, 0.16)) : Theme.ashHi
-                    Behavior on border.color { ColorAnimation { duration: Theme.motionMorph } }
+                    Behavior on border.color { ColorAnimation { duration: Theme.motionQuick } }
 
                     // Breathes with the ember: slow, small, only while on and open.
                     SequentialAnimation on opacity {
@@ -110,7 +114,7 @@ Item {
                     Shape {
                         anchors.fill: parent
                         opacity: root.on ? 1 : 0
-                        Behavior on opacity { NumberAnimation { duration: Theme.motionMorph } }
+                        Behavior on opacity { NumberAnimation { duration: Theme.motionQuick; easing.type: Easing.OutCubic } }
                         preferredRendererType: Shape.CurveRenderer
                         ShapePath {
                             strokeWidth: -1
@@ -140,7 +144,7 @@ Item {
                             color: root.on ? Qt.tint(Theme.islandText, Qt.alpha(Theme.ember, 0.7)) : Theme.islandMuted
                             font.family: Theme.fontIcon
                             font.pixelSize: Theme.textTitle * 2
-                            Behavior on color { ColorAnimation { duration: Theme.motionMorph } }
+                            Behavior on color { ColorAnimation { duration: Theme.motionQuick } }
                         }
                         Text {
                             width: parent.width
@@ -168,6 +172,7 @@ Item {
         }
 
         Kindle {
+            quick: root.quick
             lit: root.lit
             index: 2
             width: column.width
@@ -176,7 +181,7 @@ Item {
                 id: factsRow
                 spacing: Theme.spaceSm
                 opacity: root.on ? 1 : 0.4
-                Behavior on opacity { NumberAnimation { duration: Theme.motionMorph } }
+                Behavior on opacity { NumberAnimation { duration: Theme.motionQuick; easing.type: Easing.OutCubic } }
 
                 Repeater {
                     model: root.facts.length
@@ -216,6 +221,7 @@ Item {
         }
 
         Kindle {
+            quick: root.quick
             lit: root.lit
             index: 3
             width: column.width

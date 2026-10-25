@@ -7,6 +7,8 @@ Item {
     id: root
 
     property bool lit: false
+    // Set once the island has settled; switching views then skips the stagger.
+    property bool quick: false
 
     readonly property var wx: Weather.wx
     property var today: new Date()
@@ -39,6 +41,7 @@ Item {
     implicitHeight: Theme.spaceMd * 2 + Theme.controlSize + Theme.spaceSm + Theme.calCell * 8
 
     Kindle {
+        quick: root.quick
         id: head
         lit: root.lit
         index: 0
@@ -75,6 +78,7 @@ Item {
 
         // Weather
         Kindle {
+            quick: root.quick
             id: weather
             lit: root.lit
             index: 1
@@ -165,6 +169,7 @@ Item {
 
         // Month
         Kindle {
+            quick: root.quick
             id: month
             lit: root.lit
             index: 2

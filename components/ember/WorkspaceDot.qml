@@ -39,7 +39,7 @@ Item {
         height: Theme.workspaceDot
         radius: height / 2
         color: dot.isActive ? Theme.ember : (mouse.containsMouse ? Theme.islandText : Theme.islandMuted)
-        Behavior on width { NumberAnimation { duration: Theme.motionMorph; easing.type: Easing.BezierSpline; easing.bezierCurve: Theme.curveMorph } }
+        Behavior on width { NumberAnimation { duration: Theme.motionQuick; easing.type: Easing.OutCubic } }
         Behavior on color { ColorAnimation { duration: Theme.motionFast } }
     }
 

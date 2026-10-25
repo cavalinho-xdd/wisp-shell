@@ -231,8 +231,18 @@ Scope {
                 lightY: cc.emberPoint.y
                 onClicked: controller.toggle("right")
 
+                // After the first reveal, moving between views only fades.
+                property bool settled: false
+                onOpenChanged: if (!open) settled = false
+                Timer {
+                    interval: 1000
+                    running: right.open
+                    onTriggered: right.settled = true
+                }
+
                 ControlCentre {
                     id: cc
+                    quick: right.settled
                     lit: right.open && right.view === "cc"
                     enabled: lit
                     onShowView: view => controller.rightView = view
@@ -240,6 +250,7 @@ Scope {
 
                 CalendarView {
                     id: calendar
+                    quick: right.settled
                     lit: right.open && right.view === "calendar"
                     enabled: lit
                     onBack: controller.rightView = "cc"
@@ -247,6 +258,7 @@ Scope {
 
                 PowerView {
                     id: power
+                    quick: right.settled
                     lit: right.open && right.view === "power"
                     enabled: lit
                     onBack: controller.rightView = "cc"
@@ -255,6 +267,7 @@ Scope {
 
                 SoundView {
                     id: sound
+                    quick: right.settled
                     lit: right.open && right.view === "sound"
                     enabled: lit
                     onBack: controller.rightView = "cc"
@@ -262,6 +275,7 @@ Scope {
 
                 WifiOrb {
                     id: wifiOrb
+                    quick: right.settled
                     lit: right.open && right.view === "wifi"
                     enabled: lit
                     onBack: controller.rightView = "cc"
@@ -270,6 +284,7 @@ Scope {
 
                 BluetoothOrb {
                     id: btOrb
+                    quick: right.settled
                     lit: right.open && right.view === "bluetooth"
                     enabled: lit
                     onBack: controller.rightView = "cc"
@@ -278,6 +293,7 @@ Scope {
 
                 WifiList {
                     id: wifiList
+                    quick: right.settled
                     lit: right.open && right.view === "wifi-list"
                     enabled: lit
                     onBack: controller.rightView = "wifi"
@@ -285,6 +301,7 @@ Scope {
 
                 BluetoothList {
                     id: btList
+                    quick: right.settled
                     lit: right.open && right.view === "bluetooth-list"
                     enabled: lit
                     onBack: controller.rightView = "bluetooth"

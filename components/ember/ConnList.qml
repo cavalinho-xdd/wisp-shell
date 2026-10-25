@@ -8,6 +8,8 @@ Item {
     id: root
 
     property bool lit: false
+    // Set once the island has settled; switching views then skips the stagger.
+    property bool quick: false
     property string title: ""
     property string emptyText: ""
     property var rows: []
@@ -19,6 +21,7 @@ Item {
     implicitHeight: Theme.spaceMd * 2 + Theme.controlSize + Theme.spaceSm + Theme.listRow * Theme.listRows
 
     Kindle {
+        quick: root.quick
         id: head
         lit: root.lit
         index: 0
@@ -48,6 +51,7 @@ Item {
     }
 
     Kindle {
+        quick: root.quick
         id: body
         lit: root.lit
         index: 1

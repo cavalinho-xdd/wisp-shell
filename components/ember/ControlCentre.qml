@@ -10,6 +10,8 @@ Item {
     id: root
 
     property bool lit: false
+    // Set once the island has settled; switching views then skips the stagger.
+    property bool quick: false
 
     // Asks the island to show a detail view: "wifi", "bluetooth", "sound", "power" or "calendar".
     signal showView(string view)
@@ -36,6 +38,7 @@ Item {
         spacing: Theme.spaceSm
 
         Kindle {
+            quick: root.quick
             lit: root.lit
             index: 0
             width: column.width
@@ -69,6 +72,7 @@ Item {
         }
 
         Kindle {
+            quick: root.quick
             lit: root.lit
             index: 1
             width: column.width
@@ -117,6 +121,7 @@ Item {
         }
 
         Kindle {
+            quick: root.quick
             id: volumeBlock
             lit: root.lit
             index: 2
@@ -171,6 +176,7 @@ Item {
         }
 
         Kindle {
+            quick: root.quick
             lit: root.lit
             index: 3
             width: column.width
@@ -209,6 +215,7 @@ Item {
         }
 
         Kindle {
+            quick: root.quick
             lit: root.lit
             index: 4
             width: column.width
@@ -302,6 +309,7 @@ Item {
         }
 
         Kindle {
+            quick: root.quick
             lit: root.lit
             index: 5
             width: column.width
