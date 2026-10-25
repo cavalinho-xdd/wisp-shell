@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Widgets
 import "../core"
@@ -54,19 +55,28 @@ Item {
     }
 
     // ── Card ──
+    RectangularShadow {
+        anchors.fill: card
+        radius: card.radius
+        color: Qt.alpha(Theme.ember, Math.min(1, Theme.glowAlphaOpen * Theme.glow))
+        blur: Theme.glowBlurOpen * Theme.glow
+        opacity: card.opacity
+        scale: card.scale
+    }
+
     Rectangle {
         id: card
         anchors.centerIn: parent
         width: 420
         height: cardCol.implicitHeight + 48
-        radius: 26
-        color: Theme.panelBackground
+        radius: Theme.radiusIslandOpen
+        color: Theme.smoke
         // Border only while failed — that is real state worth outlining. The
         // idle grey outline it used to always wear was decoration (DESIGN.md §16).
         border.color: Theme.red
         border.width: root.failed ? 1 : 0
-        Behavior on border.width { NumberAnimation { duration: 250 } }
-        Behavior on height { NumberAnimation { duration: 320; easing.type: Easing.OutQuint } }
+        Behavior on border.width { NumberAnimation { duration: Theme.motionFast } }
+        Behavior on height { NumberAnimation { duration: Theme.motionQuick; easing.type: Easing.OutCubic } }
 
         // Swallow clicks so the backdrop's cancel doesn't fire through the card
         MouseArea { anchors.fill: parent }
@@ -81,14 +91,14 @@ Item {
             NumberAnimation { target: shakeShift; property: "x"; to: 0; duration: 50 }
         }
 
-        // Intro: spring bloom, matching the pill's own grow curve
+        // Intro: grows in like an island opening
         opacity: 0
-        scale: 0.9
+        scale: Theme.osdScale
         Component.onCompleted: intro.start()
         ParallelAnimation {
             id: intro
-            NumberAnimation { target: card; property: "opacity"; to: 1; duration: 260; easing.type: Easing.OutCubic }
-            NumberAnimation { target: card; property: "scale"; to: 1; duration: 460; easing.type: Easing.OutBack; easing.overshoot: 1.15 }
+            NumberAnimation { target: card; property: "opacity"; to: 1; duration: Theme.motionFast; easing.type: Easing.OutCubic }
+            NumberAnimation { target: card; property: "scale"; to: 1; duration: Theme.motionMorph; easing.type: Easing.OutCubic }
         }
 
         Column {
@@ -105,10 +115,10 @@ Item {
                 id: badge
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: 56; height: 56; radius: 28
-                color: Theme.surface0
+                color: Qt.alpha(Theme.islandText, 0.08)
                 border.width: 2
-                border.color: root.failed ? Theme.red : Theme.primary
-                Behavior on border.color { ColorAnimation { duration: 250 } }
+                border.color: root.failed ? Theme.red : Theme.ember
+                Behavior on border.color { ColorAnimation { duration: Theme.motionFast } }
 
                 SequentialAnimation {
                     running: root.responseRequired && !root.failed
@@ -132,8 +142,8 @@ Item {
                     text: "󰒃"
                     font.family: Theme.fontIcon
                     font.pixelSize: 24
-                    color: root.failed ? Theme.red : Theme.primary
-                    Behavior on color { ColorAnimation { duration: 250 } }
+                    color: root.failed ? Theme.red : Theme.ember
+                    Behavior on color { ColorAnimation { duration: Theme.motionFast } }
                 }
             }
 
@@ -142,7 +152,7 @@ Item {
                 width: parent.width
                 horizontalAlignment: Text.AlignHCenter
                 text: "Authentication Required"
-                color: Theme.text
+                color: Theme.islandText
                 font.pixelSize: 17
                 font.bold: true
             }
@@ -152,7 +162,7 @@ Item {
                 width: parent.width
                 horizontalAlignment: Text.AlignHCenter
                 text: root.message
-                color: Theme.subtext0
+                color: Theme.islandMuted
                 font.pixelSize: 13
                 wrapMode: Text.Wrap
                 // Polkit messages are attacker-influencable in the sense that
@@ -168,7 +178,7 @@ Item {
                 width: parent.width
                 horizontalAlignment: Text.AlignHCenter
                 text: root.actionId
-                color: Theme.subtext0
+                color: Theme.islandMuted
                 font.pixelSize: 10
                 font.family: Theme.fontIcon
                 opacity: 0.65
@@ -190,7 +200,7 @@ Item {
                         height: 28
                         width: idLabel.implicitWidth + 24
                         radius: 14
-                        color: isSel ? Theme.primary : Theme.surface0
+                        color: isSel ? Theme.ember : Qt.alpha(Theme.islandText, 0.08)
                         Behavior on color { ColorAnimation { duration: Theme.animFast } }
                         scale: idMa.pressed ? 0.94 : (idMa.containsMouse ? 1.05 : 1.0)
                         Behavior on scale { NumberAnimation { duration: 260; easing.type: Theme.easeSpring; easing.overshoot: 1.6 } }
@@ -200,7 +210,7 @@ Item {
                             id: idLabel
                             anchors.centerIn: parent
                             text: root.identities[parent.index] ? (root.identities[parent.index].displayName || root.identities[parent.index].string) : ""
-                            color: parent.isSel ? Theme.colorOnPrimary : Theme.text
+                            color: parent.isSel ? Theme.colorOnPrimary : Theme.islandText
                             font.pixelSize: 11
                             textFormat: Text.PlainText
                             Behavior on color { ColorAnimation { duration: Theme.animFast } }
@@ -222,13 +232,13 @@ Item {
                 width: parent.width
                 height: 50
                 radius: 25
-                color: Theme.surface
+                color: Qt.alpha(Theme.islandText, 0.08)
                 border.width: 2
                 border.color: root.failed ? Theme.red
-                    : (passInput.activeFocus ? Theme.primary : Theme.outline)
-                Behavior on border.color { ColorAnimation { duration: 200 } }
+                    : (passInput.activeFocus ? Theme.ember : Qt.alpha(Theme.islandText, 0.2))
+                Behavior on border.color { ColorAnimation { duration: Theme.motionFast } }
                 opacity: root.responseRequired ? 1 : 0.5
-                Behavior on opacity { NumberAnimation { duration: 200 } }
+                Behavior on opacity { NumberAnimation { duration: Theme.motionFast } }
 
                 Text {
                     anchors.left: parent.left
@@ -237,7 +247,7 @@ Item {
                     text: "󰌾"
                     font.family: Theme.fontIcon
                     font.pixelSize: 15
-                    color: Theme.subtext0
+                    color: Theme.islandMuted
                 }
 
                 TextInput {
@@ -253,7 +263,7 @@ Item {
                     // prompt that echoes), so this must not be hardcoded.
                     echoMode: root.responseVisible ? TextInput.Normal : TextInput.Password
                     passwordCharacter: "●"
-                    color: Theme.text
+                    color: Theme.islandText
                     font.pixelSize: 15
                     clip: true
                     enabled: root.responseRequired
@@ -278,7 +288,7 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: passInput.text.length === 0
                         text: root.inputPrompt || "Password"
-                        color: Theme.subtext0
+                        color: Theme.islandMuted
                         font.pixelSize: 14
                         textFormat: Text.PlainText
                         elide: Text.ElideRight
@@ -292,7 +302,7 @@ Item {
                     anchors.rightMargin: 5
                     anchors.verticalCenter: parent.verticalCenter
                     width: 40; height: 40; radius: 20
-                    color: submitMa.containsMouse ? Theme.primary : Theme.surface0
+                    color: submitMa.containsMouse ? Theme.ember : Qt.alpha(Theme.islandText, 0.08)
                     scale: submitMa.pressed ? 0.9 : 1
                     Behavior on color { ColorAnimation { duration: Theme.animFast } }
                     Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
@@ -302,7 +312,7 @@ Item {
                         text: "󰄾"
                         font.family: Theme.fontIcon
                         font.pixelSize: 16
-                        color: submitMa.containsMouse ? Theme.colorOnPrimary : Theme.text
+                        color: submitMa.containsMouse ? Theme.colorOnPrimary : Theme.islandText
                         Behavior on color { ColorAnimation { duration: Theme.animFast } }
                     }
                     MouseArea {
@@ -321,12 +331,12 @@ Item {
                 width: parent.width
                 horizontalAlignment: Text.AlignHCenter
                 text: root.supplementaryMessage || (root.failed ? "Authentication failed — try again" : "")
-                color: (root.supplementaryIsError || root.failed) ? Theme.red : Theme.subtext0
+                color: (root.supplementaryIsError || root.failed) ? Theme.red : Theme.islandMuted
                 font.pixelSize: 12
                 wrapMode: Text.Wrap
                 textFormat: Text.PlainText
                 opacity: text.length > 0 ? 1 : 0
-                Behavior on opacity { NumberAnimation { duration: 200 } }
+                Behavior on opacity { NumberAnimation { duration: Theme.motionFast } }
             }
 
             Rectangle {
@@ -334,7 +344,7 @@ Item {
                 width: cancelLabel.implicitWidth + 40
                 height: 34
                 radius: 17
-                color: cancelMa.containsMouse ? Theme.surface0 : Theme.surface
+                color: cancelMa.containsMouse ? Qt.alpha(Theme.islandText, 0.08) : Qt.alpha(Theme.islandText, 0.08)
                 Behavior on color { ColorAnimation { duration: Theme.animFast } }
                 scale: cancelMa.pressed ? 0.95 : 1
                 Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
@@ -344,7 +354,7 @@ Item {
                     id: cancelLabel
                     anchors.centerIn: parent
                     text: "Cancel"
-                    color: Theme.subtext0
+                    color: Theme.islandMuted
                     font.pixelSize: 12
                 }
                 MouseArea {
