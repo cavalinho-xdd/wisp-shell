@@ -80,7 +80,7 @@ Scope {
         // Fixed at the tallest open island plus room for its glow: resizing
         // the surface per frame flashes grey (references/gotchas.md). Only the
         // islands inside animate; the mask keeps clicks on them.
-        implicitHeight: Theme.islandMargin + Math.max(launcher.implicitHeight, right.openHeight) + Theme.glowBlurOpen * Theme.glow
+        implicitHeight: Theme.islandMargin + Math.max(launcher.implicitHeight, cc.implicitHeight) + Theme.glowBlurOpen * Theme.glow
 
         WlrLayershell.layer: WlrLayer.Overlay
         WlrLayershell.namespace: "wisp-ember"
@@ -211,10 +211,19 @@ Scope {
                 transformOrigin: Item.TopRight
                 dimmed: controller.anyOpen && !open
                 collapsedWidth: status.implicitWidth
-                openWidth: 380
-                openHeight: 318
+                openWidth: cc.implicitWidth
+                openHeight: cc.implicitHeight
                 open: controller.openIsland === "right"
+                lit: open
+                lightX: cc.emberPoint.x
+                lightY: cc.emberPoint.y
                 onClicked: controller.toggle("right")
+
+                ControlCentre {
+                    id: cc
+                    lit: right.open
+                    enabled: right.open
+                }
 
                 StatusCollapsed {
                     id: status

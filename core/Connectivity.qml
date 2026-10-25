@@ -25,4 +25,12 @@ Singleton {
     readonly property var btAdapter: Bluetooth.defaultAdapter
     readonly property bool btEnabled: !!btAdapter && btAdapter.enabled
     readonly property var btConnected: btEnabled ? btAdapter.devices.values.filter(d => d.connected) : []
+
+    function toggleWifi(): void {
+        Networking.wifiEnabled = !Networking.wifiEnabled;
+    }
+
+    function toggleBluetooth(): void {
+        if (btAdapter) btAdapter.enabled = !btAdapter.enabled;
+    }
 }

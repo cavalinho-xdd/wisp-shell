@@ -10,6 +10,12 @@ Singleton {
     property real value: 0
     property bool ready: false
 
+    // v is 0..1. The watcher script reports the change back, so `value`
+    // follows without being set here.
+    function set(v: real): void {
+        Quickshell.execDetached(["brightnessctl", "set", Math.round(Math.max(0.01, Math.min(1, v)) * 100) + "%"]);
+    }
+
     Process {
         running: true
         command: ["bash", Quickshell.shellPath("scripts/brightness_watch.sh")]

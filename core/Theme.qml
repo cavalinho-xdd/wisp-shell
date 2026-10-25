@@ -170,6 +170,8 @@ Singleton {
     readonly property int flareWidth: 400
     readonly property int flareIcon: 44
     readonly property real flareGlowBoost: 1.5
+    // Control centre in the right island.
+    readonly property int ccWidth: 400
     // Workspaces in the left island.
     readonly property int workspaceDot: 8
     readonly property int workspaceActiveWidth: 24

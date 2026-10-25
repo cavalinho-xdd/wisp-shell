@@ -17,3 +17,4 @@ singleton ShellState ShellState.qml
 singleton Usb Usb.qml
 singleton Brightness Brightness.qml
 singleton Connectivity Connectivity.qml
+singleton QuickToggles QuickToggles.qml
