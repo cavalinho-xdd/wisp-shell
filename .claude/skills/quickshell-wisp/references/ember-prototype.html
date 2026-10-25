@@ -1,0 +1,431 @@
+<title>Wisp Ember</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a scaled 1100x620 "desktop" stage with three islands on top, controls + notes below. Deliberately single dark look. */
+:root {
+  color-scheme: dark;
+  --smoke: #0a0b0e;      /* island fill: own neutral, not from wallpaper */
+  --ash: #15171c;        /* raised surface inside islands */
+  --ash-hi: #20232a;     /* hover / inactive tile */
+  --text: #eef0f4;
+  --muted: #8a8f9b;
+  --ember: #8fd3ff;      /* the one colour taken from the wallpaper */
+  --glow: 1;             /* 0..1.6 intensity */
+  --page: #0e0f12;
+  --font: "Geist", "Inter Tight", system-ui, sans-serif;
+  --mono: "Geist Mono", ui-monospace, monospace;
+  --spring: cubic-bezier(.22, 1.18, .36, 1);
+  --soft: cubic-bezier(.2, .8, .2, 1);
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--page); color: var(--text); font-family: var(--font); font-size: 14px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 48px;
+}
+main { max-width: 1100px; margin: 0 auto; display: grid; gap: 22px; }
+header h1 { font-size: 26px; font-weight: 600; letter-spacing: -.02em; margin: 0; text-wrap: balance; }
+header p { color: var(--muted); margin: 6px 0 0; max-width: 68ch; line-height: 1.5; }
+
+/* ── stage ── */
+.stage-wrap { position: relative; width: 100%; border-radius: 14px; overflow: hidden; }
+.stage {
+  position: absolute; top: 0; left: 0; width: 1100px; height: 620px; transform-origin: 0 0;
+  background: var(--wall); transition: background .8s var(--soft); overflow: hidden; user-select: none;
+}
+.stage::after { /* soft vignette so islands read on any wall */
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(0,0,0,.35), transparent 22%);
+}
+.hint { position: absolute; bottom: 14px; left: 0; right: 0; text-align: center; color: rgba(255,255,255,.55); font-size: 12px; z-index: 1; }
+
+/* ── island ── */
+.island {
+  position: absolute; top: 12px; z-index: 5; overflow: hidden; cursor: pointer;
+  background: var(--smoke); color: var(--text);
+  border-radius: 20px;
+  transition: width .62s var(--spring), height .62s var(--spring), border-radius .5s var(--soft),
+              box-shadow .6s var(--soft), opacity .4s, filter .4s, transform .5s var(--spring);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.06),
+    0 10px 30px rgba(0,0,0,.45),
+    0 0 calc(var(--glow) * 22px) color-mix(in oklab, var(--ember) calc(var(--glow) * 22%), transparent);
+}
+.island::before { /* the light living inside the island, centred on the ember */
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(160px 90px at var(--ex, 20px) var(--ey, 18px),
+              color-mix(in oklab, var(--ember) calc(var(--glow) * 16%), transparent), transparent 70%);
+  transition: opacity .6s;
+}
+.island.open { cursor: default; border-radius: 30px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 24px 60px rgba(0,0,0,.55),
+    0 0 calc(var(--glow) * 46px) color-mix(in oklab, var(--ember) calc(var(--glow) * 26%), transparent); }
+.island.dim { opacity: .35; filter: saturate(.4); transform: scale(.96); }
+.island:not(.open):hover { transform: scale(1.04); }
+#left { left: 14px; transform-origin: top left; }
+#center { left: 50%; translate: -50% 0; transform-origin: top center; }
+#right { right: 14px; transform-origin: top right; }
+
+.pane { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity .18s; }
+.pane.on { opacity: 1; pointer-events: auto; transition: opacity .3s .12s; }
+/* "kindle": content lights up out of the glow instead of sliding in */
+.pane.on .k { animation: kindle .55s var(--soft) both; animation-delay: calc(.1s + var(--i, 0) * .05s); }
+@keyframes kindle {
+  from { opacity: 0; filter: blur(7px) brightness(2.2); transform: translateY(5px) scale(.98); }
+  to { opacity: 1; filter: none; transform: none; }
+}
+
+/* ember: the signature */
+.ember { width: 8px; height: 8px; border-radius: 50%; background: var(--ember); flex: none;
+  box-shadow: 0 0 6px var(--ember), 0 0 calc(var(--glow) * 16px) var(--ember);
+  animation: breathe 5s ease-in-out infinite; }
+.playing .ember { animation: beat .52s ease-in-out infinite alternate; }
+.ember.flare { animation: flare 1.1s var(--soft); }
+@keyframes breathe { 0%,100% { opacity: .55; transform: scale(.85); } 50% { opacity: 1; transform: scale(1); } }
+@keyframes beat { from { transform: scale(.8); opacity: .7; } to { transform: scale(1.15); opacity: 1; } }
+@keyframes flare { 0% { transform: scale(1); } 25% { transform: scale(2.4); filter: brightness(1.8); } 100% { transform: scale(1); } }
+
+.row { display: flex; align-items: center; gap: 10px; height: 100%; padding: 0 16px; white-space: nowrap; }
+.clock { font-family: var(--mono); font-weight: 500; font-size: 14px; letter-spacing: .02em; font-variant-numeric: tabular-nums; }
+.track { color: var(--muted); font-size: 12.5px; max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+.ico { width: 15px; height: 15px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.batt { font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+
+/* workspaces as lights */
+.ws { display: flex; gap: 8px; align-items: center; }
+.ws button { all: unset; width: 6px; height: 6px; border-radius: 3px; background: rgba(255,255,255,.18); cursor: pointer;
+  transition: width .45s var(--spring), background .3s, box-shadow .3s; }
+.ws button.occ { background: rgba(255,255,255,.45); }
+.ws button.act { width: 20px; background: var(--ember); box-shadow: 0 0 calc(var(--glow) * 10px) var(--ember); }
+.ws button:focus-visible { outline: 2px solid var(--ember); outline-offset: 3px; }
+
+/* ── media ── */
+.media { display: grid; grid-template-columns: 112px 1fr; gap: 18px; padding: 20px; height: 100%; }
+.art { width: 112px; height: 112px; border-radius: 16px; position: relative; overflow: hidden;
+  background: radial-gradient(circle at 30% 30%, #f6c66b, transparent 55%), radial-gradient(circle at 75% 70%, #c0567a, transparent 60%), #2a1830;
+  box-shadow: 0 8px 26px rgba(0,0,0,.5); }
+.m-title { font-size: 17px; font-weight: 600; letter-spacing: -.01em; }
+.m-artist { color: var(--muted); margin-top: 2px; }
+.m-src { color: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; margin-top: 10px; opacity: .7; }
+.bar { height: 4px; border-radius: 2px; background: var(--ash-hi); margin-top: 16px; position: relative; }
+.bar i { position: absolute; inset: 0 auto 0 0; border-radius: 2px; background: var(--text); }
+.bar i::after { content: ""; position: absolute; right: -4px; top: -2px; width: 8px; height: 8px; border-radius: 50%; background: var(--ember);
+  box-shadow: 0 0 10px var(--ember); }
+.times { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 6px; font-variant-numeric: tabular-nums; }
+.ctrls { display: flex; gap: 6px; justify-content: center; margin-top: 4px; }
+.btn { all: unset; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; color: var(--text); transition: background .2s, transform .2s var(--spring); }
+.btn:hover { background: var(--ash-hi); }
+.btn:active { transform: scale(.9); }
+.btn.big { width: 44px; height: 44px; background: var(--ash); }
+.btn:focus-visible { outline: 2px solid var(--ember); }
+
+/* ── control centre ── */
+.cc { padding: 16px; display: grid; gap: 10px; }
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tile { all: unset; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 18px; background: var(--ash); transition: background .3s, transform .2s var(--spring); }
+.tile:active { transform: scale(.97); }
+.tile .dot { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--ash-hi); color: var(--muted); transition: all .35s var(--soft); }
+.tile.on .dot { background: var(--ember); color: var(--smoke); box-shadow: 0 0 calc(var(--glow) * 16px) color-mix(in oklab, var(--ember) 60%, transparent); }
+.tile b { display: block; font-weight: 500; font-size: 13.5px; }
+.tile small { color: var(--muted); font-size: 12px; }
+.tile:focus-visible { outline: 2px solid var(--ember); }
+.slide { background: var(--ash); border-radius: 18px; padding: 10px 12px 12px; }
+.slide-h { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 500; margin-bottom: 8px; }
+.slide-h button { all: unset; cursor: pointer; color: var(--muted); padding: 2px 6px; border-radius: 8px; font-size: 12px; }
+.slide-h button:hover { background: var(--ash-hi); color: var(--text); }
+input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 26px; border-radius: 13px; margin: 0; cursor: pointer;
+  background: linear-gradient(90deg, color-mix(in oklab, var(--ember) 85%, white) var(--v), var(--ash-hi) var(--v)); }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 4px; height: 26px; background: transparent; }
+input[type=range]::-moz-range-thumb { width: 4px; height: 26px; border: 0; background: transparent; }
+input[type=range]:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+
+.list { display: grid; gap: 6px; }
+.dev { all: unset; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 14px; background: var(--ash); font-size: 13px; }
+.dev:hover { background: var(--ash-hi); }
+.dev .ind { width: 6px; height: 6px; border-radius: 50%; background: transparent; margin-left: auto; }
+.dev.sel { color: var(--text); }
+.dev.sel .ind { background: var(--ember); box-shadow: 0 0 8px var(--ember); }
+.dev:not(.sel) { color: var(--muted); }
+.sub-h { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px; }
+.lbl { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 6px 2px 0; }
+
+/* ── launcher ── */
+.launch { padding: 14px; display: grid; gap: 10px; grid-template-rows: auto 1fr; height: 100%; }
+.search { display: flex; align-items: center; gap: 10px; padding: 0 12px; height: 44px; border-radius: 16px; background: var(--ash); }
+.search input { all: unset; flex: 1; font-size: 15px; color: var(--text); }
+.apps { display: grid; gap: 4px; align-content: start; }
+.app { display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 12px; color: var(--muted); }
+.app.sel { background: var(--ash); color: var(--text); }
+.app .sq { width: 28px; height: 28px; border-radius: 9px; background: var(--ash-hi); display: grid; place-items: center; font-size: 12px; font-weight: 600; color: var(--text); }
+.app.sel .sq { background: var(--ember); color: var(--smoke); }
+.app kbd { margin-left: auto; font-family: var(--mono); font-size: 11px; opacity: .6; }
+
+/* ── notif ── */
+.notif .from { font-size: 12px; color: var(--muted); }
+.notif .msg { font-size: 13.5px; }
+
+/* ── controls + notes ── */
+.panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+.group { display: grid; gap: 10px; align-content: start; }
+.group h2 { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 500; margin: 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { all: unset; cursor: pointer; padding: 8px 12px; border-radius: 12px; background: #1a1c21; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+.chip:hover { background: #24272e; }
+.chip[aria-pressed=true] { box-shadow: inset 0 0 0 1.5px var(--ember); }
+.chip:focus-visible { outline: 2px solid var(--ember); }
+.sw { width: 14px; height: 14px; border-radius: 50%; }
+.notes { display: grid; gap: 14px; }
+.notes div { background: #131418; border-radius: 14px; padding: 14px 16px; line-height: 1.5; }
+.notes b { display: block; margin-bottom: 4px; font-weight: 600; }
+.notes p { margin: 0; color: #b7bbc5; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+</style>
+
+<main>
+  <header>
+    <h1>Wisp Ember</h1>
+    <p>Návrh nového vzhledu Wisp: tři ostrůvky místo jedné pilulky a jedno světýlko, které je podpisem shellu. Klikni na hodiny, na Wi‑Fi nebo na plochu. Ovládání je pod náhledem. Skladba a zprávy jsou jen ukázkové.</p>
+  </header>
+
+  <div class="stage-wrap" id="wrap">
+    <div class="stage" id="stage">
+      <!-- left: workspaces -->
+      <div class="island" id="left">
+        <div class="pane on" data-v="idle"><div class="row"><div class="ws" id="ws"></div></div></div>
+      </div>
+
+      <!-- center: clock / media / launcher / notification -->
+      <div class="island" id="center">
+        <div class="pane on" data-v="idle">
+          <div class="row" style="justify-content:center">
+            <span class="ember" id="ember"></span>
+            <span class="clock" id="clock">09:11</span>
+            <span class="track" id="ctrack">golden hour</span>
+          </div>
+        </div>
+        <div class="pane" data-v="notif">
+          <div class="row notif">
+            <span class="ember k"></span>
+            <div class="k" style="--i:1;min-width:0">
+              <div class="from">Discord · #general</div>
+              <div class="msg">Večer hrajem? Mám nový beatmap</div>
+            </div>
+          </div>
+        </div>
+        <div class="pane" data-v="media">
+          <div class="media">
+            <div class="art k"></div>
+            <div style="min-width:0">
+              <div class="m-title k" style="--i:1">golden hour</div>
+              <div class="m-artist k" style="--i:2">JVKE</div>
+              <div class="m-src k" style="--i:3">Spotify</div>
+              <div class="bar k" style="--i:4"><i id="prog"></i></div>
+              <div class="times k" style="--i:4"><span id="tcur">1:02</span><span>3:29</span></div>
+              <div class="ctrls k" style="--i:5">
+                <button class="btn" aria-label="Předchozí"><svg class="ico" viewBox="0 0 24 24"><path d="M6 5v14M19 5 9 12l10 7z"/></svg></button>
+                <button class="btn big" id="pp" aria-label="Pauza"><svg class="ico" viewBox="0 0 24 24" id="ppi"><path d="M8 5v14M16 5v14"/></svg></button>
+                <button class="btn" aria-label="Další"><svg class="ico" viewBox="0 0 24 24"><path d="M18 5v14M5 5l10 7-10 7z"/></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="pane" data-v="launcher">
+          <div class="launch">
+            <label class="search k"><svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+              <input id="q" placeholder="Hledat aplikace…" autocomplete="off" aria-label="Hledat aplikace"></label>
+            <div class="apps k" style="--i:1" id="apps"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- right: status / control centre -->
+      <div class="island" id="right">
+        <div class="pane on" data-v="idle">
+          <div class="row">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M2 9a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r=".8"/></svg>
+            <svg class="ico" viewBox="0 0 24 24"><path d="M10 3h4v2h2v16H8V5h2z"/></svg>
+            <span class="batt">90%</span>
+          </div>
+        </div>
+        <div class="pane" data-v="cc">
+          <div class="cc">
+            <div class="tiles">
+              <button class="tile on k" data-t><span class="dot"><svg class="ico" viewBox="0 0 24 24"><path d="M2 9a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/></svg></span><span><b>Wi‑Fi</b><small>Atlantis 5G</small></span></button>
+              <button class="tile on k" data-t style="--i:1"><span class="dot"><svg class="ico" viewBox="0 0 24 24"><path d="m7 7 10 10-5 5V2l5 5L7 17"/></svg></span><span><b>Bluetooth</b><small>Sluchátka</small></span></button>
+              <button class="tile k" data-t style="--i:2"><span class="dot"><svg class="ico" viewBox="0 0 24 24"><path d="M20 14A8 8 0 1 1 10 4a6 6 0 0 0 10 10z"/></svg></span><span><b>Nerušit</b><small>Vypnuto</small></span></button>
+              <button class="tile k" data-t style="--i:3"><span class="dot"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="10" rx="5"/><path d="M8 11v4M6 13h4M16 12h.01M18 14h.01"/></svg></span><span><b>Herní režim</b><small>Vypnuto</small></span></button>
+            </div>
+            <div class="slide k" style="--i:4"><div class="slide-h">Zvuk <button id="toSound">Zařízení ›</button></div><input type="range" id="vol" value="62" aria-label="Hlasitost"></div>
+            <div class="slide k" style="--i:5"><div class="slide-h">Jas</div><input type="range" id="bri" value="40" aria-label="Jas"></div>
+          </div>
+        </div>
+        <div class="pane" data-v="sound">
+          <div class="cc">
+            <div class="sub-h k"><button class="btn" id="back" aria-label="Zpět"><svg class="ico" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></svg></button>Zvuk</div>
+            <div class="lbl k" style="--i:1">Výstup</div>
+            <div class="list k" style="--i:2" data-group="out">
+              <button class="dev sel">Sluchátka (Bluetooth)<span class="ind"></span></button>
+              <button class="dev">Reproduktory notebooku<span class="ind"></span></button>
+              <button class="dev">Monitor HDMI<span class="ind"></span></button>
+            </div>
+            <div class="lbl k" style="--i:3">Vstup</div>
+            <div class="list k" style="--i:4" data-group="in">
+              <button class="dev sel">Blue Yeti<span class="ind"></span></button>
+              <button class="dev">Vestavěný mikrofon<span class="ind"></span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hint" id="hint">Klikni na hodiny nebo na Wi‑Fi</div>
+    </div>
+  </div>
+
+  <section class="panel">
+    <div class="group">
+      <h2>Tapeta (určuje barvu světýlka)</h2>
+      <div class="chips" id="walls"></div>
+    </div>
+    <div class="group">
+      <h2>Vyzkoušej</h2>
+      <div class="chips">
+        <button class="chip" id="bNotif">Přišla zpráva</button>
+        <button class="chip" id="bPlay" aria-pressed="true">Hraje hudba</button>
+        <button class="chip" id="bLaunch">Spouštěč (Super+Space)</button>
+      </div>
+    </div>
+    <div class="group">
+      <h2>Síla záře</h2>
+      <div class="chips" id="glows"></div>
+    </div>
+  </section>
+
+  <section class="notes">
+    <div><b>Světýlko je podpis</b><p>Jediný prvek, který nikde jinde není. V klidu pomalu dýchá, při hudbě pulzuje do rytmu, při zprávě vzplane. Je to jediná barva převzatá z tapety, takže se Wisp přizpůsobí, ale zůstane poznat.</p></div>
+    <div><b>Obsah se rozsvítí, nevyjede</b><p>Ostrůvek se pružně zvětší a obsah se objeví z rozmazaného světla do ostrého. Tenhle jeden pohyb se opakuje všude: v médiích, v ovládání, ve spouštěči i v notifikaci.</p></div>
+    <div><b>Každý ostrůvek má jednu věc</b><p>Hodiny otevřou to, co právě běží (hudba, zpráva, spouštěč). Stav vpravo otevře ovládání. Žádné záložky. Ostatní ostrůvky při tom ztlumí, aby bylo jasné, kde jsi.</p></div>
+    <div><b>Vlastní základ</b><p>Téměř černá výplň, šedé tóny a písmo jsou pevné a tvoje. Zmizí Catppuccin i plné přebarvování z tapety. Do QML z toho půjdou společné hodnoty: barvy, zaoblení, velikosti písma a délky pohybů.</p></div>
+  </section>
+</main>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const stage = $('#stage'), wrap = $('#wrap');
+  const W = 1100, H = 620;
+  function fit() { const s = Math.min(1, wrap.clientWidth / W); stage.style.transform = `scale(${s})`; wrap.style.height = H * s + 'px'; }
+  addEventListener('resize', fit); fit();
+
+  const walls = [
+    { n: 'Noční moře', e: '#8fd3ff', bg: 'radial-gradient(900px 500px at 70% 110%, #1d4a6b, transparent 60%), radial-gradient(700px 400px at 10% 0%, #2b2147, transparent 60%), #0d1424' },
+    { n: 'Les', e: '#a8e08a', bg: 'radial-gradient(900px 500px at 30% 110%, #1f4a2a, transparent 60%), radial-gradient(600px 400px at 90% 10%, #3b4a24, transparent 60%), #0f1a14' },
+    { n: 'Západ', e: '#ffb36b', bg: 'radial-gradient(900px 520px at 60% 120%, #b2482e, transparent 60%), radial-gradient(700px 400px at 0% 0%, #46203f, transparent 60%), #1c1018' },
+    { n: 'Teal (jako v ukázce)', e: '#5fe0c4', bg: 'radial-gradient(800px 500px at 50% 100%, #0f7f6e, transparent 70%), #0b5a52' },
+  ];
+  const glows = [['Jemná', .6], ['Střední', 1], ['Výrazná', 1.6]];
+  const root = document.documentElement;
+  function chipRow(el, items, onPick, initial) {
+    items.forEach((it, i) => {
+      const b = document.createElement('button'); b.className = 'chip'; b.setAttribute('aria-pressed', i === initial);
+      b.innerHTML = (it.e ? `<span class="sw" style="background:${it.e};box-shadow:0 0 8px ${it.e}"></span>` : '') + (it.n || it[0]);
+      b.onclick = () => { [...el.children].forEach(c => c.setAttribute('aria-pressed', c === b)); onPick(it); };
+      el.appendChild(b);
+    });
+    onPick(items[initial]);
+  }
+  chipRow($('#walls'), walls, w => { stage.style.setProperty('--wall', w.bg); root.style.setProperty('--ember', w.e); }, 0);
+  chipRow($('#glows'), glows, g => root.style.setProperty('--glow', g[1]), 1);
+
+  // islands & sizes
+  const isl = { left: $('#left'), center: $('#center'), right: $('#right') };
+  let playing = true;
+  const size = {
+    left: { idle: [124, 40] },
+    center: { idle: () => [playing ? 214 : 110, 40], notif: [330, 58], media: [440, 172], launcher: [520, 290] },
+    right: { idle: [118, 40], cc: [380, 318], sound: [380, 384] },
+  };
+  const state = { left: 'idle', center: 'idle', right: 'idle' };
+  function apply() {
+    const anyOpen = Object.entries(state).find(([, v]) => v !== 'idle' && v !== 'notif');
+    for (const k in isl) {
+      let s = size[k][state[k]]; if (typeof s === 'function') s = s();
+      isl[k].style.width = s[0] + 'px'; isl[k].style.height = s[1] + 'px';
+      isl[k].classList.toggle('open', state[k] !== 'idle');
+      isl[k].classList.toggle('dim', !!anyOpen && anyOpen[0] !== k);
+      isl[k].querySelectorAll('.pane').forEach(p => p.classList.toggle('on', p.dataset.v === state[k]));
+    }
+    // light origin follows the ember / content
+    isl.center.style.setProperty('--ex', state.center === 'media' ? '76px' : '24px');
+    isl.center.style.setProperty('--ey', state.center === 'media' ? '76px' : '20px');
+    isl.center.classList.toggle('playing', playing);
+    $('#ctrack').style.display = playing ? '' : 'none';
+    $('#hint').style.opacity = anyOpen ? 0 : 1;
+    if (state.center === 'launcher') setTimeout(() => $('#q').focus(), 150);
+  }
+  function set(k, v) { for (const o in state) if (o !== k && state[o] !== 'notif') state[o] = 'idle'; state[k] = v; apply(); }
+  function closeAll() { for (const o in state) state[o] = 'idle'; apply(); }
+
+  isl.center.addEventListener('click', e => { if (state.center === 'idle' || state.center === 'notif') { e.stopPropagation(); set('center', 'media'); } else e.stopPropagation(); });
+  isl.right.addEventListener('click', e => { e.stopPropagation(); if (state.right === 'idle') set('right', 'cc'); });
+  isl.left.addEventListener('click', e => e.stopPropagation());
+  stage.addEventListener('click', closeAll);
+  addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
+  $('#toSound').onclick = e => { e.stopPropagation(); set('right', 'sound'); };
+  $('#back').onclick = e => { e.stopPropagation(); set('right', 'cc'); };
+  document.querySelectorAll('[data-t]').forEach(t => t.onclick = () => { t.classList.toggle('on'); const s = t.querySelector('small'); if (/Vyp|Zap/.test(s.textContent)) s.textContent = t.classList.contains('on') ? 'Zapnuto' : 'Vypnuto'; });
+  document.querySelectorAll('.list').forEach(l => l.addEventListener('click', e => { const d = e.target.closest('.dev'); if (!d) return; l.querySelectorAll('.dev').forEach(x => x.classList.toggle('sel', x === d)); }));
+  for (const id of ['vol', 'bri']) { const r = $('#' + id); const u = () => r.style.setProperty('--v', r.value + '%'); r.oninput = u; u(); }
+
+  // workspaces
+  const ws = $('#ws'); let active = 2; const occ = new Set([1, 2, 4]);
+  for (let i = 1; i <= 5; i++) { const b = document.createElement('button'); b.setAttribute('aria-label', 'Plocha ' + i); b.onclick = () => { active = i; occ.add(i); drawWs(); }; ws.appendChild(b); }
+  function drawWs() { [...ws.children].forEach((b, i) => { b.classList.toggle('act', i + 1 === active); b.classList.toggle('occ', occ.has(i + 1)); }); }
+  drawWs();
+
+  // clock + playback
+  let pos = 62; const dur = 209;
+  const fmt = s => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+  function tick() {
+    const d = new Date(); $('#clock').textContent = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+    if (playing) pos = (pos + 1) % dur;
+    $('#tcur').textContent = fmt(pos); $('#prog').style.width = (pos / dur * 100) + '%';
+  }
+  setInterval(tick, 1000); tick();
+  function setPlaying(p) {
+    playing = p; $('#bPlay').setAttribute('aria-pressed', p);
+    $('#ppi').innerHTML = p ? '<path d="M8 5v14M16 5v14"/>' : '<path d="M7 4v16l13-8z"/>';
+    $('#pp').setAttribute('aria-label', p ? 'Pauza' : 'Přehrát'); apply();
+  }
+  $('#pp').onclick = e => { e.stopPropagation(); setPlaying(!playing); };
+  $('#bPlay').onclick = () => setPlaying(!playing);
+
+  // notification: ember flares, island grows briefly
+  let nt;
+  $('#bNotif').onclick = () => {
+    if (state.center !== 'idle') return;
+    const em = $('#ember'); em.classList.remove('flare'); void em.offsetWidth; em.classList.add('flare');
+    setTimeout(() => { state.center = 'notif'; apply(); }, 180);
+    clearTimeout(nt); nt = setTimeout(() => { if (state.center === 'notif') { state.center = 'idle'; apply(); } }, 3600);
+  };
+
+  // launcher
+  const appsList = ['Firefox', 'Kitty', 'Spotify', 'Discord', 'osu!', 'Steam', 'Nautilus', 'Obsidian'];
+  let sel = 0;
+  function drawApps() {
+    const q = $('#q').value.toLowerCase(); const f = appsList.filter(a => a.toLowerCase().includes(q)).slice(0, 5);
+    sel = Math.min(sel, Math.max(0, f.length - 1));
+    $('#apps').innerHTML = f.length ? f.map((a, i) => `<div class="app${i === sel ? ' sel' : ''}"><span class="sq">${a[0].toUpperCase()}</span>${a}${i === sel ? '<kbd>Enter</kbd>' : ''}</div>`).join('')
+      : '<div class="app">Nic nenalezeno</div>';
+  }
+  $('#q').oninput = () => { sel = 0; drawApps(); };
+  $('#q').onkeydown = e => { if (e.key === 'ArrowDown') { sel++; drawApps(); e.preventDefault(); } if (e.key === 'ArrowUp') { sel = Math.max(0, sel - 1); drawApps(); e.preventDefault(); } if (e.key === 'Enter') closeAll(); };
+  drawApps();
+  $('#bLaunch').onclick = () => { $('#q').value = ''; drawApps(); set('center', 'launcher'); };
+
+  apply();
+})();
+</script>
