@@ -90,7 +90,7 @@ Scope {
         // Fixed at the tallest open island plus room for its glow: resizing
         // the surface per frame flashes grey (references/gotchas.md). Only the
         // islands inside animate; the mask keeps clicks on them.
-        implicitHeight: Theme.islandMargin + Math.max(launcher.implicitHeight, cc.implicitHeight, wifiOrb.implicitHeight, btOrb.implicitHeight, wifiList.implicitHeight, btList.implicitHeight) + Theme.glowBlurOpen * Theme.glow
+        implicitHeight: Theme.islandMargin + Math.max(launcher.implicitHeight, cc.implicitHeight, wifiOrb.implicitHeight, btOrb.implicitHeight, wifiList.implicitHeight, btList.implicitHeight, sound.implicitHeight) + Theme.glowBlurOpen * Theme.glow
 
         WlrLayershell.layer: WlrLayer.Overlay
         WlrLayershell.namespace: "wisp-ember"
@@ -224,7 +224,7 @@ Scope {
                 readonly property string view: controller.rightView
                 openWidth: cc.implicitWidth
                 openHeight: view === "wifi" ? wifiOrb.implicitHeight : (view === "bluetooth" ? btOrb.implicitHeight
-                    : (view === "wifi-list" ? wifiList.implicitHeight : (view === "bluetooth-list" ? btList.implicitHeight : cc.implicitHeight)))
+                    : (view === "wifi-list" ? wifiList.implicitHeight : (view === "bluetooth-list" ? btList.implicitHeight : (view === "sound" ? sound.implicitHeight : cc.implicitHeight))))
                 open: controller.openIsland === "right"
                 lit: open && view === "cc"
                 lightX: cc.emberPoint.x
@@ -236,6 +236,13 @@ Scope {
                     lit: right.open && right.view === "cc"
                     enabled: lit
                     onShowView: view => controller.rightView = view
+                }
+
+                SoundView {
+                    id: sound
+                    lit: right.open && right.view === "sound"
+                    enabled: lit
+                    onBack: controller.rightView = "cc"
                 }
 
                 WifiOrb {

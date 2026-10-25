@@ -10,7 +10,7 @@ Item {
 
     property bool lit: false
 
-    // Asks the island to show a detail view: "wifi" or "bluetooth".
+    // Asks the island to show a detail view: "wifi", "bluetooth" or "sound".
     signal showView(string view)
     // Centre of the volume head, for the island's inner light.
     readonly property point emberPoint: Qt.point(
@@ -128,7 +128,7 @@ Item {
                 }
                 EmberSlider {
                     id: volumeSlider
-                    width: column.width - Theme.spaceLg - Theme.spaceSm * 2 - volumeText.width
+                    width: column.width - Theme.spaceLg - Theme.spaceSm * 3 - volumeText.width - volumeMore.width
                     anchors.verticalCenter: parent.verticalCenter
                     label: "Volume"
                     value: Math.min(1, Audio.volume)
@@ -143,6 +143,13 @@ Item {
                     color: Theme.islandMuted
                     font.family: Theme.fontMono
                     font.pixelSize: Theme.textMonoSmall
+                }
+                EmberButton {
+                    id: volumeMore
+                    anchors.verticalCenter: parent.verticalCenter
+                    icon: "󰅂"
+                    label: "Sound settings"
+                    onClicked: root.showView("sound")
                 }
             }
         }
