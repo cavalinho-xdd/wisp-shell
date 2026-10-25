@@ -23,7 +23,7 @@ that finishes a milestone.
 | # | Milestone | Status |
 |---|---|---|
 | M0 | Ember tokens in `core/Theme.qml` | ✅ done (c13f482) |
-| M1 | Development basics | ⬜ |
+| M1 | Development basics | ✅ done |
 | M2 | Island skeleton | ⬜ |
 | M3 | Activity island, collapsed | ⬜ |
 | M4 | Activity island, open (media) | ⬜ |
@@ -35,16 +35,19 @@ that finishes a milestone.
 
 ### M1 — Development basics
 Goal: make every later milestone cheaper to build and check.
-- `.qmlls.ini` next to `shell.qml` (Quickshell fills it; git-ignored) so the
-  editor shows qmllint warnings live.
-- `scripts/lint.sh`: qmllint over changed `.qml` files. First record a
-  baseline of today's warnings, then only fail on new ones.
-- `scripts/shot.sh <name>`: grim screenshot of the island area into
-  `docs/screens/<name>.png` — the before/after evidence for PRs.
-- `probes/` folder for throwaway probe `.qml` files that are worth keeping
-  (today they lie in the repo root: `test_*.qml`, `test-qs.qml`).
+- `.qmlls.ini` next to `shell.qml` (`touch` it once; Quickshell turns it into
+  a link to its tooling VFS on the next start; git-ignored) so the editor
+  shows qmllint warnings live.
+- `scripts/lint.py`: Qt 6 qmllint over every `.qml` with a baseline of
+  today's warnings (681, `scripts/lint-baseline.txt`); fails only on new ones.
+- `scripts/shot.sh <name>`: grim screenshot of the island area of every
+  monitor into `docs/screens/` (git-ignored) — the before/after evidence for PRs.
+- `probes/` folder for probe files worth re-running (tracked, left out of the
+  package); the stray `test_*` files from the root moved there.
 - PR template with the Definition of Done checklist below.
 - `CHANGELOG.md` (Keep a Changelog), section *Unreleased*.
+- GitHub milestones M1–M9 mirror the table above (D4); PRs are assigned to
+  one. Tasks stay in this file.
 
 Done when: lint and screenshot scripts run on this machine, the root holds no
 stray test files, the PR template is used by the M2 PR.
@@ -98,7 +101,7 @@ deleted, unused old tokens removed from `Theme.qml`, `DESIGN.md` refreshed
 ## Definition of Done (every milestone and PR)
 
 - [ ] Ran under `qs`; `qs log` has no new warnings or errors.
-- [ ] `scripts/lint.sh` adds no new qmllint warnings (from M1 on).
+- [ ] `scripts/lint.py` adds no new qmllint warnings (from M1 on).
 - [ ] Checked on both monitors and with the setting on and off.
 - [ ] No raw durations, radii, spacing or font sizes — tokens only.
 - [ ] Every animation survives being interrupted halfway.
@@ -138,4 +141,5 @@ Where each feature goes in Ember. *Proposal* rows are not decided yet (D1).
 | D1 | Final homes for the *proposal* rows and the Performance view | M7 |
 | D2 | Install Geist / Geist Mono, or pick another font | M3 (tuning) |
 | D3 | Glow strength as a user setting (soft / medium / strong) or fixed | M3 |
-| D4 | GitHub milestones + issues mirroring this file, or this file only | M1 |
+
+Decided: D4 — GitHub milestones only, no issues (2026-10-25).
