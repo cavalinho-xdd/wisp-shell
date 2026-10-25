@@ -14,7 +14,10 @@ Item {
     property real collapsedWidth: Theme.islandHeight
     property real openWidth: collapsedWidth
     property real openHeight: Theme.islandHeight
-    // Where the inner light sits, in island coordinates (on the ember).
+    // The inner light is the ember lighting the island from inside, so it
+    // is only on while the island shows the ember (or another ember-coloured
+    // element) at lightX/lightY, in island coordinates.
+    property bool lit: false
     property real lightX: width / 2
     property real lightY: Theme.islandHeight / 2
     readonly property bool hovered: mouse.containsMouse
@@ -57,6 +60,9 @@ Item {
     // island's own rounded shape, so it never spills past the corners.
     Shape {
         anchors.fill: parent
+        visible: opacity > 0
+        opacity: island.lit ? 1 : 0
+        Behavior on opacity { NumberAnimation { duration: Theme.motionFast; easing.type: Easing.OutCubic } }
         preferredRendererType: Shape.CurveRenderer
         ShapePath {
             strokeWidth: -1

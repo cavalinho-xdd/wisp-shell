@@ -102,6 +102,7 @@ Scope {
                 openWidth: 440
                 openHeight: 172
                 open: controller.openIsland === "center"
+                lit: !open
                 lightX: activity.emberCentre.x
                 lightY: activity.emberCentre.y
                 onClicked: controller.toggle("center")
