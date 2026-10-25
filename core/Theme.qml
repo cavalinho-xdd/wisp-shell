@@ -99,8 +99,9 @@ Singleton {
     // Body/UI text. Google Sans Flex is a variable font (one file covers
     // tooltip-size to headline-size cleanly) and is what both of the most
     // polished reference shells (ii-dots, caelestia-dots) use as their sans.
+    // Geist leads because the Ember design is set in it; not installed yet.
     readonly property string fontFamily: pickFont(
-        ["Google Sans Flex", "Inter", "Rubik", "Noto Sans"], "sans-serif")
+        ["Geist", "Google Sans Flex", "Inter", "Rubik", "Noto Sans"], "sans-serif")
 
     // Nerd Font glyphs. Must be a font that actually carries the Nerd glyph
     // ranges — the whole point of the resolution above.
@@ -110,12 +111,77 @@ Singleton {
 
     // Monospace (keybind chips, action ids, config paths).
     readonly property string fontMono: pickFont(
-        ["JetBrainsMono Nerd Font", "JetBrains Mono", "Noto Sans Mono"], "monospace")
+        ["Geist Mono", "GeistMono Nerd Font", "JetBrainsMono Nerd Font", "JetBrains Mono", "Noto Sans Mono"], "monospace")
 
     Component.onCompleted: console.log("Theme fonts -> text:", fontFamily, "| icon:", fontIcon, "| mono:", fontMono)
 
     readonly property int animFast: 150
     readonly property int animSlow: 350
+
+    // ── Wisp Ember tokens ──
+    // Target design (DESIGN.md, references/ember-to-qml.md). Nothing reads
+    // these yet; the old pill keeps using the tokens above until the islands
+    // replace it. Values come from the HTML prototype and get tuned live.
+
+    // Own neutrals: deliberately NOT palette-derived (The Own Neutrals Rule).
+    // `islandText`/`islandMuted` are separate from `text`/`subtext0` because
+    // those still follow matugen for the old pill.
+    readonly property color smoke: "#0a0b0e"
+    readonly property color ash: "#15171c"
+    readonly property color ashHi: "#20232a"
+    readonly property color islandText: "#eef0f4"
+    readonly property color islandMuted: "#8a8f9b"
+
+    // The only wallpaper-derived colour.
+    property color ember: c("primary", "#8fd3ff")
+    Behavior on ember { ColorAnimation { duration: 600; easing.type: Easing.OutCubic } }
+
+    // Multiplies glow alpha and blur; soft 0.6 / medium 1.0 / strong 1.6.
+    readonly property real glow: 1.0
+    readonly property real glowAlpha: 0.22
+    readonly property real glowBlur: 22
+    readonly property real glowAlphaOpen: 0.26
+    readonly property real glowBlurOpen: 46
+    readonly property real innerLightAlpha: 0.16
+
+    // Geometry
+    readonly property int islandHeight: 40
+    readonly property int islandMargin: 12
+    readonly property int radiusIsland: 20
+    readonly property int radiusIslandOpen: 30
+    readonly property int radiusTile: 18
+    readonly property int radiusArt: 16
+    readonly property int radiusRow: 14
+    readonly property int emberSize: 8
+
+    readonly property int spaceXs: 6
+    readonly property int spaceSm: 10
+    readonly property int spaceMd: 16
+    readonly property int spaceLg: 20
+
+    // Type scale. font.pixelSize is an int, so the prototype's 13.5px body
+    // rounds to 14.
+    readonly property int textTitle: 17
+    readonly property int textBody: 14
+    readonly property int textLabel: 11
+    readonly property int textMono: 14
+    readonly property int textMonoSmall: 12
+
+    // Motion. Curves are BezierSpline control points (end point 1,1 included).
+    readonly property int motionFast: 150
+    readonly property int motionMorph: 620
+    readonly property var curveMorph: [0.22, 1.18, 0.36, 1, 1, 1]
+    readonly property int motionKindle: 550
+    readonly property int kindleDelay: 100
+    readonly property int kindleStagger: 50
+    readonly property var curveKindle: [0.2, 0.8, 0.2, 1, 1, 1]
+    readonly property int emberBreathe: 5000
+    readonly property int emberBeat: 520
+    readonly property int emberFlare: 1100
+
+    // Islands other than the open one
+    readonly property real dimOpacity: 0.35
+    readonly property real dimScale: 0.96
 
     // Easing curve for fluid bounce
     readonly property var easeSpring: Easing.OutBack
