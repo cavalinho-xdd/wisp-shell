@@ -90,7 +90,7 @@ Scope {
         // Fixed at the tallest open island plus room for its glow: resizing
         // the surface per frame flashes grey (references/gotchas.md). Only the
         // islands inside animate; the mask keeps clicks on them.
-        implicitHeight: Theme.islandMargin + Math.max(launcher.implicitHeight, cc.implicitHeight, wifiOrb.implicitHeight, btOrb.implicitHeight) + Theme.glowBlurOpen * Theme.glow
+        implicitHeight: Theme.islandMargin + Math.max(launcher.implicitHeight, cc.implicitHeight, wifiOrb.implicitHeight, btOrb.implicitHeight, wifiList.implicitHeight, btList.implicitHeight) + Theme.glowBlurOpen * Theme.glow
 
         WlrLayershell.layer: WlrLayer.Overlay
         WlrLayershell.namespace: "wisp-ember"
@@ -223,7 +223,8 @@ Scope {
                 collapsedWidth: status.implicitWidth
                 readonly property string view: controller.rightView
                 openWidth: cc.implicitWidth
-                openHeight: view === "wifi" ? wifiOrb.implicitHeight : (view === "bluetooth" ? btOrb.implicitHeight : cc.implicitHeight)
+                openHeight: view === "wifi" ? wifiOrb.implicitHeight : (view === "bluetooth" ? btOrb.implicitHeight
+                    : (view === "wifi-list" ? wifiList.implicitHeight : (view === "bluetooth-list" ? btList.implicitHeight : cc.implicitHeight)))
                 open: controller.openIsland === "right"
                 lit: open && view === "cc"
                 lightX: cc.emberPoint.x
@@ -242,6 +243,7 @@ Scope {
                     lit: right.open && right.view === "wifi"
                     enabled: lit
                     onBack: controller.rightView = "cc"
+                    onMore: controller.rightView = "wifi-list"
                 }
 
                 BluetoothOrb {
@@ -249,6 +251,21 @@ Scope {
                     lit: right.open && right.view === "bluetooth"
                     enabled: lit
                     onBack: controller.rightView = "cc"
+                    onMore: controller.rightView = "bluetooth-list"
+                }
+
+                WifiList {
+                    id: wifiList
+                    lit: right.open && right.view === "wifi-list"
+                    enabled: lit
+                    onBack: controller.rightView = "wifi"
+                }
+
+                BluetoothList {
+                    id: btList
+                    lit: right.open && right.view === "bluetooth-list"
+                    enabled: lit
+                    onBack: controller.rightView = "bluetooth"
                 }
 
                 StatusCollapsed {
