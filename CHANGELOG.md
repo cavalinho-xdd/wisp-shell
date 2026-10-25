@@ -28,9 +28,17 @@ All notable changes to Wisp Shell. Format after
   it falls back. Click runs the default action, middle click dismisses.
   Skipped over fullscreen and while an island is open. IPC `flash` fakes a
   notification for checking.
+- Launcher in the centre island: search field and the five best results
+  (apps by name and frecency, `=` calc, `?` web, `$` shell), arrows, Enter,
+  Esc. `wisp launcher` opens it on the focused monitor only.
   Clicks inside an open island no longer close it.
 
 ### Changed
 - `PRODUCT.md` and `DESIGN.md` rewritten for the Wisp Ember direction.
 - `.gitignore` tracks the project docs explicitly instead of ignoring all
   Markdown.
+
+### Fixed
+- Launcher search let a much-used app through on any query (frecency was
+  added before dropping non-matches); fixed in the island launcher, the old
+  pill launcher still has it.

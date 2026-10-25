@@ -28,7 +28,7 @@ that finishes a milestone.
 | M2 | Island skeleton | ✅ done (e43fe9d) |
 | M3 | Activity island, collapsed | ✅ done (db0e752) |
 | M4 | Activity island, open (media) | ✅ done (46e87ae) |
-| M5 | Notifications and launcher | ⬜ |
+| M5 | Notifications and launcher | 🔄 flare and launcher built, review pending |
 | M6 | Workspaces island (left) | ⬜ |
 | M7 | Status island and control centre (right) | ⬜ |
 | M8 | Remaining features of the old pill | ⬜ |

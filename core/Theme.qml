@@ -168,6 +168,11 @@ Singleton {
     readonly property int flareWidth: 400
     readonly property int flareIcon: 44
     readonly property real flareGlowBoost: 1.5
+    // Launcher in the centre island.
+    readonly property int launcherWidth: 520
+    readonly property int launcherField: 44
+    readonly property int launcherRow: 44
+    readonly property int launcherIcon: 28
 
     readonly property int spaceXs: 6
     readonly property int spaceSm: 10

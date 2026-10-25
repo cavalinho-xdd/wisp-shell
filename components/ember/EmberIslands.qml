@@ -29,12 +29,25 @@ Scope {
         function onAnyOpenChanged() { if (controller.anyOpen) Island.dismissFlash(); }
     }
 
+    // The launcher belongs to the output that was focused when it was
+    // toggled (`wisp launcher`, ShellState); closing it here switches it off.
+    readonly property bool launcherWanted: ShellState.launcherActive && ShellState.launcherScreen === screen.name
+    onLauncherWantedChanged: {
+        if (launcherWanted) controller.openLauncher();
+        else if (controller.launcherOpen) controller.close();
+    }
+    Connections {
+        target: controller
+        function onLauncherOpenChanged() { if (!controller.launcherOpen && root.launcherWanted) ShellState.launcherActive = false; }
+    }
+
     // `qs ipc -p shell.qml call ember-eDP-1 toggle center` — opens islands
     // without a mouse, for checking changes and taking screenshots.
     IpcHandler {
         target: "ember-" + root.screen.name
         function toggle(island: string): void { controller.toggle(island); }
         function close(): void { controller.close(); }
+        function launcher(): void { controller.toggleLauncher(); }
         // Fake notification for checking the flare (the real server can be
         // taken by another shell). urgency: 0 low, 1 normal, 2 critical.
         function flash(summary: string, body: string, app: string, urgency: int): void {
@@ -65,12 +78,13 @@ Scope {
         // Fixed at the tallest open island plus room for its glow: resizing
         // the surface per frame flashes grey (references/gotchas.md). Only the
         // islands inside animate; the mask keeps clicks on them.
-        implicitHeight: Theme.islandMargin + Math.max(center.openHeight, right.openHeight) + Theme.glowBlurOpen * Theme.glow
+        implicitHeight: Theme.islandMargin + Math.max(launcher.implicitHeight, right.openHeight) + Theme.glowBlurOpen * Theme.glow
 
         WlrLayershell.layer: WlrLayer.Overlay
         WlrLayershell.namespace: "wisp-ember"
         // Focus only while open, for Esc; collapsed islands never take keys.
-        WlrLayershell.keyboardFocus: controller.anyOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+        // The launcher types, so it takes the keyboard outright.
+        WlrLayershell.keyboardFocus: controller.launcherOpen ? WlrKeyboardFocus.Exclusive : (controller.anyOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None)
 
         // Hyprland adds gaps_out to the reserved strip, so subtract it to get
         // islandMargin of space under the collapsed islands. Must match
@@ -113,16 +127,18 @@ Scope {
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: Theme.islandMargin
                 collapsedWidth: activity.implicitWidth
-                readonly property bool mediaOpen: controller.openIsland === "center"
-                openWidth: mediaOpen ? media.implicitWidth : notif.implicitWidth
-                openHeight: mediaOpen ? media.implicitHeight : notif.implicitHeight
-                open: mediaOpen || root.flaring
+                readonly property bool launcherOpen: controller.launcherOpen
+                readonly property bool mediaOpen: controller.openIsland === "center" && !launcherOpen
+                openWidth: launcherOpen ? launcher.implicitWidth : (mediaOpen ? media.implicitWidth : notif.implicitWidth)
+                openHeight: launcherOpen ? launcher.implicitHeight : (mediaOpen ? media.implicitHeight : notif.implicitHeight)
+                open: launcherOpen || mediaOpen || root.flaring
                 dimmed: controller.anyOpen && !open
                 // The light follows the ember: the dot when collapsed, the
-                // one in the notification, the progress head in the media view.
+                // one in the notification, the search glyph in the launcher, the
+                // progress head in the media view.
                 lit: mediaOpen ? media.emberVisible : true
-                lightX: mediaOpen ? media.emberPoint.x : (root.flaring ? notif.emberPoint.x : activity.emberCentre.x)
-                lightY: mediaOpen ? media.emberPoint.y : (root.flaring ? notif.emberPoint.y : activity.emberCentre.y)
+                lightX: launcherOpen ? launcher.emberPoint.x : (mediaOpen ? media.emberPoint.x : (root.flaring ? notif.emberPoint.x : activity.emberCentre.x))
+                lightY: launcherOpen ? launcher.emberPoint.y : (mediaOpen ? media.emberPoint.y : (root.flaring ? notif.emberPoint.y : activity.emberCentre.y))
                 onClicked: controller.toggle("center")
 
                 Connections {
@@ -142,6 +158,13 @@ Scope {
                     id: notif
                     lit: root.flaring
                     enabled: root.flaring
+                }
+
+                LauncherView {
+                    id: launcher
+                    lit: center.launcherOpen
+                    enabled: center.launcherOpen
+                    onDismiss: controller.close()
                 }
 
                 MediaView {

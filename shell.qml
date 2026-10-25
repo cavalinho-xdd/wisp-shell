@@ -74,7 +74,10 @@ ShellRoot {
 
     IpcHandler {
         target: "shell"
-        function toggleLauncher(): void { ShellState.launcherActive = !ShellState.launcherActive; }
+        function toggleLauncher(): void {
+            if (!ShellState.launcherActive) ShellState.launcherScreen = Hyprland.focusedMonitor ? Hyprland.focusedMonitor.name : "";
+            ShellState.launcherActive = !ShellState.launcherActive;
+        }
     }
 
     PolkitAgent {
