@@ -21,12 +21,25 @@ Scope {
 
     IslandController { id: controller }
 
+    // A notification flares the centre island only while nothing is open
+    // and nothing is fullscreen; opening an island takes the flare away.
+    readonly property bool flaring: !!Island.flashNotif && !controller.anyOpen && !fullscreen
+    Connections {
+        target: controller
+        function onAnyOpenChanged() { if (controller.anyOpen) Island.dismissFlash(); }
+    }
+
     // `qs ipc -p shell.qml call ember-eDP-1 toggle center` — opens islands
     // without a mouse, for checking changes and taking screenshots.
     IpcHandler {
         target: "ember-" + root.screen.name
         function toggle(island: string): void { controller.toggle(island); }
         function close(): void { controller.close(); }
+        // Fake notification for checking the flare (the real server can be
+        // taken by another shell). urgency: 0 low, 1 normal, 2 critical.
+        function flash(summary: string, body: string, app: string, urgency: int): void {
+            Island.flashNotif = { summary: summary, body: body, appName: app, appIcon: "", image: "", urgency: urgency };
+        }
     }
 
     PanelWindow {
@@ -100,16 +113,22 @@ Scope {
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: Theme.islandMargin
                 collapsedWidth: activity.implicitWidth
-                openWidth: media.implicitWidth
-                openHeight: media.implicitHeight
-                open: controller.openIsland === "center"
+                readonly property bool mediaOpen: controller.openIsland === "center"
+                openWidth: mediaOpen ? media.implicitWidth : notif.implicitWidth
+                openHeight: mediaOpen ? media.implicitHeight : notif.implicitHeight
+                open: mediaOpen || root.flaring
                 dimmed: controller.anyOpen && !open
                 // The light follows the ember: the dot when collapsed, the
-                // progress head when open.
-                lit: open ? media.emberVisible : true
-                lightX: open ? media.emberPoint.x : activity.emberCentre.x
-                lightY: open ? media.emberPoint.y : activity.emberCentre.y
+                // one in the notification, the progress head in the media view.
+                lit: mediaOpen ? media.emberVisible : true
+                lightX: mediaOpen ? media.emberPoint.x : (root.flaring ? notif.emberPoint.x : activity.emberCentre.x)
+                lightY: mediaOpen ? media.emberPoint.y : (root.flaring ? notif.emberPoint.y : activity.emberCentre.y)
                 onClicked: controller.toggle("center")
+
+                Connections {
+                    target: Island
+                    function onFlashNotifChanged() { if (Island.flashNotif && !controller.anyOpen && !root.fullscreen) center.flare(); }
+                }
 
                 ActivityCollapsed {
                     id: activity
@@ -119,10 +138,16 @@ Scope {
                     Behavior on opacity { NumberAnimation { duration: Theme.motionFast; easing.type: Easing.OutCubic } }
                 }
 
+                NotifView {
+                    id: notif
+                    lit: root.flaring
+                    enabled: root.flaring
+                }
+
                 MediaView {
                     id: media
-                    lit: center.open
-                    enabled: center.open
+                    lit: center.mediaOpen
+                    enabled: center.mediaOpen
                 }
             }
 

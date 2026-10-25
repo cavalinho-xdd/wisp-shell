@@ -23,6 +23,11 @@ All notable changes to Wisp Shell. Format after
 - Open activity island: media view (art, title, artist, source, progress with
   the ember as its head, controls) that kindles in block by block while the
   island morphs; the other islands dim; the inner light follows the ember.
+- Notification flare: the centre island grows to show the app icon, name,
+  summary and body of a new notification, the glow flares for a moment, then
+  it falls back. Click runs the default action, middle click dismisses.
+  Skipped over fullscreen and while an island is open. IPC `flash` fakes a
+  notification for checking.
   Clicks inside an open island no longer close it.
 
 ### Changed

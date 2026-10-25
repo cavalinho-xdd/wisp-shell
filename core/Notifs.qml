@@ -94,6 +94,12 @@ Singleton {
         if (n && !n.resident) n.dismiss();
     }
 
+    // Same as activate(), for a live Notification object (what flashes).
+    function activateLive(n) {
+        const key = Object.keys(root._live).find(k => root._live[k] === n);
+        if (key) root.activate(key);
+    }
+
     function reply(key, text) {
         const n = root._live[key];
         if (n && n.hasInlineReply && text.trim() !== "") n.sendInlineReply(text);

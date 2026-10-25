@@ -23,6 +23,22 @@ Item {
     property real lightX: width / 2
     property real lightY: Theme.islandHeight / 2
     readonly property bool hovered: mouse.containsMouse
+    // 1 right after flare(), falling to 0: extra glow for a moment.
+    property real flareBoost: 0
+
+    function flare(): void {
+        flareAnim.restart();
+    }
+
+    NumberAnimation {
+        id: flareAnim
+        target: island
+        property: "flareBoost"
+        from: 1
+        to: 0
+        duration: Theme.emberFlare
+        easing.type: Easing.OutCubic
+    }
 
     default property alias content: contentArea.data
 
@@ -46,8 +62,8 @@ Item {
     RectangularShadow {
         anchors.fill: fill
         radius: fill.radius
-        color: Qt.alpha(Theme.ember, (island.open ? Theme.glowAlphaOpen : Theme.glowAlpha) * Theme.glow)
-        blur: (island.open ? Theme.glowBlurOpen : Theme.glowBlur) * Theme.glow
+        color: Qt.alpha(Theme.ember, Math.min(1, (island.open ? Theme.glowAlphaOpen : Theme.glowAlpha) * Theme.glow * (1 + island.flareBoost * Theme.flareGlowBoost)))
+        blur: (island.open ? Theme.glowBlurOpen : Theme.glowBlur) * Theme.glow * (1 + island.flareBoost * Theme.flareGlowBoost)
         Behavior on blur { NumberAnimation { duration: Theme.motionMorph; easing.type: Easing.OutCubic } }
         Behavior on color { ColorAnimation { duration: Theme.motionMorph } }
     }

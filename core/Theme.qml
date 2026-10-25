@@ -164,6 +164,10 @@ Singleton {
     readonly property int progressHeight: 4
     readonly property int controlSize: 36
     readonly property int controlSizeBig: 44
+    // Notification flare in the centre island.
+    readonly property int flareWidth: 400
+    readonly property int flareIcon: 44
+    readonly property real flareGlowBoost: 1.5
 
     readonly property int spaceXs: 6
     readonly property int spaceSm: 10
