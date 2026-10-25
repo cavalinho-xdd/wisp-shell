@@ -48,6 +48,8 @@ Scope {
         function toggle(island: string): void { controller.toggle(island); }
         function close(): void { controller.close(); }
         function launcher(): void { controller.toggleLauncher(); }
+        // Same step as the mouse wheel over the left island: 1 next, -1 previous.
+        function workspace(delta: int): void { workspaces.step(delta); }
         // Fake notification for checking the flare (the real server can be
         // taken by another shell). urgency: 0 low, 1 normal, 2 critical.
         function flash(summary: string, body: string, app: string, urgency: int): void {
@@ -119,7 +121,15 @@ Scope {
                 y: Theme.islandMargin
                 transformOrigin: Item.TopLeft
                 dimmed: controller.anyOpen
-                collapsedWidth: 124
+                collapsedWidth: workspaces.implicitWidth
+                lit: workspaces.shown.length > 0
+                lightX: workspaces.emberPoint.x
+                lightY: workspaces.emberPoint.y
+
+                WorkspacesView {
+                    id: workspaces
+                    monitor: root.hyprMonitor
+                }
             }
 
             EmberIsland {

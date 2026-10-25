@@ -23,6 +23,7 @@ Item {
     // Opened by keyboard (launcher): morph short and without overshoot.
     property bool quick: false
     property real lightX: width / 2
+    Behavior on lightX { NumberAnimation { duration: Theme.motionFast; easing.type: Easing.OutCubic } }
     property real lightY: Theme.islandHeight / 2
     readonly property bool hovered: mouse.containsMouse
     // 1 right after flare(), falling to 0: extra glow for a moment.
