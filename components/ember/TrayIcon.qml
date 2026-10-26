@@ -30,7 +30,7 @@ MouseArea {
     Rectangle {
         anchors.fill: parent
         radius: width / 2
-        color: root.containsMouse ? Theme.ashHi : "transparent"
+        color: root.containsMouse ? Theme.hover : "transparent"
         Behavior on color { ColorAnimation { duration: Theme.motionFast } }
     }
     IconImage {

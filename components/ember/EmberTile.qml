@@ -34,7 +34,7 @@ Item {
         id: plate
         anchors.fill: parent
         lit: tile.checked
-        base: mouse.containsMouse || (tile.checked && Theme.glass) ? Theme.ashHi : Theme.ash
+        base: mouse.containsMouse ? Theme.hover : (tile.checked && Theme.glass ? Theme.ashHi : Theme.ash)
         radius: Theme.radiusTile
         lightX: well.x + well.width / 2
         lightY: height / 2

@@ -97,7 +97,7 @@ Item {
                     width: column.width
                     height: Theme.listRow
                     radius: Theme.radiusRow
-                    color: armed ? Qt.tint(Theme.ash, Qt.alpha(Theme.ember, 0.18)) : (mouse.containsMouse ? Theme.ash : "transparent")
+                    color: armed ? Qt.tint(Theme.ash, Qt.alpha(Theme.ember, 0.18)) : (mouse.containsMouse ? Theme.hoverRow : "transparent")
                     Behavior on color { ColorAnimation { duration: Theme.motionFast } }
                     activeFocusOnTab: true
                     Keys.onReturnPressed: root.pick(kin.slot)

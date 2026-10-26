@@ -231,7 +231,7 @@ Item {
                 width: column.width
                 height: Theme.controlSizeBig
                 radius: Theme.radiusTile
-                color: moreMouse.containsMouse ? Theme.ashHi : Theme.ash
+                color: moreMouse.containsMouse ? Theme.hover : Theme.ash
                 Behavior on color { ColorAnimation { duration: Theme.motionFast } }
                 activeFocusOnTab: true
                 Keys.onReturnPressed: root.more()

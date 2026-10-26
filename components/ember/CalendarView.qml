@@ -215,7 +215,7 @@ Item {
                                 width: Math.min(parent.width, parent.height)
                                 height: width
                                 radius: width / 2
-                                color: cell.isToday ? Theme.ember : (dayMouse.containsMouse ? Theme.ashHi : "transparent")
+                                color: cell.isToday ? Theme.ember : (dayMouse.containsMouse ? Theme.hover : "transparent")
                                 Behavior on color { ColorAnimation { duration: Theme.motionFast } }
                             }
                             Text {

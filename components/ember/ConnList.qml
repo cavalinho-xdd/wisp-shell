@@ -79,7 +79,7 @@ Item {
                     height: Theme.listRow
                     radius: Theme.radiusRow
                     opacity: row.modelData.enabled ? 1 : 0.5
-                    color: rowMouse.containsMouse && row.modelData.enabled ? Theme.ash : "transparent"
+                    color: rowMouse.containsMouse && row.modelData.enabled ? Theme.hoverRow : "transparent"
                     Behavior on color { ColorAnimation { duration: Theme.motionFast } }
 
                     Text {

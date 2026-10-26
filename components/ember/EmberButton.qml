@@ -24,7 +24,7 @@ Item {
     Rectangle {
         anchors.fill: parent
         radius: width / 2
-        color: mouse.containsMouse && button.enabled ? Theme.ashHi : (button.big ? Theme.ash : "transparent")
+        color: mouse.containsMouse && button.enabled ? Theme.hover : (button.big ? Theme.ash : "transparent")
         Behavior on color { ColorAnimation { duration: Theme.motionFast } }
         scale: mouse.pressed ? 0.9 : 1
         Behavior on scale { NumberAnimation { duration: Theme.motionFast; easing.type: Easing.OutCubic } }

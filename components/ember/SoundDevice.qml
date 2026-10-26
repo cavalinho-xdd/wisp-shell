@@ -13,7 +13,7 @@ Rectangle {
 
     implicitHeight: Theme.listRow - Theme.spaceXs
     radius: Theme.radiusRow
-    color: mouse.containsMouse ? Theme.ashHi : (active ? Theme.ash : "transparent")
+    color: mouse.containsMouse ? Theme.hover : (active ? Theme.ash : "transparent")
     Behavior on color { ColorAnimation { duration: Theme.motionFast } }
 
     Accessible.role: Accessible.RadioButton
