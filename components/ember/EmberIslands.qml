@@ -271,9 +271,11 @@ Scope {
                 openHeight: view === "wifi" ? wifiOrb.implicitHeight : (view === "bluetooth" ? btOrb.implicitHeight
                     : (view === "wifi-list" ? wifiList.implicitHeight : (view === "bluetooth-list" ? btList.implicitHeight : (view === "sound" ? sound.implicitHeight : (view === "power" ? power.implicitHeight : (view === "calendar" ? calendar.implicitHeight : cc.implicitHeight))))))
                 open: controller.openIsland === "right"
-                lit: open && view === "cc"
-                lightX: cc.emberPoint.x
-                lightY: cc.emberPoint.y
+                // Collapsed, the light sits on the ember-coloured badge or
+                // battery; open, on the volume head of the control centre.
+                lit: open ? view === "cc" : status.emberShown
+                lightX: open ? cc.emberPoint.x : status.emberPoint.x
+                lightY: open ? cc.emberPoint.y : status.emberPoint.y
                 onClicked: controller.toggle("right")
 
                 // After the first reveal, moving between views only fades.
@@ -291,6 +293,7 @@ Scope {
                     lit: right.open && right.view === "cc"
                     enabled: lit
                     onShowView: view => controller.rightView = view
+                    onDone: controller.close()
                 }
 
                 CalendarView {

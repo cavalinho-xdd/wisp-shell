@@ -9,6 +9,12 @@ Item {
     id: root
 
     readonly property int unread: Notifs.liveRecords.length
+    // The island glows from inside while it shows something in ember: the
+    // count of new notifications first, else the charging or low battery.
+    readonly property bool emberShown: unread > 0 || (Battery.available && (Battery.charging || Battery.low))
+    readonly property point emberPoint: unread > 0
+        ? Qt.point(row.x + badge.x + badge.width / 2, height / 2)
+        : Qt.point(row.x + batteryGlyph.x + batteryGlyph.width / 2, height / 2)
 
     implicitWidth: row.implicitWidth + Theme.spaceMd * 2
     implicitHeight: Theme.islandHeight
@@ -38,6 +44,7 @@ Item {
         // The glyph carries the charge level and, with a bolt, that the
         // charger is plugged in; lit in ember while charging.
         Text {
+            id: batteryGlyph
             anchors.verticalCenter: parent.verticalCenter
             visible: Battery.available
             text: Battery.icon()
@@ -54,6 +61,7 @@ Item {
             font.pixelSize: Theme.textMonoSmall
         }
         Rectangle {
+            id: badge
             anchors.verticalCenter: parent.verticalCenter
             visible: root.unread > 0
             width: Math.max(height, count.implicitWidth + Theme.spaceXs)
