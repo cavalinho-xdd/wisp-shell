@@ -120,6 +120,17 @@ Scope {
             Region { item: right }
         }
 
+        // Glass materials blur the desktop behind the islands, in their
+        // rounded shape; solid ones (and fullscreen, with the bar hidden)
+        // ask for no blur at all.
+        BackgroundEffect.blurRegion: Theme.glass && !root.fullscreen ? blurRegion : null
+        Region {
+            id: blurRegion
+            Region { item: left; radius: left.cornerRadius }
+            Region { item: center; radius: center.cornerRadius }
+            Region { item: right; radius: right.cornerRadius }
+        }
+
         Item {
             id: bar
             anchors.fill: parent

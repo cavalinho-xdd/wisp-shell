@@ -128,11 +128,45 @@ Singleton {
     // Own neutrals: deliberately NOT palette-derived (The Own Neutrals Rule).
     // `islandText`/`islandMuted` are separate from `text`/`subtext0` because
     // those still follow matugen for the old pill.
+    // `smoke` stays opaque everywhere (ink on the ember, fields, popups);
+    // the island body and the layers on it come from the material below.
     readonly property color smoke: "#0a0b0e"
-    readonly property color ash: "#15171c"
-    readonly property color ashHi: "#20232a"
-    readonly property color islandText: "#eef0f4"
-    readonly property color islandMuted: "#8a8f9b"
+    readonly property color ash: mat.ash
+    readonly property color ashHi: mat.ashHi
+    readonly property color islandText: mat.text
+    readonly property color islandMuted: mat.muted
+
+    // Material of the islands, set by Settings.conf.shell.material. "solid"
+    // is opaque Ember and doubles as reduce transparency; the glass ones are
+    // see-through fills over the compositor blur (EmberIslands'
+    // BackgroundEffect), with the raised layers turning into white tints.
+    // Values from docs/decisions/Wisp — směry materiálů.html (B and C).
+    readonly property var materials: ({
+        solid: {
+            fill: "#0a0b0e", fillOpen: "#0a0b0e", tintOpen: 0,
+            ash: "#15171c", ashHi: "#20232a",
+            edge: 0.06, edgeIsland: 0.06, edgeOpen: 0.06,
+            text: "#eef0f4", muted: "#8a8f9b"
+        },
+        tinted: {
+            fill: Qt.rgba(12 / 255, 13 / 255, 18 / 255, 0.72), fillOpen: Qt.rgba(10 / 255, 11 / 255, 14 / 255, 0.62), tintOpen: 0.06,
+            ash: Qt.rgba(1, 1, 1, 0.06), ashHi: Qt.rgba(1, 1, 1, 0.10),
+            edge: 0.10, edgeIsland: 0.16, edgeOpen: 0.22,
+            text: "#f6f7fa", muted: Qt.rgba(240 / 255, 242 / 255, 248 / 255, 0.72)
+        },
+        smoked: {
+            fill: Qt.rgba(11 / 255, 12 / 255, 15 / 255, 0.90), fillOpen: Qt.rgba(11 / 255, 12 / 255, 15 / 255, 0.82), tintOpen: 0,
+            ash: Qt.rgba(1, 1, 1, 0.045), ashHi: Qt.rgba(1, 1, 1, 0.07),
+            edge: 0.07, edgeIsland: 0.08, edgeOpen: 0.09,
+            text: "#eef0f4", muted: "#a3a8b3"
+        }
+    })
+    readonly property string material: materials[Settings.conf.shell.material] ? Settings.conf.shell.material : "solid"
+    readonly property var mat: materials[material]
+    readonly property bool glass: material !== "solid"
+    readonly property color islandFill: mat.fill
+    // The open card is lit faintly by the ember through the glass.
+    readonly property color islandFillOpen: Qt.tint(mat.fillOpen, Qt.alpha(ember, mat.tintOpen))
 
     // The only wallpaper-derived colour.
     property color ember: c("primary", "#8fd3ff")
@@ -149,7 +183,9 @@ Singleton {
     // Depth: layers of fill (smoke, ash, ash-high), one real shadow under an
     // open card, a 1 px crescent of light on the top edge of islands, and the
     // ember lighting an active surface from inside. No edges round a shape.
-    readonly property color edgeLight: Qt.rgba(1, 1, 1, 0.06)
+    readonly property color edgeLight: Qt.rgba(1, 1, 1, mat.edge)
+    readonly property color edgeLightIsland: Qt.rgba(1, 1, 1, mat.edgeIsland)
+    readonly property color edgeLightOpen: Qt.rgba(1, 1, 1, mat.edgeOpen)
     readonly property real litFill: 0.06
     readonly property real litHalo: 0.30
     // The shadow of an open card: offset down, soft, black.

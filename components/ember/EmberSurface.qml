@@ -13,6 +13,7 @@ Item {
     property color base: Theme.ash
     property real radius: Theme.radiusTile
     property bool topLight: false
+    property color edge: Theme.edgeLight
     property bool lit: false
     // Where the ember sits for `lit`, in this item's coordinates.
     property real lightX: width / 2
@@ -29,7 +30,7 @@ Item {
         visible: root.topLight
         radius: root.radius
         gradient: Gradient {
-            GradientStop { position: 0; color: Theme.edgeLight }
+            GradientStop { position: 0; color: root.edge }
             GradientStop { position: Math.min(1, (root.radius + 2) / Math.max(1, root.height)); color: "transparent" }
             GradientStop { position: 1; color: "transparent" }
         }

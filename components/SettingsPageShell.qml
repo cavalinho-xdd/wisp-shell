@@ -42,6 +42,18 @@ CfgPage {
             onEdited: v => Settings.conf.shell.glow = v
         }
         CfgChoice {
+            icon: "󰂵"
+            text: "Island material"
+            enabled: Settings.conf.shell.ember
+            value: Settings.conf.shell.material
+            options: [
+                { value: "solid", label: "Solid" },
+                { value: "tinted", label: "Tinted glass" },
+                { value: "smoked", label: "Smoked glass" }
+            ]
+            onEdited: v => Settings.conf.shell.material = v
+        }
+        CfgChoice {
             icon: "󰕮"
             text: "Island layout"
             enabled: Settings.conf.shell.ember

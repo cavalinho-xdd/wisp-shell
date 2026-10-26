@@ -319,6 +319,10 @@ Singleton {
                 // Strength of the ember glow around and inside the islands:
                 // "soft" | "medium" | "strong" (Theme.glow, D3).
                 property string glow: "medium"
+                // What the islands are made of: "solid" (opaque, and the
+                // reduce-transparency choice) | "tinted" | "smoked"
+                // (Theme.material, docs/decisions/Wisp — směry materiálů.html).
+                property string material: "solid"
                 // Fewer, gentler Ember animations (Theme.reduceMotion).
                 property bool reduceMotion: false
                 // Where the three islands sit: "spread" | "cluster" | "quarters"

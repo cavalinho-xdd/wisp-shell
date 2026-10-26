@@ -26,6 +26,8 @@ Item {
     Behavior on lightX { NumberAnimation { duration: Theme.motionFast; easing.type: Easing.OutCubic } }
     property real lightY: Theme.islandHeight / 2
     readonly property bool hovered: hover.hovered
+    // Current corner radius, for the window's blur region.
+    readonly property alias cornerRadius: fill.radius
     // Free to be dragged along the bar; the owner decides what a drop means.
     property bool draggable: false
     property bool dragging: false
@@ -106,7 +108,8 @@ Item {
     EmberSurface {
         id: fill
         anchors.fill: parent
-        base: Theme.smoke
+        base: island.open ? Theme.islandFillOpen : Theme.islandFill
+        edge: island.open ? Theme.edgeLightOpen : Theme.edgeLightIsland
         topLight: true
         radius: island.open ? Theme.radiusIslandOpen : Theme.radiusIsland
         Behavior on radius { NumberAnimation { duration: Theme.motionMorph; easing.type: Easing.OutCubic } }
