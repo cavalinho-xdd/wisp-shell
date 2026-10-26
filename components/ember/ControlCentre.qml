@@ -15,6 +15,8 @@ Item {
 
     // Asks the island to show a detail view: "wifi", "bluetooth", "sound", "power" or "calendar".
     signal showView(string view)
+    // Asks the island to close (an app was launched from here).
+    signal done()
     // Centre of the volume head, for the island's inner light.
     readonly property point emberPoint: Qt.point(
         column.x + volumeRow.x + volumeSlider.x + volumeSlider.headX,
@@ -29,6 +31,36 @@ Item {
         id: clock
         precision: SystemClock.Minutes
     }
+
+    // Notifs.records is a plain array, and a ListView given a new array
+    // rebuilds every row with no add/remove transitions. This model follows
+    // it row by row (by key), so a dismissed notification can leave and its
+    // neighbours slide up. A row keeps its record as JSON, so it still has
+    // something to draw while it fades out.
+    ListModel { id: notifModel }
+    function syncNotifs(): void {
+        const recs = Notifs.records;
+        const keys = new Set(recs.map(r => r.key));
+        for (let i = notifModel.count - 1; i >= 0; i--)
+            if (!keys.has(notifModel.get(i).key)) notifModel.remove(i);
+        for (let i = 0; i < recs.length; i++) {
+            const json = JSON.stringify(recs[i]);
+            let at = -1;
+            for (let j = i; j < notifModel.count; j++)
+                if (notifModel.get(j).key === recs[i].key) { at = j; break; }
+            if (at < 0) {
+                notifModel.insert(i, { key: recs[i].key, json: json });
+                continue;
+            }
+            if (at !== i) notifModel.move(at, i, 1);
+            if (notifModel.get(i).json !== json) notifModel.setProperty(i, "json", json);
+        }
+    }
+    Connections {
+        target: Notifs
+        function onRecordsChanged() { root.syncNotifs(); }
+    }
+    Component.onCompleted: syncNotifs()
 
     Column {
         id: column
@@ -287,12 +319,30 @@ Item {
                     height: Theme.notifRow * Theme.ccNotifRows
                     clip: true
                     boundsBehavior: Flickable.StopAtBounds
-                    model: Notifs.records
+                    model: notifModel
+
+                    // Leaving: fades and slides out to the right; the rest
+                    // close the gap. Arriving: fades in where it lands.
+                    add: Transition {
+                        NumberAnimation { property: "opacity"; from: 0; to: 1; duration: Theme.motionQuick; easing.type: Easing.OutCubic }
+                    }
+                    remove: Transition {
+                        NumberAnimation { property: "opacity"; to: 0; duration: Theme.motionQuick; easing.type: Easing.OutCubic }
+                        NumberAnimation { property: "x"; to: Theme.spaceLg; duration: Theme.motionQuick; easing.type: Easing.OutCubic }
+                    }
+                    displaced: Transition {
+                        NumberAnimation { property: "y"; duration: Theme.motionQuick; easing.type: Easing.OutCubic }
+                        // A row caught mid-add or mid-remove ends whole.
+                        NumberAnimation { property: "opacity"; to: 1; duration: Theme.motionQuick }
+                    }
+                    move: Transition {
+                        NumberAnimation { property: "y"; duration: Theme.motionQuick; easing.type: Easing.OutCubic }
+                    }
 
                     delegate: NotifRow {
-                        required property var modelData
+                        required property string json
                         width: ListView.view.width
-                        rec: modelData
+                        rec: JSON.parse(json)
                         onActivated: Notifs.activate(rec.key)
                         onDismissed: Notifs.dismiss(rec.key)
                     }
@@ -333,12 +383,26 @@ Item {
                         }
                     }
                 }
-                EmberButton {
+                Row {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
-                    icon: "󰐥"
-                    label: "Power"
-                    onClicked: root.showView("power")
+                    spacing: Theme.spaceXs / 2
+
+                    // The standalone settings app; the island closes so a
+                    // second click cannot start a second copy.
+                    EmberButton {
+                        icon: "󰒓"
+                        label: "Settings"
+                        onClicked: {
+                            Quickshell.execDetached(["/usr/bin/qs", "-p", Settings.settingsAppPath]);
+                            root.done();
+                        }
+                    }
+                    EmberButton {
+                        icon: "󰐥"
+                        label: "Power"
+                        onClicked: root.showView("power")
+                    }
                 }
             }
         }
