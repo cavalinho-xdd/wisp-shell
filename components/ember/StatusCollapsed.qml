@@ -1,9 +1,10 @@
 import QtQuick
 import "../../core"
 
-// Collapsed right island: Wi-Fi and Bluetooth state, the battery when the
-// machine has one, and a count of notifications that are still live. Muted
-// means off or not connected; the island takes its width from implicitWidth.
+// Collapsed right island: Wi-Fi and Bluetooth state, the battery (level and
+// charging) when the machine has one, and a count of notifications that are
+// still live. Muted means off or not connected; the island takes its width
+// from implicitWidth.
 Item {
     id: root
 
@@ -31,6 +32,16 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             text: !Connectivity.btEnabled ? "󰂲" : (Connectivity.btConnected.length > 0 ? "󰂱" : "󰂯")
             color: Connectivity.btConnected.length > 0 ? Theme.islandText : Theme.islandMuted
+            font.family: Theme.fontIcon
+            font.pixelSize: Theme.textBody
+        }
+        // The glyph carries the charge level and, with a bolt, that the
+        // charger is plugged in; lit in ember while charging.
+        Text {
+            anchors.verticalCenter: parent.verticalCenter
+            visible: Battery.available
+            text: Battery.icon()
+            color: Battery.charging || Battery.low ? Theme.ember : Theme.islandMuted
             font.family: Theme.fontIcon
             font.pixelSize: Theme.textBody
         }
