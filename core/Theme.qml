@@ -135,6 +135,11 @@ Singleton {
     readonly property color ashHi: mat.ashHi
     readonly property color islandText: mat.text
     readonly property color islandMuted: mat.muted
+    // A dark recess in a card (orb disc, text field); on glass it darkens the
+    // blur instead of covering it.
+    readonly property color well: mat.well
+    // A quiet panel sitting on a card (the notification list).
+    readonly property color panel: mat.panel
 
     // Material of the islands, set by Settings.conf.shell.material. "solid"
     // is opaque Ember and doubles as reduce transparency; the glass ones are
@@ -145,18 +150,21 @@ Singleton {
         solid: {
             fill: "#0a0b0e", fillOpen: "#0a0b0e", tintOpen: 0,
             ash: "#15171c", ashHi: "#20232a",
+            well: "#0a0b0e", panel: Qt.rgba(21 / 255, 23 / 255, 28 / 255, 0.55),
             edge: 0.06, edgeIsland: 0.06, edgeOpen: 0.06,
             text: "#eef0f4", muted: "#8a8f9b"
         },
         tinted: {
             fill: Qt.rgba(12 / 255, 13 / 255, 18 / 255, 0.72), fillOpen: Qt.rgba(10 / 255, 11 / 255, 14 / 255, 0.62), tintOpen: 0.06,
             ash: Qt.rgba(1, 1, 1, 0.06), ashHi: Qt.rgba(1, 1, 1, 0.10),
+            well: Qt.rgba(0, 0, 0, 0.22), panel: Qt.rgba(0, 0, 0, 0.22),
             edge: 0.10, edgeIsland: 0.16, edgeOpen: 0.22,
             text: "#f6f7fa", muted: Qt.rgba(240 / 255, 242 / 255, 248 / 255, 0.72)
         },
         smoked: {
             fill: Qt.rgba(11 / 255, 12 / 255, 15 / 255, 0.90), fillOpen: Qt.rgba(11 / 255, 12 / 255, 15 / 255, 0.82), tintOpen: 0,
             ash: Qt.rgba(1, 1, 1, 0.045), ashHi: Qt.rgba(1, 1, 1, 0.07),
+            well: Qt.rgba(0, 0, 0, 0.45), panel: Qt.rgba(0, 0, 0, 0.30),
             edge: 0.07, edgeIsland: 0.08, edgeOpen: 0.09,
             text: "#eef0f4", muted: "#a3a8b3"
         }
@@ -179,6 +187,9 @@ Singleton {
     readonly property real glowAlphaOpen: 0.26
     readonly property real glowBlurOpen: 46
     readonly property real innerLightAlpha: 0.16
+    // Glow round a lit tile well on glass.
+    readonly property real wellGlowAlpha: 0.35
+    readonly property real wellGlowBlur: 14
 
     // Depth: layers of fill (smoke, ash, ash-high), one real shadow under an
     // open card, a 1 px crescent of light on the top edge of islands, and the

@@ -225,7 +225,7 @@ Item {
                 width: column.width
                 implicitHeight: Theme.spaceSm * 2 + headerRow.implicitHeight + Theme.spaceXs + Theme.notifRow * Theme.ccNotifRows
                 radius: Theme.radiusTile
-                base: Qt.alpha(Theme.ash, 0.55)
+                base: Theme.panel
 
                 Item {
                     id: headerRow

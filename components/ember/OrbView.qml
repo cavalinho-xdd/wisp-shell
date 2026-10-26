@@ -109,7 +109,7 @@ Item {
                     width: ring.width - Theme.spaceLg * 2.6
                     height: width
                     radius: width / 2
-                    color: Theme.smoke
+                    color: Theme.well
 
                     Shape {
                         anchors.fill: parent

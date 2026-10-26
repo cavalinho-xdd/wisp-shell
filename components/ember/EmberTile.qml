@@ -34,7 +34,7 @@ Item {
         id: plate
         anchors.fill: parent
         lit: tile.checked
-        base: mouse.containsMouse ? Theme.ashHi : Theme.ash
+        base: mouse.containsMouse || (tile.checked && Theme.glass) ? Theme.ashHi : Theme.ash
         radius: Theme.radiusTile
         lightX: well.x + well.width / 2
         lightY: height / 2
@@ -53,7 +53,20 @@ Item {
         border.color: Theme.ember
     }
 
-    // The well: dark, the icon is the ember when on.
+    // On glass the well itself is the ember while on, and glows.
+    RectangularShadow {
+        anchors.fill: well
+        radius: well.radius
+        scale: well.scale
+        color: Qt.alpha(Theme.ember, Theme.wellGlowAlpha * Theme.glow)
+        blur: Theme.wellGlowBlur * Theme.glow
+        opacity: Theme.glass && tile.checked ? 1 : 0
+        visible: opacity > 0
+        Behavior on opacity { NumberAnimation { duration: Theme.motionFast; easing.type: Easing.OutCubic } }
+    }
+
+    // The well: dark, the icon is the ember when on (solid); an ember disc
+    // with a dark icon when on (glass).
     EmberSurface {
         id: well
         x: Theme.spaceSm
@@ -61,14 +74,14 @@ Item {
         width: Theme.controlSize
         height: width
         radius: width / 2
-        base: tile.checked ? Theme.smoke : Theme.ashHi
+        base: tile.checked ? (Theme.glass ? Theme.ember : Theme.smoke) : Theme.ashHi
         scale: plate.scale
         Behavior on base { ColorAnimation { duration: Theme.motionFast } }
 
         Text {
             anchors.centerIn: parent
             text: tile.icon
-            color: tile.checked ? Theme.ember : Theme.islandMuted
+            color: tile.checked ? (Theme.glass ? Theme.smoke : Theme.ember) : Theme.islandMuted
             font.family: Theme.fontIcon
             font.pixelSize: Theme.textTitle
             Behavior on color { ColorAnimation { duration: Theme.motionFast } }

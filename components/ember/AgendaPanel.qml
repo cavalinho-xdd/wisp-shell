@@ -121,7 +121,7 @@ Item {
         width: parent.width
         height: Theme.controlSize - Theme.spaceXs
         radius: height / 2
-        color: field.activeFocus ? Theme.ashHi : Theme.smoke
+        color: field.activeFocus ? Theme.ashHi : Theme.well
         border.width: field.activeFocus ? 1 : 0
         border.color: Theme.ember
         Behavior on color { ColorAnimation { duration: Theme.motionFast } }
