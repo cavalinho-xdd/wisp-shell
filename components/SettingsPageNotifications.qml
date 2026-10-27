@@ -45,48 +45,53 @@ CfgPage {
         return Array.from(names).sort((a, b) => a.localeCompare(b));
     }
 
-    CfgSection {
-        title: "Do Not Disturb"
-        icon: "󰂛"
+    // Do not disturb: the manual switch and the three automatic ones.
+    RowLayout {
+        Layout.fillWidth: true
+        spacing: Theme.spaceSm
 
-        CfgSwitch {
+        CfgTile {
             icon: "󰂛"
-            text: "Do not disturb"
-            hint: "Notifications still land in the centre, the pill just stays quiet. Critical ones always show."
+            text: "Silence"
             checked: page.conf.dnd
             onToggled: value => Settings.conf.notifications.dnd = value
         }
-        CfgSwitch {
+        CfgTile {
             icon: "󰊴"
-            text: "Automatically while gaming"
-            hint: "Whenever a game session is detected (Steam, Heroic, gamemode)"
+            text: "Gaming"
             checked: page.conf.dndDuringGames
             onToggled: value => Settings.conf.notifications.dndDuringGames = value
         }
-        CfgSwitch {
+        CfgTile {
             icon: "󰊓"
-            text: "Automatically in fullscreen"
-            hint: "When the focused monitor shows a fullscreen window"
+            text: "Fullscreen"
             checked: page.conf.dndWhenFullscreen
             onToggled: value => Settings.conf.notifications.dndWhenFullscreen = value
         }
-        CfgSwitch {
+        CfgTile {
             icon: "󰔛"
-            text: "On a schedule"
+            text: "Schedule"
+            hint: checked ? page.conf.dndFrom + "–" + page.conf.dndTo : "Off"
             checked: page.conf.dndScheduleEnabled
             onToggled: value => Settings.conf.notifications.dndScheduleEnabled = value
         }
+    }
+
+    CfgNotice {
+        text: "The tiles keep the pill quiet: by hand, while gaming (Steam, Heroic, gamemode), when the focused monitor is fullscreen, or on a schedule. Notifications still land in the centre and critical ones always show."
+    }
+
+    CfgSection {
+        visible: page.conf.dndScheduleEnabled
+        title: "Schedule"
+
         CfgSpin {
-            visible: page.conf.dndScheduleEnabled
-            icon: "󰖔"
             text: "From (hour)"
             from: 0; to: 23
             value: page.hourOf(page.conf.dndFrom)
             onEdited: v => Settings.conf.notifications.dndFrom = page.hm(v)
         }
         CfgSpin {
-            visible: page.conf.dndScheduleEnabled
-            icon: "󰖙"
             text: "Until (hour)"
             from: 0; to: 23
             value: page.hourOf(page.conf.dndTo)
@@ -95,7 +100,7 @@ CfgPage {
     }
 
     CfgSection {
-        title: "Per-App Rules"
+        title: "Apps"
         icon: "󰀻"
 
         CfgNotice {
@@ -119,8 +124,8 @@ CfgPage {
                 Text {
                     Layout.leftMargin: 12; Layout.topMargin: 8
                     text: appBlock.modelData
-                    font.family: Theme.fontFamily; font.pixelSize: 13; font.bold: true
-                    color: Theme.text
+                    font.family: Theme.fontFamily; font.pixelSize: Theme.textCaption; font.weight: Font.DemiBold
+                    color: Theme.islandText
                 }
                 CfgSwitch {
                     icon: "󰂜"
