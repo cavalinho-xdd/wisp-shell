@@ -1,6 +1,11 @@
 #!/bin/bash
 CORES=$(nproc 2>/dev/null || echo 1)
 
+# JSON needs "0.51", not bc's ".51"; an empty or zero total gives 0
+ratio() {
+    awk -v a="$1" -v b="$2" 'BEGIN { printf "%.4f", (b + 0 > 0) ? a / b : 0 }'
+}
+
 human_net() {
     local b=$1
     if [ $b -gt 1048576 ]; then
@@ -66,12 +71,16 @@ while true; do
     fi
 
     # GPU Load (Nvidia -> AMD -> Intel)
-    gpu_load=0
+    # nvidia-smi can be installed without a working driver and prints an error instead of a number
+    gpu_load=""
     if command -v nvidia-smi >/dev/null 2>&1; then
-        gpu_load=$(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits 2>/dev/null || echo 0)
-    elif [ -f /sys/class/drm/card0/device/gpu_busy_percent ] || [ -f /sys/class/drm/card1/device/gpu_busy_percent ]; then
-        amd_busy_file=$(ls /sys/class/drm/card*/device/gpu_busy_percent 2>/dev/null | head -n 1 || true)
-        gpu_load=$(cat "$amd_busy_file" 2>/dev/null || echo 0)
+        gpu_load=$(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits 2>/dev/null | head -n 1 | tr -dc '0-9')
+    fi
+    amd_busy_file=$(ls /sys/class/drm/card*/device/gpu_busy_percent 2>/dev/null | head -n 1 || true)
+    if [ -n "$gpu_load" ]; then
+        :
+    elif [ -n "$amd_busy_file" ]; then
+        gpu_load=$(tr -dc '0-9' < "$amd_busy_file")
     elif [ -n "$intel_rc6_file" ] && [ -r "$intel_rc6_file" ]; then
         rc6_after=$(cat "$intel_rc6_file" 2>/dev/null || echo 0)
         time_after=$(date +%s%3N)
@@ -85,6 +94,7 @@ while true; do
         [ $gpu_load -lt 0 ] && gpu_load=0
         [ $gpu_load -gt 100 ] && gpu_load=100
     fi
+    gpu_load=${gpu_load:-0}
     
     # Top 5 CPU Processes (exclude self, normalize CPU across cores)
     top_procs=$(ps -eo pcpu,pmem,comm --sort=-pcpu | awk -v cores="$CORES" '
@@ -99,5 +109,5 @@ while true; do
         }
     ' | sed 's/,$//')
     
-    echo "{ \"ram\": { \"used\": \"$RAM_USED GB\", \"free\": \"$RAM_FREE GB\", \"total\": \"$RAM_TOTAL GB\", \"value\": $(echo "$RAM_USED / $RAM_TOTAL" | bc -l 2>/dev/null || echo 0) }, \"swap\": { \"used\": \"$SWAP_USED GB\", \"free\": \"$SWAP_FREE GB\", \"total\": \"$SWAP_TOTAL GB\", \"value\": $(echo "$SWAP_USED / $SWAP_TOTAL" | bc -l 2>/dev/null || echo 0) }, \"cpu\": { \"load\": \"${cpu_load}%\", \"value\": $(echo "$cpu_load / 100" | bc -l) }, \"gpu\": { \"load\": \"${gpu_load}%\", \"value\": $(echo "$gpu_load / 100" | bc -l) }, \"disk\": { \"used\": \"${disk_used}G\", \"total\": \"${disk_total}G\", \"value\": ${disk_val} }, \"net\": { \"rx\": \"${rx_human}\", \"tx\": \"${tx_human}\" }, \"top\": [$top_procs] }"
+    echo "{ \"ram\": { \"used\": \"$RAM_USED GB\", \"free\": \"$RAM_FREE GB\", \"total\": \"$RAM_TOTAL GB\", \"value\": $(ratio "$RAM_USED" "$RAM_TOTAL") }, \"swap\": { \"used\": \"$SWAP_USED GB\", \"free\": \"$SWAP_FREE GB\", \"total\": \"$SWAP_TOTAL GB\", \"value\": $(ratio "$SWAP_USED" "$SWAP_TOTAL") }, \"cpu\": { \"load\": \"${cpu_load}%\", \"value\": $(ratio "$cpu_load" 100) }, \"gpu\": { \"load\": \"${gpu_load}%\", \"value\": $(ratio "$gpu_load" 100) }, \"disk\": { \"used\": \"${disk_used}G\", \"total\": \"${disk_total}G\", \"value\": ${disk_val} }, \"net\": { \"rx\": \"${rx_human}\", \"tx\": \"${tx_human}\" }, \"top\": [$top_procs] }"
 done
