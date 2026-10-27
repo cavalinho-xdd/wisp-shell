@@ -8,15 +8,16 @@ import "components"
 
 // Standalone settings app — third entry point next to shell.qml / wallpaper.qml.
 // Launch with `qs -p settings.qml` (the dashboard gear does exactly that).
-// Layout: left navigation rail (pages, "Open config file" at its foot),
-// scrollable content pages on the right.
+// Layout (variant D of docs/decisions/Wisp — směry nastavení.html): one
+// surface, a sidebar with the pages and About at its foot, and on the right a
+// header with the page title over the scrollable page.
 ShellRoot {
     FloatingWindow {
         id: win
         title: "Wisp Settings"
         implicitWidth: 860
         implicitHeight: 600
-        color: Theme.background
+        color: Theme.smoke
 
         property int currentPage: 0
 
@@ -26,193 +27,195 @@ ShellRoot {
             Quickshell.execDetached(["hyprctl", "eval",
                 'hl.window_rule({ match = { class = "^org\\\\.quickshell$" }, float = true, size = {860, 600} })'])
         }
+        // The last page (About) sits apart at the foot of the sidebar.
         readonly property var pages: [
-            { name: "Hyprland", icon: "󰉼", component: "SettingsPageHypr.qml" },
-            { name: "Colors", icon: "󰸌", component: "SettingsPageColors.qml" },
-            { name: "Monitors", icon: "󰹑", component: "SettingsPageMonitors.qml" },
-            { name: "Keybinds", icon: "󰌌", component: "SettingsPageKeybinds.qml" },
-            { name: "Shell", icon: "󰍜", component: "SettingsPageShell.qml" },
-            { name: "Notifications", icon: "󰂚", component: "SettingsPageNotifications.qml" },
-            { name: "Advanced", icon: "󰒓", component: "SettingsPageAdvanced.qml" },
-            { name: "About", icon: "󰋽", component: "SettingsPageAbout.qml" }
+            { name: "Hyprland", icon: "󰉼", component: "SettingsPageHypr.qml",
+              sub: "Written to general.lua and animations.lua; Hyprland reloads straight away." },
+            { name: "Colors", icon: "󰸌", component: "SettingsPageColors.qml",
+              sub: "Colours taken from the wallpaper, and the wallpaper itself." },
+            { name: "Monitors", icon: "󰹑", component: "SettingsPageMonitors.qml",
+              sub: "Where the shell shows, refresh rate and scale." },
+            { name: "Keybinds", icon: "󰌌", component: "SettingsPageKeybinds.qml",
+              sub: "Your own shortcuts on top of the defaults." },
+            { name: "Shell", icon: "󰍜", component: "SettingsPageShell.qml",
+              sub: "The islands at the top of every screen." },
+            { name: "Notifications", icon: "󰂚", component: "SettingsPageNotifications.qml",
+              sub: "History keeps the last 7 days, up to 200." },
+            { name: "Advanced", icon: "󰒓", component: "SettingsPageAdvanced.qml",
+              sub: "The config file, the welcome wizard and Hyprland sync." },
+            { name: "About", icon: "󰋽", component: "SettingsPageAbout.qml",
+              sub: "Version and system." }
         ]
 
-        RowLayout {
-            anchors.fill: parent
-            anchors.margins: 12
-            spacing: 12
+        component NavItem: Rectangle {
+            id: item
+            required property int page
+            readonly property bool active: win.currentPage === page
 
-            // ── Navigation rail ──
-            ColumnLayout {
-                Layout.preferredWidth: 170
-                Layout.minimumWidth: 170
-                Layout.maximumWidth: 170
-                Layout.fillHeight: true
-                spacing: 6
+            Layout.fillWidth: true
+            Layout.preferredHeight: Theme.settingsNavRow
+            radius: Theme.radiusRow
+            color: navMa.containsMouse && !active ? Theme.hover : "transparent"
+            Behavior on color { ColorAnimation { duration: Theme.animFast } }
+            scale: navMa.pressed ? Theme.pressScale : 1
+            Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
 
-                Text {
-                    font.family: Theme.fontFamily
-                    Layout.leftMargin: 12
-                    Layout.topMargin: 10
-                    Layout.bottomMargin: 14
-                    text: "Settings"
-                    font.pixelSize: 18
-                    font.bold: true
-                    color: Theme.text
-                }
-
-                // Nav buttons with a sliding highlight pill
-                Item {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-
-                    Rectangle {
-                        id: navIndicator
-                        width: parent.width
-                        height: 36
-                        radius: 10
-                        color: Theme.surface0
-                        y: win.currentPage * 38
-                        Behavior on y { NumberAnimation { duration: 320; easing.type: Easing.OutBack; easing.overshoot: 1.1 } }
-                    }
-
-                    Column {
-                        width: parent.width
-                        spacing: 2
-
-                        Repeater {
-                            model: win.pages
-                            delegate: Item {
-                                width: parent.width
-                                height: 36
-
-                                readonly property bool active: win.currentPage === index
-
-                                Row {
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 12
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    spacing: 12
-                                    Text {
-                                        text: modelData.icon
-                                        font.family: Theme.fontIcon
-                                        font.pixelSize: 15
-                                        color: active ? Theme.text : Theme.subtext0
-                                        Behavior on color { ColorAnimation { duration: Theme.animFast } }
-                                        anchors.verticalCenter: parent.verticalCenter
-                                    }
-                                    Text {
-                                        font.family: Theme.fontFamily
-                                        text: modelData.name
-                                        font.pixelSize: 13
-                                        font.weight: active ? Font.Medium : Font.Normal
-                                        color: active || navMa.containsMouse ? Theme.text : Theme.subtext0
-                                        Behavior on color { ColorAnimation { duration: Theme.animFast } }
-                                        anchors.verticalCenter: parent.verticalCenter
-                                    }
-                                }
-
-                                MouseArea {
-                                    id: navMa
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: win.currentPage = index
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // Open settings.json directly — a secondary action, so it sits
-                // at the foot of the rail instead of as a filled button on top
-                Item {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 36
-                    Row {
-                        anchors.left: parent.left
-                        anchors.leftMargin: 12
-                        anchors.verticalCenter: parent.verticalCenter
-                        spacing: 12
-                        Text {
-                            text: "󰈔"
-                            font.family: Theme.fontIcon; font.pixelSize: 15
-                            color: fabMa.containsMouse ? Theme.text : Theme.subtext0
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-                        Text {
-                            font.family: Theme.fontFamily
-                            text: "Open config file"
-                            font.pixelSize: 13
-                            color: fabMa.containsMouse ? Theme.text : Theme.subtext0
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-                    }
-                    MouseArea {
-                        id: fabMa
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: Quickshell.execDetached(["xdg-open", Settings.configPath])
-                    }
+            // The selected page is lit by the ember from its left edge.
+            Rectangle {
+                anchors.fill: parent
+                radius: parent.radius
+                opacity: item.active ? 1 : 0
+                Behavior on opacity { NumberAnimation { duration: Theme.animFast } }
+                gradient: Gradient {
+                    orientation: Gradient.Horizontal
+                    GradientStop { position: 0; color: Qt.tint(Theme.ashHi, Qt.alpha(Theme.ember, 0.12)) }
+                    GradientStop { position: 1; color: Theme.ash }
                 }
             }
 
-            // ── Content pane ──
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                radius: 20
-                color: Theme.surface
-                clip: true
-
-                // Close button — floats over the page content, top-right
-                Rectangle {
-                    anchors.top: parent.top
-                    anchors.right: parent.right
-                    anchors.margins: 12
-                    width: 30; height: 30; radius: 15
-                    z: 10
-                    color: closeMa.containsMouse ? Theme.surface0 : "transparent"
+            Row {
+                anchors.left: parent.left
+                anchors.leftMargin: Theme.spaceSm + 2
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: Theme.spaceSm + 2
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: win.pages[item.page].icon
+                    font.family: Theme.fontIcon
+                    font.pixelSize: Theme.textBody
+                    color: item.active ? Theme.ember : Theme.islandMuted
                     Behavior on color { ColorAnimation { duration: Theme.animFast } }
-                    scale: closeMa.pressed ? 0.9 : 1.0
-                    Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
-                    Text {
-                        anchors.centerIn: parent
-                        text: "󰅖"
-                        font.family: Theme.fontIcon
-                        font.pixelSize: 14
-                        color: closeMa.containsMouse ? Theme.text : Theme.subtext0
-                        Behavior on color { ColorAnimation { duration: Theme.animFast } }
+                }
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: win.pages[item.page].name
+                    font.family: Theme.fontFamily
+                    font.pixelSize: Theme.textCaption
+                    font.weight: item.active ? Font.Medium : Font.Normal
+                    color: item.active || navMa.containsMouse ? Theme.islandText : Theme.islandMuted
+                    Behavior on color { ColorAnimation { duration: Theme.animFast } }
+                }
+            }
+
+            MouseArea {
+                id: navMa
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: win.currentPage = item.page
+            }
+        }
+
+        RowLayout {
+            anchors.fill: parent
+            anchors.margins: Theme.spaceSm + 2
+            spacing: Theme.spaceMd
+
+            // ── Sidebar ──
+            ColumnLayout {
+                Layout.preferredWidth: Theme.settingsNavWidth
+                Layout.fillHeight: true
+                spacing: 2
+
+                Row {
+                    Layout.leftMargin: Theme.spaceSm + 2
+                    Layout.topMargin: Theme.spaceXs
+                    Layout.bottomMargin: Theme.spaceMd
+                    spacing: Theme.spaceSm
+                    Rectangle {
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: Theme.emberSize
+                        height: Theme.emberSize
+                        radius: Theme.emberSize / 2
+                        color: Theme.ember
                     }
-                    MouseArea {
-                        id: closeMa
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        onClicked: Qt.quit()
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: "Wisp"
+                        font.family: Theme.fontFamily
+                        font.pixelSize: Theme.textTitle
+                        font.weight: Font.DemiBold
+                        color: Theme.islandText
                     }
                 }
 
-                // Page title, shared by every page
-                Text {
-                    id: pageTitle
-                    anchors.top: parent.top
-                    anchors.left: parent.left
-                    anchors.topMargin: 22
-                    anchors.leftMargin: 36
-                    text: win.pages[win.currentPage].name
-                    font.family: Theme.fontFamily
-                    font.pixelSize: 20
-                    font.bold: true
-                    color: Theme.text
+                Repeater {
+                    model: win.pages.length - 1
+                    delegate: NavItem {
+                        required property int index
+                        page: index
+                    }
+                }
+
+                Item { Layout.fillHeight: true }
+
+                NavItem { page: win.pages.length - 1 }
+            }
+
+            // ── Page ──
+            ColumnLayout {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                spacing: Theme.spaceSm
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.topMargin: Theme.spaceXs
+                    spacing: Theme.spaceMd
+
+                    Column {
+                        Layout.fillWidth: true
+                        spacing: 2
+                        Text {
+                            width: parent.width
+                            text: win.pages[win.currentPage].name
+                            font.family: Theme.fontFamily
+                            font.pixelSize: Theme.textHeading
+                            font.weight: Font.DemiBold
+                            color: Theme.islandText
+                            elide: Text.ElideRight
+                        }
+                        Text {
+                            width: parent.width
+                            text: win.pages[win.currentPage].sub
+                            font.family: Theme.fontFamily
+                            font.pixelSize: Theme.textCaption
+                            color: Theme.islandMuted
+                            elide: Text.ElideRight
+                        }
+                    }
+
+                    Rectangle {
+                        Layout.alignment: Qt.AlignTop
+                        Layout.preferredWidth: Theme.controlSize - 6
+                        Layout.preferredHeight: Theme.controlSize - 6
+                        radius: height / 2
+                        color: closeMa.containsMouse ? Theme.hover : "transparent"
+                        Behavior on color { ColorAnimation { duration: Theme.animFast } }
+                        scale: closeMa.pressed ? 0.9 : 1.0
+                        Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
+                        Text {
+                            anchors.centerIn: parent
+                            text: "󰅖"
+                            font.family: Theme.fontIcon
+                            font.pixelSize: Theme.textBody
+                            color: closeMa.containsMouse ? Theme.islandText : Theme.islandMuted
+                            Behavior on color { ColorAnimation { duration: Theme.animFast } }
+                        }
+                        MouseArea {
+                            id: closeMa
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: Qt.quit()
+                        }
+                    }
                 }
 
                 Item {
-                    anchors.top: pageTitle.bottom
-                    anchors.topMargin: 2
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.bottom: parent.bottom
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    clip: true
 
                     Loader {
                         id: pageLoader

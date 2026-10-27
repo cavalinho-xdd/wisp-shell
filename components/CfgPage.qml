@@ -2,15 +2,15 @@ import QtQuick
 import QtQuick.Layouts
 import "../core"
 
-// Scrollable settings page: centered column of CfgSections.
-// Modeled on ii-dots ContentPage.
+// Scrollable settings page: a column of CfgSection cards under the header
+// that settings.qml draws. Modeled on ii-dots ContentPage.
 Flickable {
     id: root
     default property alias contentData: contentColumn.data
 
     clip: true
     contentWidth: width
-    contentHeight: contentColumn.implicitHeight + 48
+    contentHeight: contentColumn.implicitHeight + Theme.spaceSm + Theme.spaceLg
     interactive: contentHeight > height
     boundsBehavior: Flickable.StopAtBounds
 
@@ -19,8 +19,8 @@ Flickable {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: 24
-        anchors.topMargin: 20
-        spacing: 24
+        anchors.topMargin: Theme.spaceSm
+        anchors.rightMargin: Theme.spaceXs
+        spacing: Theme.spaceSm
     }
 }

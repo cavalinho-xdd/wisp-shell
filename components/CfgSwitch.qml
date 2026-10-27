@@ -14,8 +14,8 @@ Rectangle {
 
     Layout.fillWidth: true
     implicitHeight: Math.max(40, rowContent.implicitHeight + 18)
-    radius: 10
-    color: rowMa.containsMouse ? Qt.alpha(Theme.surface0, 0.5) : "transparent"
+    radius: Theme.radiusRow - 4
+    color: rowMa.containsMouse ? Theme.hover : "transparent"
     Behavior on color { ColorAnimation { duration: Theme.animFast } }
 
     ColumnLayout {

@@ -266,6 +266,13 @@ Singleton {
     readonly property int spaceMd: 16
     readonly property int spaceLg: 20
 
+    // Settings app: sidebar, cards and tiles (docs/decisions/Wisp — směry
+    // nastavení.html, variant D).
+    readonly property int settingsNavWidth: 196
+    readonly property int settingsNavRow: 36
+    readonly property int radiusCard: 16
+    readonly property int textHeading: 20
+
     // Type scale. font.pixelSize is an int, so the prototype's 13.5px body
     // rounds to 14.
     readonly property int textTitle: 17
