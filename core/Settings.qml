@@ -164,6 +164,22 @@ Singleton {
             adapter.colors.scheme, adapter.colors.mode, fanout.join(",")]);
     }
 
+    // ── Material hook ──
+    // Lets the user's dotfiles follow the island material (wisp-dots matches
+    // Hyprland's blur and kitty's glass to it). Runs
+    // ~/.config/wisp/hooks/material <solid|tinted|smoked> when it exists and is
+    // executable: once settings load and on every change.
+    property bool materialApplied: false
+    function applyMaterial() {
+        Quickshell.execDetached(["sh", "-c", '[ -x "$1" ] && exec "$1" "$2"', "sh",
+            Paths.configDir + "/hooks/material", adapter.shell.material]);
+    }
+
+    Connections {
+        target: adapter.shell
+        function onMaterialChanged() { if (root.ready) root.applyMaterial(); }
+    }
+
     // Absolute path to generated/terminal-osc.sh — shown in Settings as the
     // line the user adds to their own shell init (fish/bash/zsh). Shell rc
     // files are the one thing still left to the user to wire up by hand —
@@ -271,6 +287,9 @@ Singleton {
         onLoaded: {
             root.ready = true;
             root.applyAll();   // no-op today; kept as the one startup hook if that changes
+            // onLoaded fires again on every reload of the watched file; only the
+            // first load runs the hook, later changes come via onMaterialChanged.
+            if (!root.materialApplied) { root.materialApplied = true; root.applyMaterial(); }
         }
         onLoadFailed: error => {
             if (error == FileViewError.FileNotFound) {
