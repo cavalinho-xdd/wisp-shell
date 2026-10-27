@@ -9,6 +9,8 @@ RowLayout {
     property string text: ""
     property int value: 0
     property int maxValue: 30
+    // Narrower in a half-width card (CfgGrid).
+    property int labelWidth: 140
     signal edited(int v)
 
     Layout.fillWidth: true
@@ -22,7 +24,7 @@ RowLayout {
         text: root.text
         font.pixelSize: 13
         color: root.enabled ? Theme.text : Theme.subtext0
-        Layout.preferredWidth: 140
+        Layout.preferredWidth: root.labelWidth
     }
     Slider {
         Layout.fillWidth: true

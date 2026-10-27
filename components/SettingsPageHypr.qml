@@ -16,10 +16,10 @@ CfgPage {
 
         Layout.fillWidth: true
         Layout.preferredHeight: 40
-        radius: 14
+        radius: Theme.radiusRow
         color: btnMa.containsMouse
-            ? (btn.danger ? Qt.alpha(Theme.red, 0.15) : Theme.surface0)
-            : Theme.surface
+            ? (btn.danger ? Qt.alpha(Theme.red, 0.15) : Theme.hover)
+            : Theme.ashHi
         border.color: Theme.red
         border.width: btn.danger ? 1 : 0
         Behavior on color { ColorAnimation { duration: Theme.animFast } }
@@ -32,14 +32,14 @@ CfgPage {
             Text {
                 text: btn.icon
                 font.family: Theme.fontIcon; font.pixelSize: 14
-                color: btn.danger ? Theme.red : Theme.text
+                color: btn.danger ? Theme.red : Theme.islandText
                 anchors.verticalCenter: parent.verticalCenter
             }
             Text {
                 font.family: Theme.fontFamily;
                 text: btn.text
                 font.pixelSize: 13; font.bold: true
-                color: btn.danger ? Theme.red : Theme.text
+                color: btn.danger ? Theme.red : Theme.islandText
                 anchors.verticalCenter: parent.verticalCenter
             }
         }
@@ -61,80 +61,56 @@ CfgPage {
         applyTimer.restart();
     }
 
-    property int currentTab: 0
+    // State of the "Add rule" card until the rule is added.
+    property bool newFloat: false
+    property bool newCenter: false
 
-    // Text tabs under the page title; the active one is underlined, not filled
-    Row {
-        Layout.leftMargin: 12
-        spacing: 22
-        Repeater {
-            model: ["Look & feel", "Window rules"]
-            delegate: Item {
-                required property string modelData
-                required property int index
-                readonly property bool active: page.currentTab === index
-                width: tabLabel.implicitWidth
-                height: 28
-                Text {
-                    id: tabLabel
-                    anchors.top: parent.top
-                    text: parent.modelData
-                    font.family: Theme.fontFamily
-                    font.pixelSize: 13
-                    font.weight: parent.active ? Font.Medium : Font.Normal
-                    color: parent.active || tabMa.containsMouse ? Theme.text : Theme.subtext0
-                    Behavior on color { ColorAnimation { duration: Theme.animFast } }
-                }
-                Rectangle {
-                    anchors.bottom: parent.bottom
-                    width: parent.width; height: 2; radius: 1
-                    color: Theme.text
-                    opacity: parent.active ? 1 : 0
-                    Behavior on opacity { NumberAnimation { duration: Theme.animFast } }
-                }
-                MouseArea {
-                    id: tabMa
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: page.currentTab = parent.index
-                }
-            }
+    RowLayout {
+        Layout.fillWidth: true
+        spacing: Theme.spaceSm
+
+        CfgTile {
+            icon: "󰂵"
+            text: "Blur"
+            checked: Settings.conf.hypr.blurEnabled
+            onToggled: value => { Settings.conf.hypr.blurEnabled = value; page.queueApply() }
+        }
+        CfgTile {
+            icon: "󰑮"
+            text: "Window animations"
+            checked: Settings.conf.hypr.animationsEnabled
+            onToggled: value => { Settings.conf.hypr.animationsEnabled = value; page.queueApply() }
         }
     }
 
-    // ── Tab 0: Look & Feel ──
-    ColumnLayout {
-        Layout.fillWidth: true
-        spacing: 24
-        visible: page.currentTab === 0
-
-        CfgNotice {
-            text: "Changes are written to general.lua and animations.lua, and Hyprland reloads straight away."
-        }
-
+    CfgGrid {
         CfgSection {
+            Layout.fillHeight: true
             title: "Gaps and borders"
 
             CfgSlider {
+                labelWidth: 96
                 text: "Inner gaps"
                 value: Settings.conf.hypr.gapsIn
                 maxValue: 30
                 onEdited: v => { Settings.conf.hypr.gapsIn = v; page.queueApply() }
             }
             CfgSlider {
+                labelWidth: 96
                 text: "Outer gaps"
                 value: Settings.conf.hypr.gapsOut
                 maxValue: 60
                 onEdited: v => { Settings.conf.hypr.gapsOut = v; page.queueApply() }
             }
             CfgSlider {
+                labelWidth: 96
                 text: "Border size"
                 value: Settings.conf.hypr.borderSize
                 maxValue: 8
                 onEdited: v => { Settings.conf.hypr.borderSize = v; page.queueApply() }
             }
             CfgSlider {
+                labelWidth: 96
                 text: "Rounding"
                 value: Settings.conf.hypr.rounding
                 maxValue: 30
@@ -143,196 +119,179 @@ CfgPage {
         }
 
         CfgSection {
+            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignTop
             title: "Blur"
 
-            CfgSwitch {
-                text: "Blur behind windows"
-                checked: Settings.conf.hypr.blurEnabled
-                onToggled: value => { Settings.conf.hypr.blurEnabled = value; page.queueApply() }
-            }
             CfgSpin {
-                text: "Blur size"
+                text: "Size"
                 enabled: Settings.conf.hypr.blurEnabled
                 value: Settings.conf.hypr.blurSize
                 from: 1; to: 20
                 onEdited: v => { Settings.conf.hypr.blurSize = v; page.queueApply() }
             }
             CfgSpin {
-                text: "Blur passes"
+                text: "Passes"
                 enabled: Settings.conf.hypr.blurEnabled
                 value: Settings.conf.hypr.blurPasses
                 from: 1; to: 4
                 onEdited: v => { Settings.conf.hypr.blurPasses = v; page.queueApply() }
             }
-        }
-
-        CfgSection {
-            title: "Motion"
-
-            CfgSwitch {
-                text: "Window animations"
-                checked: Settings.conf.hypr.animationsEnabled
-                onToggled: value => { Settings.conf.hypr.animationsEnabled = value; page.queueApply() }
-            }
-        }
-    }
-
-    // ── Tab 1: Window Rules ──
-    ColumnLayout {
-        Layout.fillWidth: true
-        spacing: 24
-        visible: page.currentTab === 1
-
-        CfgNotice {
-            text: "Add custom window rules below. They apply to matching window classes (e.g. 'kitty', 'firefox')."
-        }
-
-        CfgSection {
-            title: "Rules"
-
-            ColumnLayout {
-                Layout.fillWidth: true
-                Layout.leftMargin: 12
-                Layout.rightMargin: 12
-                spacing: 12
-
-                Repeater {
-                    model: Settings.conf.customWindowRules || []
-                    delegate: Rectangle {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 44
-                        radius: 12
-                        color: Theme.surface0
-                        
-                        required property var modelData
-                        required property int index
-
-                        RowLayout {
-                            anchors.fill: parent
-                            anchors.leftMargin: 12
-                            anchors.rightMargin: 12
-                            spacing: 8
-
-                            Text {
-                                text: modelData.match
-                                font.family: Theme.fontFamily
-                                font.pixelSize: 13
-                                color: Theme.text
-                                font.bold: true
-                                Layout.preferredWidth: 120
-                                elide: Text.ElideRight
-                            }
-
-                            Text {
-                                text: {
-                                    let parts = [];
-                                    for (let k in modelData.rules) {
-                                        parts.push(k + ": " + modelData.rules[k]);
-                                    }
-                                    return parts.join(", ");
-                                }
-                                font.family: Theme.fontFamily
-                                font.pixelSize: 12
-                                color: Theme.subtext0
-                                Layout.fillWidth: true
-                                elide: Text.ElideRight
-                            }
-
-                            IconButton {
-                                text: "󰅖"
-                                color: Theme.red
-                                onClicked: Settings.removeCustomWindowRule(index)
-                            }
-                        }
-                    }
-                }
+            CfgNotice {
+                Layout.topMargin: Theme.spaceXs
+                visible: !Settings.conf.hypr.blurEnabled
+                text: "Turn on Blur above to change these."
             }
         }
 
         CfgSection {
-            title: "Add new rule"
+            Layout.columnSpan: 2
+            title: "Window rules"
 
-            ColumnLayout {
-                Layout.fillWidth: true
-                Layout.leftMargin: 12
-                Layout.rightMargin: 12
-                spacing: 12
+            CfgNotice {
+                Layout.bottomMargin: Theme.spaceXs
+                text: (Settings.conf.customWindowRules || []).length === 0
+                    ? "No rules yet. A rule applies to windows whose class matches, e.g. kitty or firefox."
+                    : "Applied to windows whose class matches."
+            }
 
-                RowLayout {
+            Repeater {
+                model: Settings.conf.customWindowRules || []
+                delegate: RowLayout {
+                    id: ruleRow
+                    required property var modelData
+                    required property int index
+
                     Layout.fillWidth: true
-                    spacing: 8
+                    Layout.preferredHeight: Theme.listRow
+                    Layout.leftMargin: 12
+                    Layout.rightMargin: Theme.spaceXs
+                    spacing: Theme.spaceSm
 
                     Text {
-                        text: "Class match:"
+                        text: ruleRow.modelData.match
+                        font.family: Theme.fontMono
+                        font.pixelSize: Theme.textCaption
+                        color: Theme.islandText
+                        Layout.preferredWidth: 140
+                        elide: Text.ElideRight
+                    }
+                    Text {
+                        text: {
+                            let parts = [];
+                            for (let k in ruleRow.modelData.rules)
+                                parts.push(k + ": " + ruleRow.modelData.rules[k]);
+                            return parts.join(", ");
+                        }
                         font.family: Theme.fontFamily
-                        font.pixelSize: 13
-                        color: Theme.text
+                        font.pixelSize: Theme.textMonoSmall
+                        color: Theme.islandMuted
+                        Layout.fillWidth: true
+                        elide: Text.ElideRight
                     }
                     Rectangle {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 36
-                        radius: 8
-                        color: Theme.surface0
-                        TextInput {
-                            id: classInput
+                        Layout.preferredWidth: Theme.controlSize - 6
+                        Layout.preferredHeight: Theme.controlSize - 6
+                        radius: height / 2
+                        color: removeMa.containsMouse ? Qt.alpha(Theme.red, 0.15) : "transparent"
+                        Behavior on color { ColorAnimation { duration: Theme.animFast } }
+                        scale: removeMa.pressed ? 0.9 : 1.0
+                        Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
+                        Text {
+                            anchors.centerIn: parent
+                            text: "󰅖"
+                            font.family: Theme.fontIcon
+                            font.pixelSize: Theme.textBody
+                            color: removeMa.containsMouse ? Theme.red : Theme.islandMuted
+                            Behavior on color { ColorAnimation { duration: Theme.animFast } }
+                        }
+                        MouseArea {
+                            id: removeMa
                             anchors.fill: parent
-                            anchors.margins: 8
-                            verticalAlignment: TextInput.AlignVCenter
-                            font.family: Theme.fontFamily
-                            font.pixelSize: 13
-                            color: Theme.text
-                            clip: true
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: Settings.removeCustomWindowRule(ruleRow.index)
                         }
                     }
                 }
+            }
+        }
 
-                RowLayout {
+        CfgSection {
+            Layout.columnSpan: 2
+            title: "Add rule"
+
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.preferredHeight: Theme.listRow
+                Layout.leftMargin: 12
+                Layout.rightMargin: 12
+                spacing: Theme.spaceMd
+
+                Text {
+                    text: "Window class"
+                    font.family: Theme.fontFamily
+                    font.pixelSize: Theme.textCaption
+                    color: Theme.islandText
+                }
+                Rectangle {
                     Layout.fillWidth: true
-                    spacing: 8
-
-                    Text {
-                        text: "Float"
-                        font.family: Theme.fontFamily
-                        font.pixelSize: 13
-                        color: Theme.text
-                    }
-                    ToggleSwitch {
-                        id: floatInput
-                        onToggled: v => checked = v
-                    }
-                    
-                    Item { Layout.preferredWidth: 10 }
-
-                    Text {
-                        text: "Center"
-                        font.family: Theme.fontFamily
-                        font.pixelSize: 13
-                        color: Theme.text
-                    }
-                    ToggleSwitch {
-                        id: centerInput
-                        onToggled: v => checked = v
+                    Layout.preferredHeight: Theme.controlSize - 4
+                    radius: Theme.radiusRow - 4
+                    color: Theme.well
+                    border.width: classInput.activeFocus ? 1 : 0
+                    border.color: Qt.alpha(Theme.ember, 0.6)
+                    TextInput {
+                        id: classInput
+                        anchors.fill: parent
+                        anchors.leftMargin: Theme.spaceSm
+                        anchors.rightMargin: Theme.spaceSm
+                        verticalAlignment: TextInput.AlignVCenter
+                        font.family: Theme.fontMono
+                        font.pixelSize: Theme.textCaption
+                        color: Theme.islandText
+                        clip: true
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            visible: classInput.text === ""
+                            text: "kitty, firefox, ^steam_app_.*"
+                            font: classInput.font
+                            color: Theme.islandMuted
+                        }
                     }
                 }
-
+            }
+            CfgSwitch {
+                text: "Float"
+                checked: page.newFloat
+                onToggled: value => page.newFloat = value
+            }
+            CfgSwitch {
+                text: "Center"
+                checked: page.newCenter
+                onToggled: value => page.newCenter = value
+            }
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.leftMargin: Theme.spaceXs
+                Layout.rightMargin: Theme.spaceXs
+                Layout.topMargin: Theme.spaceXs
                 ActionButton {
-                    text: "Add Rule"
+                    text: "Add rule"
                     icon: "󰐕"
+                    enabled: classInput.text.trim() !== "" && (page.newFloat || page.newCenter)
+                    opacity: enabled ? 1 : 0.5
                     onClicked: {
-                        if (classInput.text.trim() === "") return;
                         let rules = {};
-                        if (floatInput.checked) rules["float"] = true;
-                        if (centerInput.checked) rules["center"] = true;
-                        if (Object.keys(rules).length === 0) return;
-
+                        if (page.newFloat) rules["float"] = true;
+                        if (page.newCenter) rules["center"] = true;
                         Settings.addCustomWindowRule({
                             match: classInput.text.trim(),
                             rules: rules
                         });
-
                         classInput.text = "";
-                        floatInput.checked = false;
-                        centerInput.checked = false;
+                        page.newFloat = false;
+                        page.newCenter = false;
                     }
                 }
             }
