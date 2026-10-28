@@ -143,6 +143,13 @@ CfgPage {
                 text: "Reset"
                 onClicked: Settings.conf.colors.wallpaperFolder = ""
             }
+
+            // Copies the wallpaper and ember into the Wisp Ember login screen.
+            ActionButton {
+                icon: "󰍂"
+                text: "Použít pro přihlášení"
+                onClicked: Settings.applyLoginScreen(Theme.dynWallpaper, Theme.ember, Theme.glow)
+            }
         }
     }
 

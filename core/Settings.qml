@@ -168,6 +168,14 @@ Singleton {
         Quickshell.execDetached(colorsCommand(img));
     }
 
+    // Copies the wallpaper and ember into the Wisp Ember login screen (one
+    // pkexec password prompt). Takes Theme's values from the caller so this
+    // singleton does not depend on Theme, which depends on it.
+    function applyLoginScreen(wallpaper, ember, glow) {
+        Quickshell.execDetached(["pkexec", "bash", Quickshell.shellPath("scripts/sddm_sync.sh"), "--apply",
+            wallpaper || adapter.colors.lastWallpaper, ember.toString(), String(glow)]);
+    }
+
     // Fresh install: no colors.json yet, and colours were only ever generated
     // on a wallpaper change. Generate once at startup so the shell follows the
     // current wallpaper from the first login instead of the ember fallback.
