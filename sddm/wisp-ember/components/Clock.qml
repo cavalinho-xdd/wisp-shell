@@ -9,7 +9,7 @@ Column {
     property date now: new Date()
     readonly property var cs: Qt.locale("cs_CZ")
 
-    spacing: 14
+    spacing: 3 // the digits' line box already leaves air below
 
     Timer {
         interval: 1000

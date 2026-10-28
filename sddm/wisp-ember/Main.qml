@@ -91,7 +91,9 @@ Rectangle {
             fillMode: Image.PreserveAspectCrop
             asynchronous: true
             visible: false
-            sourceSize.width: 1280 // blurred to 40 px anyway; keeps the blur cheap
+            // Small on purpose: the downscale adds to the blur (the mock's 40 px)
+            // and keeps it cheap.
+            sourceSize.width: 640
         }
         MultiEffect {
             id: wallFx
@@ -101,7 +103,7 @@ Rectangle {
             blurEnabled: true
             blurMax: 64
             blur: 1.0
-            brightness: -0.5
+            blurMultiplier: 1.5 // blurMax alone stops short of the mock's 40 px
             saturation: -0.1
 
             SequentialAnimation on scale {
@@ -110,6 +112,14 @@ Rectangle {
                 NumberAnimation { from: 1.02; to: 1.07; duration: tokens.driftDuration; easing.type: Easing.InOutSine }
                 NumberAnimation { from: 1.07; to: 1.02; duration: tokens.driftDuration; easing.type: Easing.InOutSine }
             }
+        }
+
+        // Darkened by half. A black veil multiplies like the mock's
+        // brightness(.5); MultiEffect's brightness subtracts and crushes it.
+        Rectangle {
+            anchors.fill: parent
+            color: "black"
+            opacity: 0.5
         }
 
         // Vignette: the edges fall off into the dark.
@@ -188,7 +198,7 @@ Rectangle {
                 }
             }
 
-            Item { width: 1; height: 30 }
+            Item { width: 1; height: 24 }
 
             Kindle {
                 tokens: tokens
