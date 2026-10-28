@@ -8,7 +8,7 @@ url="https://github.com/cavalinho-xdd/wisp-shell"
 license=('MIT')
 # Keep in sync with `dependencies` in ./setup.
 depends=('quickshell' 'hyprland' 'jq' 'upower' 'cliphist' 'wl-clipboard' 'grim' 'slurp' 'bc'
-         'matugen' 'awww' 'libnotify' 'python' 'nodejs' 'xdg-user-dirs' 'xdg-utils' 'curl'
+         'matugen' 'awww' 'libnotify' 'python' 'nodejs' 'xdg-user-dirs' 'xdg-utils' 'curl' 'cava'
          'ttf-mona-sans' 'otf-monaspace' 'noto-fonts' 'ttf-jetbrains-mono-nerd'
          'hypridle' 'bluez' 'bluez-utils' 'networkmanager' 'brightnessctl' 'psmisc' 'polkit')
 optdepends=(

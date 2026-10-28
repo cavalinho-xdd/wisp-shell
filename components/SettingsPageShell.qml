@@ -37,6 +37,12 @@ CfgPage {
             onToggled: value => Settings.conf.shell.reduceMotion = value
         }
         CfgTile {
+            icon: "󰝚"
+            text: "Pulse to music"
+            checked: Settings.conf.shell.musicPulse
+            onToggled: value => Settings.conf.shell.musicPulse = value
+        }
+        CfgTile {
             icon: "󰖐"
             text: "Weather"
             checked: Settings.conf.weather.enable

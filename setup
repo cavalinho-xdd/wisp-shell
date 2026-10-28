@@ -39,6 +39,8 @@ dependencies=(
                     # folder default (falls back silently if missing, but
                     # ship it so the fallback is never needed)
     "xdg-utils"   # provides xdg-open -- settings.qml uses it to open folders
+    "cava"        # core/Beat.qml -- the ember pulsing to music, the
+                  # media card spectrum
     "curl"        # scripts/weather.sh (weather.enable defaults true) and
                   # scripts/game_watch.sh (Steam cover art / achievements)
     "ttf-mona-sans" # core/Theme.qml's first fontFamily choice (Ember design)

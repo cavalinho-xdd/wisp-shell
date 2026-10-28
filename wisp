@@ -131,6 +131,7 @@ doctor() {
     chk "bc"          req "CPU/RAM readouts"                         bc
     chk "xdg-utils"   req "opening files and folders"                xdg-open xdg-user-dir
     chk "node"        req "osu! island lane runtime (needs osu!lazer + tosu too)" node
+    chk "cava"        req "ember pulsing to music, media spectrum"  cava
     chk "curl"        req "weather card, Steam cover art/achievements" curl
     chk "hypridle"    req "dashboard caffeine toggle, idle_takeover/idle_restore scripts" hypridle killall
     chk "brightnessctl" req "brightness slider"                     brightnessctl

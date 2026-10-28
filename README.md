@@ -63,6 +63,7 @@ Run `wisp doctor` any time to check what's missing.
 | `python` (`python3`) | Settings > Look & Feel / Keybinds — every edit shells out to a Python script that rewrites your real Hyprland `.lua` files |
 | `nodejs` (`node`) | The osu! island lane — spawned unconditionally at startup, harmless (just idles, retrying a closed socket) if you don't play osu! |
 | `jq`, `bc` | Parsing `hyprctl`/JSON output, CPU/RAM math |
+| `cava` | The ember and island glow pulsing to music, the media card spectrum |
 | `curl` | Weather card, Steam cover art + achievement lookups |
 | `upower` | Battery widget (auto-hidden on desktops with no battery) |
 | `xdg-user-dirs` | Locale-correct default wallpaper folder |
