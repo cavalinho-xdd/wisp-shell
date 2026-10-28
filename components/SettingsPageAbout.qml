@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import "../core"
+import "ember"
 
 Item {
     id: root
@@ -36,74 +37,17 @@ Item {
         }
     }
 
-    property string clock: Qt.formatTime(new Date(), "hh:mm")
-    Timer {
-        interval: 10000; running: true; repeat: true
-        onTriggered: root.clock = Qt.formatTime(new Date(), "hh:mm")
-    }
 
     ColumnLayout {
         anchors.centerIn: parent
         anchors.verticalCenterOffset: -16
         spacing: 0
 
-        // The collapsed pill itself, as the mark — hover it and it opens up,
-        // the way the real one does
-        Item {
+        // The ember is the mark.
+        EmberDot {
             Layout.alignment: Qt.AlignHCenter
-            Layout.preferredWidth: 300
-            Layout.preferredHeight: 48
-
-            Rectangle {
-                id: pill
-                readonly property bool open: pillMa.containsMouse
-                anchors.centerIn: parent
-                width: open ? 300 : 232
-                height: open ? 48 : 42
-                radius: height / 2
-                color: Theme.ashHi
-                Behavior on width { NumberAnimation { duration: 420; easing.type: Easing.OutBack; easing.overshoot: 1.4 } }
-                Behavior on height { NumberAnimation { duration: 420; easing.type: Easing.OutBack; easing.overshoot: 1.4 } }
-
-                // Workspaces
-                Row {
-                    anchors.left: parent.left
-                    anchors.leftMargin: 16
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: 5
-                    Repeater {
-                        model: 3
-                        Rectangle {
-                            required property int index
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: index === 0 ? 18 : 6
-                            height: 6; radius: 3
-                            color: index === 0 ? Theme.ember : Qt.alpha(Theme.islandText, 0.35)
-                        }
-                    }
-                }
-
-                Text {
-                    anchors.centerIn: parent
-                    text: root.clock
-                    font.family: Theme.fontFamily
-                    font.features: { "tnum": 1 }
-                    font.pixelSize: 14
-                    font.weight: Font.Medium
-                    color: Theme.islandText
-                }
-
-                Row {
-                    anchors.right: parent.right
-                    anchors.rightMargin: 16
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: 10
-                    Text { text: "󰕾"; font.family: Theme.fontIcon; font.pixelSize: 13; color: Theme.islandMuted }
-                    Text { text: "󰖩"; font.family: Theme.fontIcon; font.pixelSize: 13; color: Theme.islandMuted }
-                }
-
-                MouseArea { id: pillMa; anchors.fill: parent; anchors.margins: -12; hoverEnabled: true }
-            }
+            Layout.preferredWidth: Theme.controlSize - Theme.spaceSm
+            Layout.preferredHeight: Theme.controlSize - Theme.spaceSm
         }
 
         Text {
@@ -133,7 +77,7 @@ Item {
             Layout.preferredWidth: 480
             Layout.preferredHeight: 66
             radius: 16
-            color: Qt.alpha(Theme.ashHi, 0.5)
+            color: Theme.ash
 
             Row {
                 anchors.fill: parent
@@ -205,7 +149,7 @@ Item {
             Layout.preferredWidth: ghRow.implicitWidth + 36
             Layout.preferredHeight: 36
             radius: 18
-            color: ghMa.containsMouse ? Qt.lighter(Theme.ashHi, 1.25) : Theme.ashHi
+            color: ghMa.containsMouse ? Theme.hover : Theme.ashHi
             Behavior on color { ColorAnimation { duration: Theme.animFast } }
             scale: ghMa.pressed ? 0.96 : 1.0
             Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }

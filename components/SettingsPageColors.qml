@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import "../core"
+import "ember"
 
 // Wallpaper & Colors — the ember accent from the current wallpaper via
 // matugen (scripts/apply_colors.sh writes colors.json, Theme.qml watches it).
@@ -174,37 +175,28 @@ CfgPage {
             }
         }
 
-        // Swatches bound straight to Theme — they animate on palette change
+        // The one colour the wallpaper gives the shell; animates on change.
         Row {
-            spacing: 8
-            Repeater {
-                model: [
-                    { c: Theme.smoke, n: "bg" },
-                    { c: Theme.ash, n: "surface" },
-                    { c: Theme.ashHi, n: "surface0" },
-                    { c: Theme.ember, n: "primary" },
-                    { c: Theme.red, n: "error" },
-                    { c: Theme.islandText, n: "text" }
-                ]
-                delegate: Column {
-                    spacing: 4
-                    // One of only two Theme.islandMuted borders left in the shell,
-                    // kept for the same reason as the wizard's: these are colour
-                    // swatches and `background` is a near-black that would be
-                    // invisible without an edge. Functional, not decorative.
-                    Rectangle {
-                        width: 34; height: 34; radius: 17
-                        color: modelData.c
-                        border.color: Theme.islandMuted
-                        border.width: 1
-                    }
-                    Text {
-                        font.family: Theme.fontFamily;
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        text: modelData.n
-                        font.pixelSize: 9
-                        color: Theme.islandMuted
-                    }
+            spacing: Theme.spaceSm
+            EmberDot {
+                anchors.verticalCenter: parent.verticalCenter
+                width: Theme.emberSize * 2
+                height: Theme.emberSize * 2
+            }
+            Column {
+                anchors.verticalCenter: parent.verticalCenter
+                Text {
+                    text: "Your ember"
+                    font.family: Theme.fontFamily
+                    font.pixelSize: Theme.textCaption
+                    font.weight: Font.Medium
+                    color: Theme.islandText
+                }
+                Text {
+                    text: Theme.ember.toString()
+                    font.family: Theme.fontMono
+                    font.pixelSize: Theme.textMonoSmall
+                    color: Theme.islandMuted
                 }
             }
         }
@@ -276,7 +268,7 @@ CfgPage {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 36
                     radius: 12
-                    color: active ? Theme.ashHi : (schemeMa.containsMouse ? Qt.alpha(Theme.ashHi, 0.5) : Qt.alpha(Theme.ashHi, 0.25))
+                    color: active ? Theme.ashHi : (schemeMa.containsMouse ? Theme.hover : Theme.ash)
                     border.color: active ? Theme.ember : "transparent"
                     border.width: 1
                     Behavior on color { ColorAnimation { duration: Theme.animFast } }

@@ -197,7 +197,7 @@ CfgPage {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 42
                     radius: 12
-                    color: active ? Theme.ashHi : (resMa.containsMouse ? Qt.alpha(Theme.ashHi, 0.5) : Qt.alpha(Theme.ashHi, 0.25))
+                    color: active ? Theme.ashHi : (resMa.containsMouse ? Theme.hover : Theme.ash)
                     border.color: active ? Theme.ember : "transparent"
                     border.width: 1
                     Behavior on color { ColorAnimation { duration: Theme.animFast } }
@@ -248,7 +248,7 @@ CfgPage {
         icon: "󰍹"
 
         CfgNotice {
-            text: "Restrict wisp's pill + click-catcher + OSD to one monitor instead of showing them everywhere. Applies live, no reload needed."
+            text: "Show the islands and the OSD on one monitor instead of showing them everywhere. Applies live, no reload needed."
         }
 
         RowLayout {

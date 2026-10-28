@@ -181,7 +181,7 @@ ColumnLayout {
     CfgNotice {
         visible: wallModel.count === 0 && !folderPicker.visible
         icon: "󰋽"
-        text: "Point this at a folder with images, or drop some into the path above. You can always browse the full picker later from the dashboard's wallpaper button."
+        text: "Point this at a folder with images, or drop some into the path above. You can always browse the full picker later with Super + Shift + W."
     }
 
     Item { Layout.fillHeight: true }

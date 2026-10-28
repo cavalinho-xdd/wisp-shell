@@ -121,7 +121,7 @@ ColumnLayout {
                 width: dirList.width
                 height: 32
                 radius: 10
-                color: rowMa.containsMouse ? Qt.lighter(Theme.ash, 1.35) : "transparent"
+                color: rowMa.containsMouse ? Theme.hoverRow : "transparent"
                 Behavior on color { ColorAnimation { duration: Theme.animFast } }
 
                 Row {

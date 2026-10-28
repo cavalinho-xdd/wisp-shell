@@ -78,7 +78,7 @@ CfgPage {
     }
 
     CfgNotice {
-        text: "The tiles keep the pill quiet: by hand, while gaming (Steam, Heroic, gamemode), when the focused monitor is fullscreen, or on a schedule. Notifications still land in the centre and critical ones always show."
+        text: "The tiles keep the islands quiet: by hand, while gaming (Steam, Heroic, gamemode), when the focused monitor is fullscreen, or on a schedule. Notifications still land in the centre and critical ones always show."
     }
 
     CfgSection {
@@ -129,7 +129,7 @@ CfgPage {
                 }
                 CfgSwitch {
                     icon: "󰂜"
-                    text: "Never flash in the pill"
+                    text: "Never flash in the centre island"
                     checked: !!appBlock.rule.noFlash
                     onToggled: value => page.setRule(appBlock.modelData, "noFlash", value)
                 }

@@ -534,7 +534,7 @@ CfgPage {
                     Layout.fillWidth: true
                     implicitHeight: 44
                     radius: 12
-                    color: customRowMa.containsMouse ? Qt.alpha(Theme.ashHi, 0.6) : "transparent"
+                    color: customRowMa.containsMouse ? Theme.hoverRow : "transparent"
                     Behavior on color { ColorAnimation { duration: Theme.animFast } }
 
                     RowLayout {
@@ -596,7 +596,7 @@ CfgPage {
                 Layout.fillWidth: true
                 implicitHeight: matchesFilter ? (editing ? 76 : 44) : 0
                 radius: 12
-                color: editing ? Theme.ashHi : (rowMa.containsMouse ? Qt.alpha(Theme.ashHi, 0.6) : "transparent")
+                color: editing ? Theme.ashHi : (rowMa.containsMouse ? Theme.hoverRow : "transparent")
                 Behavior on color { ColorAnimation { duration: Theme.animFast } }
                 Behavior on implicitHeight { NumberAnimation { duration: Theme.animFast; easing.type: Easing.OutQuint } }
                 clip: true
