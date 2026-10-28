@@ -77,6 +77,33 @@ Item {
         }
     }
 
+    // The spectrum under the art, in the room the taller info column leaves.
+    // Bars rise from the baseline; they sink away when the music stops.
+    Row {
+        id: spectrum
+        readonly property real barWidth: (Theme.artSize - (Beat.barCount - 1) * spacing) / Beat.barCount
+        x: Theme.spaceLg
+        y: Theme.spaceLg + Theme.artSize + Theme.spaceSm
+        width: Theme.artSize
+        height: root.height - y - Theme.spaceLg
+        spacing: 3
+        visible: height >= 8 && Beat.fade > 0 && root.lit
+        Accessible.ignored: true
+
+        Repeater {
+            model: Beat.barCount
+            Rectangle {
+                required property int index
+                anchors.bottom: parent.bottom
+                width: spectrum.barWidth
+                height: Math.max(width, spectrum.height * (Beat.bars[index] || 0) * Beat.fade)
+                radius: width / 2
+                color: Theme.ember
+                opacity: 0.35 + 0.65 * (Beat.bars[index] || 0)
+            }
+        }
+    }
+
     Column {
         id: info
         x: Theme.spaceLg + Theme.artSize + Theme.spaceMd

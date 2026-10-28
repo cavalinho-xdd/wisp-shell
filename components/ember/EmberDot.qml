@@ -59,7 +59,8 @@ Item {
     Binding {
         target: light
         property: "scale"
-        value: dot.playing ? 1.025 - 0.125 * dot.wave : 0.925 + 0.075 * dot.wave
+        // With cava (core/Beat.qml) the beat is the music's own bass.
+        value: dot.playing ? (Beat.active ? 0.9 + 0.4 * Beat.pulse : 1.025 - 0.125 * dot.wave) : 0.925 + 0.075 * dot.wave
         when: !Theme.reduceMotion
     }
 }

@@ -105,6 +105,17 @@ Item {
         Behavior on color { ColorAnimation { duration: Theme.motionMorph } }
     }
 
+    // The bass on top of the glow: its own layer, so the glow's slow morph
+    // behaviours never lag the beat. Hidden (and free) while nothing plays.
+    RectangularShadow {
+        anchors.fill: fill
+        radius: fill.radius
+        color: Qt.alpha(Theme.ember, Math.min(1, (island.open ? Theme.glowAlphaOpen : Theme.glowAlpha) * Theme.glow))
+        blur: (island.open ? Theme.glowBlurOpen : Theme.glowBlur) * Theme.glow * 1.4
+        opacity: Beat.pulse * Theme.beatGlowBoost
+        visible: opacity > 0.01
+    }
+
     EmberSurface {
         id: fill
         anchors.fill: parent

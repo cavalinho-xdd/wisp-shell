@@ -188,6 +188,8 @@ Singleton {
     readonly property int flareWidth: 400
     readonly property int flareIcon: 44
     readonly property real flareGlowBoost: 1.5
+    // How much a full bass hit adds to the islands' glow (core/Beat.qml).
+    readonly property real beatGlowBoost: 0.6
     // Control centre in the right island.
     readonly property int ccWidth: 400
     // Wi-Fi / Bluetooth orb.

@@ -375,6 +375,9 @@ Singleton {
                 property string material: "solid"
                 // Fewer, gentler Ember animations (Theme.reduceMotion).
                 property bool reduceMotion: false
+                // The ember and the islands' glow pulse to playing music
+                // (core/Beat.qml, needs cava).
+                property bool musicPulse: true
                 // Where the three islands sit: "spread" | "cluster" | "quarters"
                 // (components/ember/layout.js). Dragging an island sets it.
                 property string emberLayout: "spread"
