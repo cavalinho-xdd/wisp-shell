@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-# Prime sudo timeout
-sudo -v
-
 # Wisp setup script - manages installation of dependencies and dotfiles.
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -22,7 +19,7 @@ print_err()  { printf "%s[ERR]%s %s\n" "${c_red}" "${c_rst}" "$1"; }
 
 dependencies=(
     "hyprland"
-    "quickshell" # AUR
+    "quickshell"
     "jq"
     "upower"
     "cliphist"
@@ -30,7 +27,7 @@ dependencies=(
     "grim"
     "slurp"
     "bc"
-    "matugen-bin" # AUR
+    "matugen"     # in extra; an installed matugen-bin provides it, so no conflict
     "awww" # swww's actively-maintained fork; hyprpaper also works as a fallback
     "libnotify"
     "python"      # provides python3 -- core/Settings.qml shells out to
@@ -44,10 +41,15 @@ dependencies=(
     "xdg-utils"   # provides xdg-open -- settings.qml uses it to open folders
     "curl"        # scripts/weather.sh (weather.enable defaults true) and
                   # scripts/game_watch.sh (Steam cover art / achievements)
-    "noto-fonts"  # core/Theme.qml's fontFamily candidate list -- without a
-                  # match, body text falls back to plain "sans-serif"
-    "ttf-jetbrains-mono-nerd" # core/Theme.qml's fontIcon/fontMono candidate
-                  # list -- without a match every icon glyph renders as a box
+    "ttf-mona-sans" # core/Theme.qml's first fontFamily choice (Ember design)
+    "otf-monaspace" # core/Theme.qml's first fontMono choice (Monaspace Neon)
+    "noto-fonts"  # fontFamily fallback -- without any match, body text falls
+                  # back to plain "sans-serif"
+    "ttf-jetbrains-mono-nerd" # core/Theme.qml's fontIcon candidate list --
+                  # without a match every icon glyph renders as a box
+    "brightnessctl" # core/Brightness.qml sets brightness through it
+    "psmisc"      # provides killall -- the dashboard caffeine toggle
+    "polkit"      # provides pkexec -- scripts/set_sddm.sh (welcome wizard)
     "hypridle"    # ExpandedDashboard.qml's caffeine toggle unconditionally
                   # runs `killall -STOP/-CONT hypridle`; scripts/idle_takeover.sh
                   # and idle_restore.sh also assume it exists
@@ -61,8 +63,8 @@ dependencies=(
 )
 
 # Only needed for `bootstrap`'s SDDM theme step, so `install`/`deps` (shell
-# only) stay exactly as fast/minimal as before. Pulled from qylock's own
-# sddm.sh dependency table (github.com/Darkkal44/qylock).
+# only) stay exactly as fast/minimal as before. material-you-dark itself only
+# imports Qt5Compat; the multimedia/gst set is kept for qylock's video themes.
 sddm_theme_dependencies=(
     "sddm"
     "qt6-declarative"
@@ -76,32 +78,26 @@ sddm_theme_dependencies=(
     "gst-plugins-ugly"
 )
 
-ensure_aur_helper() {
-    # Callers capture this function's stdout via $(...) to get back just the
-    # helper name -- every other line here MUST go to stderr (>&2), or the
-    # build log itself becomes the "helper name" and the caller tries to
-    # execute it as a command.
-    if command -v paru &>/dev/null; then echo "paru"; return; fi
-    if command -v yay &>/dev/null; then echo "yay"; return; fi
-    if ! command -v pacman &>/dev/null; then return; fi
-
-    print_warn "No AUR helper (paru/yay) found. Building yay from AUR..." >&2
-    sudo pacman -S --needed --noconfirm base-devel git >&2
+ensure_paru() {
+    command -v paru &>/dev/null && return
+    print_info "paru not found. Building paru-bin from AUR..."
+    sudo pacman -S --needed --noconfirm base-devel git
     local build_dir; build_dir="$(mktemp -d)"
-    if git clone --depth 1 https://aur.archlinux.org/yay-bin.git "$build_dir" >/dev/null 2>&1 \
-        && (cd "$build_dir" && makepkg -si --noconfirm >&2); then
+    if git clone --depth 1 https://aur.archlinux.org/paru-bin.git "$build_dir" >/dev/null 2>&1 \
+        && (cd "$build_dir" && makepkg -si --noconfirm); then
         rm -rf "$build_dir"
-        echo "yay"
+        print_succ "paru installed."
     else
         rm -rf "$build_dir"
-        print_warn "Failed to build yay automatically." >&2
+        print_err "Failed to build paru automatically."
+        exit 1
     fi
 }
 
 install_dependencies() {
     # Defaults to the core shell dependency list; pass an explicit package
     # list (e.g. "${sddm_theme_dependencies[@]}") to install a different set
-    # through the same missing-check/AUR-helper path.
+    # through the same missing-check path.
     local pkgs=("$@")
     [ ${#pkgs[@]} -eq 0 ] && pkgs=("${dependencies[@]}")
 
@@ -112,28 +108,29 @@ install_dependencies() {
         return
     fi
 
-    local missing=()
+    sudo -v
+    ensure_paru
+
+    # pacman -Qi also resolves provides (awww satisfies swww, matugen-bin satisfies matugen).
+    local repo=() aur=()
     for pkg in "${pkgs[@]}"; do
-        if ! pacman -Qi "$pkg" &>/dev/null; then
-            missing+=("$pkg")
-        fi
+        pacman -Qi "$pkg" &>/dev/null && continue
+        if pacman -Si "$pkg" &>/dev/null; then repo+=("$pkg"); else aur+=("$pkg"); fi
     done
 
-    if [ ${#missing[@]} -eq 0 ]; then
+    if [ ${#repo[@]} -eq 0 ] && [ ${#aur[@]} -eq 0 ]; then
         print_succ "All dependencies are already installed."
         return
     fi
 
-    print_info "Missing dependencies: ${missing[*]}"
-
-    local helper; helper="$(ensure_aur_helper)"
-    if [ -z "$helper" ]; then
-        print_err "No AUR helper available — missing packages were not installed: ${missing[*]}"
-        exit 1
+    if [ ${#repo[@]} -gt 0 ]; then
+        print_info "Installing from the Arch repos via pacman: ${repo[*]}"
+        sudo pacman -S --needed --noconfirm "${repo[@]}" || { print_err "pacman failed to install: ${repo[*]}"; exit 1; }
     fi
-
-    print_info "Installing via $helper..."
-    "$helper" -S --needed --noconfirm "${missing[@]}" || { print_err "Some packages failed to install."; exit 1; }
+    if [ ${#aur[@]} -gt 0 ]; then
+        print_info "Installing from AUR via paru: ${aur[*]}"
+        paru -S --aur --needed --noconfirm "${aur[@]}" || { print_err "paru failed to install: ${aur[*]}"; exit 1; }
+    fi
     print_succ "Dependencies installed."
 }
 
@@ -370,7 +367,7 @@ case "$command" in
         ;;
     update)
         print_info "Pulling latest changes..."
-        git pull origin main || print_warn "Git pull failed, continuing with local files..."
+        git -C "$REPO_ROOT" pull origin main || print_warn "Git pull failed, continuing with local files..."
         install_wisp
         print_succ "Update complete!"
         ;;

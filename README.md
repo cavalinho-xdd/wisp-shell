@@ -45,7 +45,7 @@ git clone https://github.com/cavalinho-xdd/wisp-shell.git ~/.local/share/wisp-sh
 cd ~/.local/share/wisp-shell
 ./setup install
 ```
-This installs the packages below (bootstrapping `paru` from the AUR automatically if neither `paru` nor `yay` is present), copies the QML/scripts to `~/.local/share/wisp-shell`, symlinks the `wisp` CLI into `~/.local/bin`, and adds that directory to your `systemd --user` `PATH` (both for future logins and this session).
+This installs `paru` first (built from the AUR if missing), then the packages below — everything in the official Arch repos through `pacman`, anything that isn't through `paru` — copies the QML/scripts to `~/.local/share/wisp-shell`, symlinks the `wisp` CLI into `~/.local/bin`, and adds that directory to your `systemd --user` `PATH` (both for future logins and this session).
 
 You'll then need to add, to your own `hyprland.conf`/Lua config:
 - An autostart line: `exec-once = wisp start` (classic syntax) or the Lua equivalent `hl.exec_cmd("$HOME/.local/bin/wisp start")` on `hl.on("hyprland.start", ...)` — a bare `wisp` in Hyprland's own exec environment can silently fail since `~/.local/bin` isn't guaranteed on its PATH; the absolute path always works.
@@ -59,7 +59,7 @@ Run `wisp doctor` any time to check what's missing.
 | Dependency | Required for |
 |---|---|
 | `hyprland` | The compositor |
-| `quickshell` (AUR) | The shell itself |
+| `quickshell` | The shell itself |
 | `python` (`python3`) | Settings > Look & Feel / Keybinds — every edit shells out to a Python script that rewrites your real Hyprland `.lua` files |
 | `nodejs` (`node`) | The osu! island lane — spawned unconditionally at startup, harmless (just idles, retrying a closed socket) if you don't play osu! |
 | `jq`, `bc` | Parsing `hyprctl`/JSON output, CPU/RAM math |
@@ -68,9 +68,18 @@ Run `wisp doctor` any time to check what's missing.
 | `xdg-user-dirs` | Locale-correct default wallpaper folder |
 | `wl-clipboard`, `cliphist` | Copy actions, clipboard history |
 | `grim`, `slurp` | Screenshot tooling |
-| `matugen-bin` (AUR) | Wallpaper-derived Material You color scheme |
+| `matugen` | Wallpaper-derived Material You color scheme (`matugen-bin` also satisfies it) |
 | `awww` | Wallpaper daemon (`swww`/`hyprpaper` also work, detected as fallbacks) |
 | `libnotify` | Sending Wisp's own desktop notifications |
+| `xdg-utils` | Opening files and folders |
+| `hypridle` | Dashboard caffeine toggle, Wisp's idle/lock handling |
+| `bluez`, `bluez-utils` | Bluetooth panel (`bluetooth.service` is enabled for you) |
+| `networkmanager` | Wi-Fi panel (`NetworkManager.service` is enabled for you) |
+| `brightnessctl` | Brightness slider and OSD |
+| `psmisc` (`killall`) | Dashboard caffeine toggle |
+| `polkit` (`pkexec`) | Switching the SDDM theme from the welcome wizard |
+| `ttf-mona-sans`, `otf-monaspace`, `noto-fonts` | UI and monospace text |
+| `ttf-jetbrains-mono-nerd` | Icon glyphs — without a Nerd Font every icon is a box |
 
 Run `./setup deps` to (re-)install just this list, or `wisp doctor` to see what's actually present on your machine right now, including optional-only items like `nvidia-smi` (GPU ring) and `qalc` (launcher calculator).
 

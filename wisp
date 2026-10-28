@@ -132,7 +132,9 @@ doctor() {
     chk "xdg-utils"   req "opening files and folders"                xdg-open xdg-user-dir
     chk "node"        req "osu! island lane runtime (needs osu!lazer + tosu too)" node
     chk "curl"        req "weather card, Steam cover art/achievements" curl
-    chk "hypridle"    req "dashboard caffeine toggle, idle_takeover/idle_restore scripts" hypridle
+    chk "hypridle"    req "dashboard caffeine toggle, idle_takeover/idle_restore scripts" hypridle killall
+    chk "brightnessctl" req "brightness slider"                     brightnessctl
+    chk "polkit"      req "switching the SDDM theme"                 pkexec
     chk "bluez"       req "Bluetooth panel (Quickshell.Bluetooth needs bluetoothd)" bluetoothctl
     chk "networkmanager" req "Wifi panel (Quickshell.Networking needs NetworkManager)" nmcli
     chk "qalc"        opt "launcher calculator"                      qalc
