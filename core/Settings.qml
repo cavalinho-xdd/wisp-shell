@@ -172,7 +172,17 @@ Singleton {
     // pkexec password prompt). Takes Theme's values from the caller so this
     // singleton does not depend on Theme, which depends on it.
     function applyLoginScreen(wallpaper, ember, glow) {
-        Quickshell.execDetached(["pkexec", "bash", Quickshell.shellPath("scripts/sddm_sync.sh"), "--apply",
+        // The script runs as root, out of sight, so a notification says how
+        // it went. pkexec exits 126/127 when cancelled or not authorised.
+        Quickshell.execDetached(["sh", "-c",
+            'err=$(pkexec bash "$0" --apply "$@" 2>&1 >/dev/null); rc=$?\n' +
+            'case $rc in\n' +
+            '  0) msg="Your wallpaper and ember are on the login screen." ;;\n' +
+            '  126|127) msg="Cancelled." ;;\n' +
+            '  *) msg=${err:-"sddm_sync.sh failed ($rc)."} ;;\n' +
+            'esac\n' +
+            'notify-send -a Wisp "Login screen" "$msg"',
+            Quickshell.shellPath("scripts/sddm_sync.sh"),
             wallpaper || adapter.colors.lastWallpaper, ember.toString(), String(glow)]);
     }
 

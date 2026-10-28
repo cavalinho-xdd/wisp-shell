@@ -62,14 +62,10 @@ Item {
         onAccepted: field.accepted()
         onTextChanged: if (text.length > 0) field.failed = false
         Keys.onEscapePressed: field.escapePressed()
-        Keys.onLeftPressed: event => {
-            if (text.length === 0) field.stepUser(-1);
-            else event.accepted = false;
-        }
-        Keys.onRightPressed: event => {
-            if (text.length === 0) field.stepUser(1);
-            else event.accepted = false;
-        }
+        // With text, the arrows do nothing: the drawn caret always sits at the
+        // end, so moving the hidden cursor would insert out of sight.
+        Keys.onLeftPressed: if (text.length === 0) field.stepUser(-1)
+        Keys.onRightPressed: if (text.length === 0) field.stepUser(1)
     }
 
     Text {
@@ -103,7 +99,10 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 color: field.tokens.text
                 scale: 1
-                Component.onCompleted: if (!field.tokens.reduceMotion) popIn.start()
+                required property int index
+                // A number model re-creates every dot on each key: only the
+                // newest one pops, the rest appear as they were.
+                Component.onCompleted: if (index === input.text.length - 1 && !field.tokens.reduceMotion) popIn.start()
                 ParallelAnimation {
                     id: popIn
                     NumberAnimation { target: bullet; property: "scale"; from: 0.2; to: 1; duration: 380; easing.type: Easing.OutBack; easing.overshoot: 2 }

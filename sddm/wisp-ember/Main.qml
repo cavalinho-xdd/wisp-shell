@@ -51,7 +51,8 @@ Rectangle {
         field.text = "";
         field.failed = true;
         field.shake();
-        status = "Heslo nesedí";
+        // Keep a message PAM sent first (a locked account says why).
+        if (status === "") status = "Heslo nesedí";
     }
     function loginSucceeded() {
         ember.flare();

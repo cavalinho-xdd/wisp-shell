@@ -15,6 +15,16 @@ Item {
     }
 
     Timer {
+        id: typer
+        interval: 150
+        repeat: true
+        onTriggered: {
+            const m = main.item;
+            m.password = m.password.length >= 12 ? "a" : m.password + "a";
+        }
+    }
+
+    Timer {
         interval: 1500
         running: main.status === Loader.Ready
         onTriggered: {
@@ -36,6 +46,15 @@ Item {
                 m.login();
                 console.log("PREVIEW empty login, no password: busy=" + m.busy);
                 break;
+            // PAM's own message (faillock) arrives before loginFailed and must stay.
+            case "locked":
+                m.password = "x"; m.login();
+                m.status = "Účet je zamčený";
+                m.loginFailed();
+                console.log("PREVIEW status after failure: " + m.status);
+                break;
+            // Keeps typing, so the screenshot lands mid-typing.
+            case "typing-live": typer.start(); break;
             case "leaving": m.password = "wisp"; m.login(); m.loginSucceeded(); break;
             case "menu": m.sessionMenuOpen = true; break;
             case "ask": m.powerAsk("powerOff"); break;
