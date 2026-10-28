@@ -1,0 +1,10 @@
+[SddmGreeterTheme]
+Name=Wisp Ember
+Description=Wisp's login screen: the blurred wallpaper, the ember and three islands
+Author=Wisp
+License=MIT
+Type=sddm-theme
+Version=1.0
+MainScript=Main.qml
+ConfigFile=theme.conf
+QtVersion=6
