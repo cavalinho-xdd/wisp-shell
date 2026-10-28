@@ -79,11 +79,17 @@ sddm_theme_dependencies=(
 )
 
 ensure_paru() {
-    command -v paru &>/dev/null && return
-    print_info "paru not found. Building paru-bin from AUR..."
+    # `--version`, not `command -v`: a paru built against an older libalpm is
+    # on PATH but dies on start after a pacman upgrade.
+    paru --version &>/dev/null && return
+    # From source, not paru-bin: the prebuilt binary lags pacman's libalpm
+    # soname (libalpm.so.15 vs pacman 7.1's .so.16) and then cannot start.
+    print_info "No working paru. Building paru from AUR (compiles, takes a few minutes)..."
     sudo pacman -S --needed --noconfirm base-devel git
+    # A broken paru-bin conflicts with paru, and --noconfirm answers that prompt "no".
+    if pacman -Q paru-bin &>/dev/null; then sudo pacman -Rdd --noconfirm paru-bin; fi
     local build_dir; build_dir="$(mktemp -d)"
-    if git clone --depth 1 https://aur.archlinux.org/paru-bin.git "$build_dir" >/dev/null 2>&1 \
+    if git clone --depth 1 https://aur.archlinux.org/paru.git "$build_dir" >/dev/null 2>&1 \
         && (cd "$build_dir" && makepkg -si --noconfirm); then
         rm -rf "$build_dir"
         print_succ "paru installed."
