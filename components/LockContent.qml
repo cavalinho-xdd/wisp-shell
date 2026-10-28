@@ -3,9 +3,10 @@ import QtQuick.Effects
 import Quickshell
 import Quickshell.Io
 import "../core"
+import "ember"
 
-// Fullscreen lock-surface content: blurred wallpaper, clock, avatar,
-// password pill. Purely presentational — PAM state comes in via
+// Fullscreen lock-surface content in Ember: blurred wallpaper, the ember,
+// a mono clock and the password field as a lit island. Purely presentational — PAM state comes in via
 // properties, the typed password leaves via submit(). Instantiated once
 // per screen by WlSessionLock, so no per-screen state may live here
 // beyond the input field itself.
@@ -76,16 +77,22 @@ Item {
     Column {
         id: content
         anchors.centerIn: parent
-        spacing: 26
+        spacing: Theme.spaceLg
 
-        // Intro: fade + rise (Translate, not y — y fights centerIn)
+        // Intro: kindles in (Translate, not y — y fights centerIn)
         opacity: 0
-        transform: Translate { id: rise; y: 24 }
+        transform: Translate { id: rise; y: Theme.kindleShift * 4 }
         Component.onCompleted: intro.start()
         ParallelAnimation {
             id: intro
-            NumberAnimation { target: content; property: "opacity"; to: 1; duration: 500; easing.type: Easing.OutCubic }
-            NumberAnimation { target: rise; property: "y"; to: 0; duration: 600; easing.type: Easing.OutCubic }
+            NumberAnimation { target: content; property: "opacity"; to: 1; duration: Theme.motionKindle; easing.type: Easing.BezierSpline; easing.bezierCurve: Theme.curveKindle }
+            NumberAnimation { target: rise; property: "y"; to: 0; duration: Theme.motionKindle; easing.type: Easing.BezierSpline; easing.bezierCurve: Theme.curveKindle }
+        }
+
+        EmberDot {
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: Theme.emberSize * 2
+            height: Theme.emberSize * 2
         }
 
         Column {
@@ -93,62 +100,55 @@ Item {
             spacing: 4
 
             Text {
-                font.family: Theme.fontFamily;
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: Qt.formatTime(clock.date, Settings.conf.shell.clock12h ? "h:mm ap" : "HH:mm")
                 color: Theme.islandText
+                font.family: Theme.fontMono
                 font.pixelSize: 96
-                font.bold: true
+                font.weight: Font.Light
             }
             Text {
                 font.family: Theme.fontFamily;
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: Qt.formatDate(clock.date, "dddd, d MMMM")
                 color: Theme.islandMuted
-                font.pixelSize: 17
+                font.pixelSize: Theme.textTitle
             }
         }
 
-        Item { width: 1; height: 10 } // breathing room before the auth block
-
-        Rectangle {
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: 84; height: 84; radius: 42
-            color: Theme.ash
-            border.width: 2
-            border.color: root.failed ? Theme.red : Theme.ember
-            Behavior on border.color { ColorAnimation { duration: 300 } }
-
-            Text {
-                font.family: Theme.fontFamily;
-                anchors.centerIn: parent
-                text: (Quickshell.env("USER") || "?").charAt(0).toUpperCase()
-                color: Theme.ember
-                font.pixelSize: 36
-                font.bold: true
-            }
-        }
+        Item { width: 1; height: Theme.spaceLg } // breathing room before the auth block
 
         Text {
             font.family: Theme.fontFamily;
             anchors.horizontalCenter: parent.horizontalCenter
             text: Quickshell.env("USER") || ""
             color: Theme.islandText
-            font.pixelSize: 16
-            font.bold: true
+            font.pixelSize: Theme.textBody
+            font.weight: Font.Medium
         }
 
-        // ── Password pill ──
-        Rectangle {
+        // ── Password island ──
+        // Lit by the ember while typing, by red after a failure. No outline.
+        Item {
             id: pill
             anchors.horizontalCenter: parent.horizontalCenter
-            width: 300; height: 52; radius: 26
-            color: Theme.ash
-            border.width: 2
-            border.color: root.failed ? Theme.red
-                : (passInput.activeFocus ? Theme.ember : Theme.islandMuted)
-            Behavior on border.color { ColorAnimation { duration: 200 } }
+            width: 300; height: Theme.controlSizeBig + Theme.spaceXs
             transform: Translate { id: shakeShift }
+            readonly property color light: root.failed ? Theme.red : Theme.ember
+
+            RectangularShadow {
+                anchors.fill: parent
+                radius: height / 2
+                blur: Theme.glowBlur * Theme.glow
+                color: Qt.alpha(pill.light, Theme.glowAlphaOpen * Theme.glow * (passInput.text.length > 0 || root.failed ? 1.6 : 1))
+                Behavior on color { ColorAnimation { duration: Theme.motionFast } }
+            }
+            Rectangle {
+                anchors.fill: parent
+                radius: height / 2
+                color: Qt.tint(Theme.smoke, Qt.alpha(pill.light, Theme.litFill))
+                Behavior on color { ColorAnimation { duration: Theme.motionFast } }
+            }
 
             SequentialAnimation {
                 id: shake
@@ -206,11 +206,11 @@ Item {
                 anchors.right: parent.right
                 anchors.rightMargin: 6
                 anchors.verticalCenter: parent.verticalCenter
-                width: 40; height: 40; radius: 20
-                color: submitMouse.containsMouse ? Theme.ember : Theme.ashHi
+                width: Theme.controlSize; height: width; radius: width / 2
+                color: submitMouse.containsMouse ? Theme.ember : Theme.ash
                 scale: submitMouse.pressed ? 0.9 : 1
-                Behavior on color { ColorAnimation { duration: Theme.animFast } }
-                Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
+                Behavior on color { ColorAnimation { duration: Theme.motionFast } }
+                Behavior on scale { NumberAnimation { duration: Theme.motionFast; easing.type: Easing.OutCubic } }
 
                 Text {
                     anchors.centerIn: parent
