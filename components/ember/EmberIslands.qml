@@ -63,11 +63,11 @@ Scope {
             Notifs.records = Array.from({ length: n }, (_, i) => ({ key: "fake" + i, appName: apps[i % 5][0], appIcon: "", desktopEntry: "", summary: apps[i % 5][1], body: apps[i % 5][2],
                 image: "", urgency: 1, time: Date.now() - i * 240000, live: i < 2, transient: false, expiresAt: 0, redacted: false }));
         }
-        // Fake Discord call behind media, for checking the bubble; the
-        // next real call or player change puts the true state back.
-        function fakeCall(on: bool): void {
+        // Fake Discord call, behind media (the bubble) or alone (the centre
+        // island); the next real call or player change puts the truth back.
+        function fakeCall(on: bool, behindMedia: bool): void {
             Discord.inVoice = on;
-            Island.mediaActive = on;
+            Island.mediaActive = on && behindMedia;
         }
         // Same step as the mouse wheel over the left island: 1 next, -1 previous.
         function workspace(delta: int): void { workspaces.step(delta); }
@@ -101,7 +101,7 @@ Scope {
         // Fixed at the tallest open island plus room for its glow: resizing
         // the surface per frame flashes grey (references/gotchas.md). Only the
         // islands inside animate; the mask keeps clicks on them.
-        implicitHeight: Theme.islandMargin + Math.max(launcher.implicitHeight, cc.implicitHeight, wifiOrb.implicitHeight, btOrb.implicitHeight, wifiList.implicitHeight, btList.implicitHeight, sound.implicitHeight, power.implicitHeight, calendar.implicitHeight) + Theme.glowBlurOpen * Theme.glow
+        implicitHeight: Theme.islandMargin + Math.max(launcher.implicitHeight, cc.implicitHeight, wifiOrb.implicitHeight, btOrb.implicitHeight, wifiList.implicitHeight, btList.implicitHeight, sound.implicitHeight, power.implicitHeight, calendar.implicitHeight, call.implicitHeight, bubbleCall.implicitHeight) + Theme.glowBlurOpen * Theme.glow
 
         WlrLayershell.layer: WlrLayer.Overlay
         WlrLayershell.namespace: "wisp-ember"
@@ -153,7 +153,7 @@ Scope {
             // step aside the moment one opens.
             readonly property var slots: IslandLayout.place(Settings.conf.shell.emberLayout, bar.width,
                 // The bubble counts as part of the centre island, so the pair stays centred together.
-                [left.targetWidth, center.targetWidth + (bubble.shown ? Theme.islandHeight + Theme.islandGap : 0), right.targetWidth], center.open ? 1 : (right.open ? 2 : -1), Theme.islandMargin, Theme.islandGap)
+                [left.targetWidth, center.targetWidth + (bubble.shown ? bubble.targetWidth + Theme.islandGap : 0), right.targetWidth], center.open ? 1 : (right.open ? 2 : -1), Theme.islandMargin, Theme.islandGap)
 
             // A dropped island picks the layout whose spot for it is nearest
             // to where it would have coasted to (decelerating at 0.998 per
@@ -202,11 +202,13 @@ Scope {
                 collapsedWidth: activity.implicitWidth
                 readonly property bool launcherOpen: controller.launcherOpen
                 readonly property bool mediaOpen: controller.openIsland === "center" && !launcherOpen
+                // A call as the first activity: the open centre shows its controls.
+                readonly property bool callOpen: mediaOpen && Island.activities[0] === "discord"
                 // Nothing playing: the open centre shows the system instead
                 // of an empty player.
-                readonly property bool perfOpen: mediaOpen && !media.hasPlayer
-                openWidth: launcherOpen ? launcher.implicitWidth : (perfOpen ? perf.implicitWidth : (mediaOpen ? media.implicitWidth : notif.implicitWidth))
-                openHeight: launcherOpen ? launcher.implicitHeight : (perfOpen ? perf.implicitHeight : (mediaOpen ? media.implicitHeight : notif.implicitHeight))
+                readonly property bool perfOpen: mediaOpen && !callOpen && !media.hasPlayer
+                openWidth: launcherOpen ? launcher.implicitWidth : (callOpen ? call.implicitWidth : (perfOpen ? perf.implicitWidth : (mediaOpen ? media.implicitWidth : notif.implicitWidth)))
+                openHeight: launcherOpen ? launcher.implicitHeight : (callOpen ? call.implicitHeight : (perfOpen ? perf.implicitHeight : (mediaOpen ? media.implicitHeight : notif.implicitHeight)))
                 open: launcherOpen || mediaOpen || root.flaring
                 // The launcher is opened by keyboard, often: its morph is
                 // short, and so is the close that follows. Anything else
@@ -222,7 +224,7 @@ Scope {
                 // The light follows the ember: the dot when collapsed, the
                 // one in the notification, the search glyph in the launcher, the
                 // progress head in the media view.
-                lit: mediaOpen ? (!perfOpen && media.emberVisible) : true
+                lit: mediaOpen ? (!callOpen && !perfOpen && media.emberVisible) : true
                 lightX: launcherOpen ? launcher.emberPoint.x : (mediaOpen ? media.emberPoint.x : (root.flaring ? notif.emberPoint.x : activity.emberCentre.x))
                 lightY: launcherOpen ? launcher.emberPoint.y : (mediaOpen ? media.emberPoint.y : (root.flaring ? notif.emberPoint.y : activity.emberCentre.y))
                 onClicked: controller.toggle("center")
@@ -283,32 +285,54 @@ Scope {
 
                 MediaView {
                     id: media
-                    lit: center.mediaOpen && media.hasPlayer
-                    enabled: center.mediaOpen && media.hasPlayer
+                    lit: center.mediaOpen && !center.callOpen && media.hasPlayer
+                    enabled: lit
+                }
+
+                CallView {
+                    id: call
+                    lit: center.callOpen
+                    enabled: lit
+                    onDone: controller.close()
                 }
             }
 
             // The second lasting activity (a Discord call behind media) in its
-            // own small island beside the centre one, like iOS. A click
-            // toggles the mute in Discord.
+            // own small island beside the centre one, like iOS. A click opens
+            // it into the call controls.
             EmberIsland {
                 id: bubble
                 readonly property bool shown: Island.secondary === "discord" && !center.open && !root.fullscreen
+                // The call ended or moved into the centre island under it.
+                onShownChanged: if (!shown && open) controller.close()
                 x: center.x + center.width + Theme.islandGap
                 y: center.y
                 collapsedWidth: Theme.islandHeight
-                dimmed: controller.anyOpen
+                openWidth: bubbleCall.implicitWidth
+                openHeight: bubbleCall.implicitHeight
+                open: controller.openIsland === "bubble"
+                dimmed: controller.anyOpen && !open
                 opacity: !shown ? 0 : (dimmed ? Theme.dimOpacity : 1)
                 visible: opacity > 0
-                onClicked: Discord.toggleMute()
-                Accessible.name: (Discord.selfMuted || Discord.micMuted ? "Unmute" : "Mute") + " in Discord call"
+                onClicked: controller.toggle("bubble")
+                Accessible.name: "Discord call"
 
                 Text {
                     anchors.centerIn: parent
-                    text: Discord.selfMuted || Discord.micMuted ? "󰍭" : "󰙯"
-                    color: Discord.selfMuted || Discord.micMuted ? Theme.red : Theme.blurple
+                    opacity: bubble.open ? 0 : 1
+                    visible: opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: Theme.motionFast; easing.type: Easing.OutCubic } }
+                    text: bubbleCall.muted ? "󰍭" : "󰙯"
+                    color: bubbleCall.muted ? Theme.red : Theme.blurple
                     font.family: Theme.fontIcon
                     font.pixelSize: Theme.textMono
+                }
+
+                CallView {
+                    id: bubbleCall
+                    lit: bubble.open
+                    enabled: lit
+                    onDone: controller.close()
                 }
             }
 

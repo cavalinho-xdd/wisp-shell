@@ -3,7 +3,8 @@ import QtQuick
 // Which island is open on one screen. Only one at a time; the open one is
 // closed by clicking it again, a click outside or Esc (see EmberIslands).
 QtObject {
-    // "none" | "center" | "right". The left island (workspaces) never opens.
+    // "none" | "center" | "right" | "bubble" (the call beside the centre).
+    // The left island (workspaces) never opens.
     property string openIsland: "none"
     readonly property bool anyOpen: openIsland !== "none"
     // What the open centre island shows: "media" or "launcher".
