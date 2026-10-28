@@ -91,7 +91,7 @@ CfgPage {
                 width: capText.implicitWidth + 12
                 height: 22
                 radius: 6
-                color: Theme.surface0
+                color: Theme.ashHi
                 Text {
                     font.family: Theme.fontFamily;
                     id: capText
@@ -99,7 +99,7 @@ CfgPage {
                     text: modelData
                     font.pixelSize: 10
                     font.bold: true
-                    color: Theme.text
+                    color: Theme.islandText
                 }
             }
         }
@@ -118,8 +118,8 @@ CfgPage {
             Layout.fillWidth: true
             Layout.preferredHeight: 34
             radius: 12
-            color: Theme.surface0
-            border.color: filterInput.activeFocus ? Theme.primary : "transparent"
+            color: Theme.ashHi
+            border.color: filterInput.activeFocus ? Theme.ember : "transparent"
             border.width: 1
             Behavior on border.color { ColorAnimation { duration: Theme.animFast } }
 
@@ -128,13 +128,13 @@ CfgPage {
                 anchors.leftMargin: 12
                 anchors.rightMargin: 12
                 spacing: 8
-                Text { text: "󰍉"; font.family: Theme.fontIcon; font.pixelSize: 14; color: Theme.subtext0 }
+                Text { text: "󰍉"; font.family: Theme.fontIcon; font.pixelSize: 14; color: Theme.islandMuted }
                 TextInput {
                     font.family: Theme.fontFamily;
                     id: filterInput
                     Layout.fillWidth: true
                     font.pixelSize: 12
-                    color: Theme.text
+                    color: Theme.islandText
                     clip: true
                     selectByMouse: true
                     onTextChanged: page.filter = text.toLowerCase()
@@ -143,7 +143,7 @@ CfgPage {
                         anchors.verticalCenter: parent.verticalCenter
                         text: "Filter keybinds…"
                         font.pixelSize: 12
-                        color: Qt.alpha(Theme.subtext0, 0.6)
+                        color: Qt.alpha(Theme.islandMuted, 0.6)
                         visible: filterInput.text === "" && !filterInput.activeFocus
                     }
                 }
@@ -192,7 +192,7 @@ CfgPage {
             Layout.rightMargin: 12
             Layout.preferredHeight: addForm.implicitHeight + 24
             radius: 14
-            color: Theme.surface0
+            color: Theme.ashHi
             Behavior on Layout.preferredHeight { NumberAnimation { duration: Theme.animFast; easing.type: Easing.OutQuint } }
 
             ColumnLayout {
@@ -209,8 +209,8 @@ CfgPage {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 40
                     radius: 12
-                    color: captureArea.activeFocus ? Qt.alpha(Theme.primary, 0.12) : Theme.background
-                    border.color: captureArea.activeFocus ? Theme.primary : "transparent"
+                    color: captureArea.activeFocus ? Qt.alpha(Theme.ember, 0.12) : Theme.smoke
+                    border.color: captureArea.activeFocus ? Theme.ember : "transparent"
                     border.width: 1
                     Behavior on color { ColorAnimation { duration: Theme.animFast } }
                     Behavior on border.color { ColorAnimation { duration: Theme.animFast } }
@@ -231,24 +231,24 @@ CfgPage {
                                 model: captureBox.capturedMods
                                 delegate: Rectangle {
                                     width: modCapText.implicitWidth + 12; height: 22; radius: 6
-                                    color: Theme.primary
+                                    color: Theme.ember
                                     Text {
                                         id: modCapText
                                         font.family: Theme.fontFamily
                                         anchors.centerIn: parent; text: modelData
-                                        font.pixelSize: 10; font.bold: true; color: Theme.background
+                                        font.pixelSize: 10; font.bold: true; color: Theme.smoke
                                     }
                                 }
                             }
                             Rectangle {
                                 visible: captureBox.capturedKey !== ""
                                 width: keyCapText.implicitWidth + 12; height: 22; radius: 6
-                                color: Theme.primary
+                                color: Theme.ember
                                 Text {
                                     id: keyCapText
                                     font.family: Theme.fontFamily
                                     anchors.centerIn: parent; text: captureBox.capturedKey
-                                    font.pixelSize: 10; font.bold: true; color: Theme.background
+                                    font.pixelSize: 10; font.bold: true; color: Theme.smoke
                                 }
                             }
                         }
@@ -257,7 +257,7 @@ CfgPage {
                             Layout.fillWidth: true
                             horizontalAlignment: Text.AlignRight
                             font.pixelSize: 11
-                            color: Theme.subtext0
+                            color: Theme.islandMuted
                             text: captureArea.activeFocus
                                 ? "Press your key combo…"
                                 : (captureBox.capturedKey === "" ? "Click, then press a key combo" : "Click to capture again")
@@ -310,12 +310,12 @@ CfgPage {
                     font.family: Theme.fontFamily
                     text: "Combos already bound to something else won't reach this box — Hyprland handles those first."
                     font.pixelSize: 10
-                    color: Qt.alpha(Theme.subtext0, 0.7)
+                    color: Qt.alpha(Theme.islandMuted, 0.7)
                     wrapMode: Text.WordWrap
                 }
 
                 // ── What the keybind does ──
-                Text { font.family: Theme.fontFamily; text: "Action"; font.pixelSize: 11; font.bold: true; color: Theme.subtext0 }
+                Text { font.family: Theme.fontFamily; text: "Action"; font.pixelSize: 11; font.bold: true; color: Theme.islandMuted }
                 Flow {
                     Layout.fillWidth: true
                     spacing: 6
@@ -326,18 +326,18 @@ CfgPage {
                             width: actRow.implicitWidth + 20
                             height: 30
                             radius: 10
-                            color: active ? Qt.alpha(Theme.primary, 0.22) : Theme.background
+                            color: active ? Qt.alpha(Theme.ember, 0.22) : Theme.smoke
                             Behavior on color { ColorAnimation { duration: Theme.animFast } }
                             Row {
                                 id: actRow
                                 anchors.centerIn: parent
                                 spacing: 6
-                                Text { text: modelData.icon; font.family: Theme.fontIcon; font.pixelSize: 12; color: active ? Theme.primary : Theme.subtext0; anchors.verticalCenter: parent.verticalCenter }
+                                Text { text: modelData.icon; font.family: Theme.fontIcon; font.pixelSize: 12; color: active ? Theme.ember : Theme.islandMuted; anchors.verticalCenter: parent.verticalCenter }
                                 Text {
                                     font.family: Theme.fontFamily
                                     text: modelData.label
                                     font.pixelSize: 11
-                                    color: active ? Theme.primary : Theme.text
+                                    color: active ? Theme.ember : Theme.islandText
                                     anchors.verticalCenter: parent.verticalCenter
                                 }
                             }
@@ -359,8 +359,8 @@ CfgPage {
                     Layout.preferredHeight: 34
                     visible: page.actionById(addForm.selectedAction).arg === "command"
                     radius: 10
-                    color: Theme.background
-                    border.color: cmdInput.activeFocus ? Theme.primary : "transparent"
+                    color: Theme.smoke
+                    border.color: cmdInput.activeFocus ? Theme.ember : "transparent"
                     border.width: 1
                     Behavior on border.color { ColorAnimation { duration: Theme.animFast } }
                     TextInput {
@@ -370,7 +370,7 @@ CfgPage {
                         anchors.leftMargin: 10; anchors.rightMargin: 10
                         verticalAlignment: TextInput.AlignVCenter
                         font.pixelSize: 12
-                        color: Theme.text
+                        color: Theme.islandText
                         clip: true
                         selectByMouse: true
                         onTextChanged: addForm.argValue = text
@@ -379,7 +379,7 @@ CfgPage {
                             anchors.verticalCenter: parent.verticalCenter
                             text: "Command, e.g. kitty, firefox, flameshot gui…"
                             font.pixelSize: 12
-                            color: Qt.alpha(Theme.subtext0, 0.6)
+                            color: Qt.alpha(Theme.islandMuted, 0.6)
                             visible: cmdInput.text === "" && !cmdInput.activeFocus
                         }
                     }
@@ -393,13 +393,13 @@ CfgPage {
                         delegate: Rectangle {
                             readonly property bool active: addForm.argValue === modelData.id
                             width: 34; height: 30; radius: 10
-                            color: active ? Qt.alpha(Theme.primary, 0.22) : Theme.background
+                            color: active ? Qt.alpha(Theme.ember, 0.22) : Theme.smoke
                             Behavior on color { ColorAnimation { duration: Theme.animFast } }
                             Text {
                                 anchors.centerIn: parent
                                 text: modelData.label
                                 font.pixelSize: 14
-                                color: active ? Theme.primary : Theme.text
+                                color: active ? Theme.ember : Theme.islandText
                             }
                             MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: addForm.argValue = modelData.id }
                         }
@@ -422,8 +422,8 @@ CfgPage {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 34
                     radius: 10
-                    color: Theme.background
-                    border.color: descInput.activeFocus ? Theme.primary : "transparent"
+                    color: Theme.smoke
+                    border.color: descInput.activeFocus ? Theme.ember : "transparent"
                     border.width: 1
                     Behavior on border.color { ColorAnimation { duration: Theme.animFast } }
                     TextInput {
@@ -433,7 +433,7 @@ CfgPage {
                         anchors.leftMargin: 10; anchors.rightMargin: 10
                         verticalAlignment: TextInput.AlignVCenter
                         font.pixelSize: 12
-                        color: Theme.text
+                        color: Theme.islandText
                         clip: true
                         selectByMouse: true
                         Text {
@@ -441,7 +441,7 @@ CfgPage {
                             anchors.verticalCenter: parent.verticalCenter
                             text: "Description (optional)"
                             font.pixelSize: 12
-                            color: Qt.alpha(Theme.subtext0, 0.6)
+                            color: Qt.alpha(Theme.islandMuted, 0.6)
                             visible: descInput.text === "" && !descInput.activeFocus
                         }
                     }
@@ -481,7 +481,7 @@ CfgPage {
                         Layout.preferredHeight: 32
                         radius: 12
                         opacity: valid ? 1.0 : 0.4
-                        color: addMa.containsMouse && valid ? Qt.lighter(Theme.primary, 1.1) : Theme.primary
+                        color: addMa.containsMouse && valid ? Qt.lighter(Theme.ember, 1.1) : Theme.ember
                         Behavior on color { ColorAnimation { duration: Theme.animFast } }
                         Behavior on opacity { NumberAnimation { duration: Theme.animFast } }
                         Text {
@@ -489,7 +489,7 @@ CfgPage {
                             anchors.centerIn: parent
                             text: "Add"
                             font.pixelSize: 12; font.bold: true
-                            color: Theme.background
+                            color: Theme.smoke
                         }
                         MouseArea {
                             id: addMa
@@ -534,7 +534,7 @@ CfgPage {
                     Layout.fillWidth: true
                     implicitHeight: 44
                     radius: 12
-                    color: customRowMa.containsMouse ? Qt.alpha(Theme.surface0, 0.6) : "transparent"
+                    color: customRowMa.containsMouse ? Qt.alpha(Theme.ashHi, 0.6) : "transparent"
                     Behavior on color { ColorAnimation { duration: Theme.animFast } }
 
                     RowLayout {
@@ -550,14 +550,14 @@ CfgPage {
                             Layout.fillWidth: true
                             text: modelData.description || modelData.luaExpr
                             font.pixelSize: 11
-                            color: Theme.text
+                            color: Theme.islandText
                             elide: Text.ElideRight
                         }
 
                         Text {
                             text: "󰆴"
                             font.family: Theme.fontIcon; font.pixelSize: 13
-                            color: delCustomMa.containsMouse ? Theme.red : Theme.subtext0
+                            color: delCustomMa.containsMouse ? Theme.red : Theme.islandMuted
                             Behavior on color { ColorAnimation { duration: Theme.animFast } }
                             MouseArea {
                                 id: delCustomMa
@@ -596,7 +596,7 @@ CfgPage {
                 Layout.fillWidth: true
                 implicitHeight: matchesFilter ? (editing ? 76 : 44) : 0
                 radius: 12
-                color: editing ? Theme.surface0 : (rowMa.containsMouse ? Qt.alpha(Theme.surface0, 0.6) : "transparent")
+                color: editing ? Theme.ashHi : (rowMa.containsMouse ? Qt.alpha(Theme.ashHi, 0.6) : "transparent")
                 Behavior on color { ColorAnimation { duration: Theme.animFast } }
                 Behavior on implicitHeight { NumberAnimation { duration: Theme.animFast; easing.type: Easing.OutQuint } }
                 clip: true
@@ -620,7 +620,7 @@ CfgPage {
                         Rectangle {
                             visible: bindRow.ov !== null
                             width: 6; height: 6; radius: 3
-                            color: Theme.primary
+                            color: Theme.ember
                         }
 
                         Text {
@@ -628,7 +628,7 @@ CfgPage {
                             Layout.fillWidth: true
                             text: modelData.desc !== "" ? modelData.desc : modelData.rest
                             font.pixelSize: 11
-                            color: modelData.desc !== "" ? Theme.text : Theme.subtext0
+                            color: modelData.desc !== "" ? Theme.islandText : Theme.islandMuted
                             elide: Text.ElideRight
                         }
 
@@ -637,7 +637,7 @@ CfgPage {
                             visible: bindRow.ov !== null
                             text: "󰦛"
                             font.family: Theme.fontIcon; font.pixelSize: 13
-                            color: resetMa.containsMouse ? Theme.red : Theme.subtext0
+                            color: resetMa.containsMouse ? Theme.red : Theme.islandMuted
                             Behavior on color { ColorAnimation { duration: Theme.animFast } }
                             MouseArea {
                                 id: resetMa
@@ -652,8 +652,8 @@ CfgPage {
                             text: modelData.editable ? (bindRow.editing ? "󰅖" : "󰏫") : "󰌾"
                             font.family: Theme.fontIcon; font.pixelSize: 13
                             color: modelData.editable
-                                ? (editMa.containsMouse ? Theme.primary : Theme.subtext0)
-                                : Qt.alpha(Theme.subtext0, 0.4)
+                                ? (editMa.containsMouse ? Theme.ember : Theme.islandMuted)
+                                : Qt.alpha(Theme.islandMuted, 0.4)
                             Behavior on color { ColorAnimation { duration: Theme.animFast } }
                             MouseArea {
                                 id: editMa
@@ -684,8 +684,8 @@ CfgPage {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 28
                             radius: 10
-                            color: Theme.background
-                            border.color: Theme.primary
+                            color: Theme.smoke
+                            border.color: Theme.ember
                             border.width: 1
                             TextInput {
                                 font.family: Theme.fontFamily;
@@ -695,7 +695,7 @@ CfgPage {
                                 anchors.rightMargin: 10
                                 verticalAlignment: TextInput.AlignVCenter
                                 font.pixelSize: 12
-                                color: Theme.text
+                                color: Theme.islandText
                                 clip: true
                                 selectByMouse: true
                                 onAccepted: {
@@ -710,14 +710,14 @@ CfgPage {
                             Layout.preferredWidth: 60
                             Layout.preferredHeight: 28
                             radius: 10
-                            color: applyMa.containsMouse ? Qt.lighter(Theme.primary, 1.1) : Theme.primary
+                            color: applyMa.containsMouse ? Qt.lighter(Theme.ember, 1.1) : Theme.ember
                             Behavior on color { ColorAnimation { duration: Theme.animFast } }
                             Text {
                                 font.family: Theme.fontFamily;
                                 anchors.centerIn: parent
                                 text: "Bind"
                                 font.pixelSize: 11; font.bold: true
-                                color: Theme.background
+                                color: Theme.smoke
                             }
                             MouseArea {
                                 id: applyMa

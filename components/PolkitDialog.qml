@@ -210,7 +210,7 @@ Item {
                             id: idLabel
                             anchors.centerIn: parent
                             text: root.identities[parent.index] ? (root.identities[parent.index].displayName || root.identities[parent.index].string) : ""
-                            color: parent.isSel ? Theme.colorOnPrimary : Theme.islandText
+                            color: parent.isSel ? Theme.smoke : Theme.islandText
                             font.pixelSize: 11
                             textFormat: Text.PlainText
                             Behavior on color { ColorAnimation { duration: Theme.animFast } }
@@ -312,7 +312,7 @@ Item {
                         text: "󰄾"
                         font.family: Theme.fontIcon
                         font.pixelSize: 16
-                        color: submitMa.containsMouse ? Theme.colorOnPrimary : Theme.islandText
+                        color: submitMa.containsMouse ? Theme.smoke : Theme.islandText
                         Behavior on color { ColorAnimation { duration: Theme.animFast } }
                     }
                     MouseArea {

@@ -58,7 +58,7 @@ ShellRoot {
         locked: true
 
         WlSessionLockSurface {
-            color: Theme.background
+            color: Theme.smoke
 
             LockContent {
                 anchors.fill: parent

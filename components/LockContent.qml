@@ -49,7 +49,7 @@ Item {
     // ── Background: blurred wallpaper + darken so the type carries ──
     Rectangle {
         anchors.fill: parent
-        color: Theme.background
+        color: Theme.smoke
     }
     Image {
         id: wp
@@ -96,7 +96,7 @@ Item {
                 font.family: Theme.fontFamily;
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: Qt.formatTime(clock.date, Settings.conf.shell.clock12h ? "h:mm ap" : "HH:mm")
-                color: Theme.text
+                color: Theme.islandText
                 font.pixelSize: 96
                 font.bold: true
             }
@@ -104,7 +104,7 @@ Item {
                 font.family: Theme.fontFamily;
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: Qt.formatDate(clock.date, "dddd, d MMMM")
-                color: Theme.subtext0
+                color: Theme.islandMuted
                 font.pixelSize: 17
             }
         }
@@ -114,16 +114,16 @@ Item {
         Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             width: 84; height: 84; radius: 42
-            color: Theme.surface
+            color: Theme.ash
             border.width: 2
-            border.color: root.failed ? Theme.red : Theme.primary
+            border.color: root.failed ? Theme.red : Theme.ember
             Behavior on border.color { ColorAnimation { duration: 300 } }
 
             Text {
                 font.family: Theme.fontFamily;
                 anchors.centerIn: parent
                 text: (Quickshell.env("USER") || "?").charAt(0).toUpperCase()
-                color: Theme.primary
+                color: Theme.ember
                 font.pixelSize: 36
                 font.bold: true
             }
@@ -133,7 +133,7 @@ Item {
             font.family: Theme.fontFamily;
             anchors.horizontalCenter: parent.horizontalCenter
             text: Quickshell.env("USER") || ""
-            color: Theme.text
+            color: Theme.islandText
             font.pixelSize: 16
             font.bold: true
         }
@@ -143,10 +143,10 @@ Item {
             id: pill
             anchors.horizontalCenter: parent.horizontalCenter
             width: 300; height: 52; radius: 26
-            color: Theme.surface
+            color: Theme.ash
             border.width: 2
             border.color: root.failed ? Theme.red
-                : (passInput.activeFocus ? Theme.primary : Theme.outline)
+                : (passInput.activeFocus ? Theme.ember : Theme.islandMuted)
             Behavior on border.color { ColorAnimation { duration: 200 } }
             transform: Translate { id: shakeShift }
 
@@ -166,7 +166,7 @@ Item {
                 text: root.authenticating ? "󰦖" : "󰌾"
                 font.family: Theme.fontIcon
                 font.pixelSize: 16
-                color: root.authenticating ? Theme.primary : Theme.subtext0
+                color: root.authenticating ? Theme.ember : Theme.islandMuted
             }
 
             TextInput {
@@ -179,7 +179,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 echoMode: TextInput.Password
                 passwordCharacter: "●"
-                color: Theme.text
+                color: Theme.islandText
                 font.pixelSize: 15
                 clip: true
                 enabled: !root.authenticating
@@ -196,7 +196,7 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     visible: passInput.text.length === 0 && !root.authenticating
                     text: "Enter password"
-                    color: Theme.subtext0
+                    color: Theme.islandMuted
                     font.pixelSize: 14
                 }
             }
@@ -207,7 +207,7 @@ Item {
                 anchors.rightMargin: 6
                 anchors.verticalCenter: parent.verticalCenter
                 width: 40; height: 40; radius: 20
-                color: submitMouse.containsMouse ? Theme.primary : Theme.surface0
+                color: submitMouse.containsMouse ? Theme.ember : Theme.ashHi
                 scale: submitMouse.pressed ? 0.9 : 1
                 Behavior on color { ColorAnimation { duration: Theme.animFast } }
                 Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
@@ -217,7 +217,7 @@ Item {
                     text: "󰄾"
                     font.family: Theme.fontIcon
                     font.pixelSize: 16
-                    color: submitMouse.containsMouse ? Theme.colorOnPrimary : Theme.text
+                    color: submitMouse.containsMouse ? Theme.smoke : Theme.islandText
                 }
                 MouseArea {
                     id: submitMouse
@@ -232,7 +232,7 @@ Item {
             font.family: Theme.fontFamily;
             anchors.horizontalCenter: parent.horizontalCenter
             text: root.authenticating ? "Authenticating…" : root.statusText
-            color: root.failed ? Theme.red : Theme.subtext0
+            color: root.failed ? Theme.red : Theme.islandMuted
             font.pixelSize: 13
             opacity: text.length > 0 ? 1 : 0
             Behavior on opacity { NumberAnimation { duration: 200 } }

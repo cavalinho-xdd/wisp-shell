@@ -30,14 +30,14 @@ RowLayout {
         Layout.fillWidth: true
         text: root.text
         font.pixelSize: 13
-        color: root.enabled ? Theme.text : Theme.subtext0
+        color: root.enabled ? Theme.islandText : Theme.islandMuted
     }
 
     Rectangle {
         Layout.preferredWidth: 104
         Layout.preferredHeight: 30
         radius: 10
-        color: Theme.surface0
+        color: Theme.ashHi
 
         RowLayout {
             anchors.fill: parent
@@ -51,7 +51,7 @@ RowLayout {
                     anchors.centerIn: parent
                     text: "󰍴"
                     font.family: Theme.fontIcon; font.pixelSize: 13
-                    color: minusMa.containsMouse ? Theme.text : Theme.subtext0
+                    color: minusMa.containsMouse ? Theme.islandText : Theme.islandMuted
                     scale: minusMa.pressed ? 0.8 : 1.0
                     Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
                 }
@@ -71,7 +71,7 @@ RowLayout {
                 horizontalAlignment: Text.AlignHCenter
                 text: root.value
                 font.pixelSize: 13
-                color: Theme.text
+                color: Theme.islandText
             }
 
             Item {
@@ -80,7 +80,7 @@ RowLayout {
                     anchors.centerIn: parent
                     text: "󰐕"
                     font.family: Theme.fontIcon; font.pixelSize: 13
-                    color: plusMa.containsMouse ? Theme.text : Theme.subtext0
+                    color: plusMa.containsMouse ? Theme.islandText : Theme.islandMuted
                     scale: plusMa.pressed ? 0.8 : 1.0
                     Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
                 }

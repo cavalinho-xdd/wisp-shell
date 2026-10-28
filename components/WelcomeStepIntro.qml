@@ -31,14 +31,14 @@ ColumnLayout {
         // Primary-tinted fill rather than a surface fill inside a 2px primary
         // ring — the accent reads as the badge itself instead of as an outline
         // drawn around a neutral box.
-        color: Qt.alpha(Theme.primary, 0.16)
+        color: Qt.alpha(Theme.ember, 0.16)
 
         Text {
             anchors.centerIn: parent
             text: "󱐋"
             font.family: Theme.fontIcon
             font.pixelSize: 38
-            color: Theme.primary
+            color: Theme.ember
         }
 
         // Slow breathing glow — the pill's own "alive" idiom, so the first
@@ -56,7 +56,7 @@ ColumnLayout {
         text: "Welcome to Wisp"
         font.pixelSize: 30
         font.bold: true
-        color: Theme.text
+        color: Theme.islandText
     }
 
     Text {
@@ -65,7 +65,7 @@ ColumnLayout {
         font.family: Theme.fontFamily
         text: "Let's set up your desktop. A minute now, or skip it — everything here lives in Settings too."
         font.pixelSize: 13
-        color: Theme.subtext0
+        color: Theme.islandMuted
         wrapMode: Text.WordWrap
         horizontalAlignment: Text.AlignHCenter
     }
@@ -118,13 +118,13 @@ ColumnLayout {
                     Layout.preferredWidth: 32
                     Layout.preferredHeight: 32
                     radius: 10
-                    color: Qt.alpha(Theme.primary, 0.14)
+                    color: Qt.alpha(Theme.ember, 0.14)
                     Text {
                         anchors.centerIn: parent
                         text: modelData.icon
                         font.family: Theme.fontIcon
                         font.pixelSize: 15
-                        color: Theme.primary
+                        color: Theme.ember
                     }
                 }
 
@@ -136,14 +136,14 @@ ColumnLayout {
                         text: modelData.label
                         font.pixelSize: 13
                         font.bold: true
-                        color: Theme.text
+                        color: Theme.islandText
                     }
                     Text {
                         Layout.fillWidth: true
                         font.family: Theme.fontFamily
                         text: modelData.desc
                         font.pixelSize: 11
-                        color: Theme.subtext0
+                        color: Theme.islandMuted
                         elide: Text.ElideRight
                     }
                 }

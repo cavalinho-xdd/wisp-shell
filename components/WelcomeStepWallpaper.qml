@@ -33,7 +33,7 @@ ColumnLayout {
                 radius: 12
                 // Tonal step alone reads as an inset field; the outline it used
                 // to carry was doing nothing the fill wasn't already doing.
-                color: Theme.surface0
+                color: Theme.ashHi
                 Text {
                     anchors.fill: parent
                     anchors.leftMargin: 12
@@ -42,7 +42,7 @@ ColumnLayout {
                     elide: Text.ElideMiddle
                     font.family: Theme.fontMono
                     font.pixelSize: 11
-                    color: Theme.subtext0
+                    color: Theme.islandMuted
                     text: Settings.wallpaperFolder
                 }
             }
@@ -91,7 +91,7 @@ ColumnLayout {
                 : "No images here yet"
             font.pixelSize: 12
             font.bold: true
-            color: wallModel.count > 0 ? Theme.text : Theme.peach
+            color: wallModel.count > 0 ? Theme.islandText : Theme.peach
         }
     }
 
@@ -120,7 +120,7 @@ ColumnLayout {
             width: 160
             height: 100
             radius: 14
-            color: Theme.surface0
+            color: Theme.ashHi
             clip: true
             // A ring ONLY when selected. The separation ladder allows an
             // outline for genuine semantic state, and "which wallpaper is
@@ -128,7 +128,7 @@ ColumnLayout {
             // thumbnail used to wear was decoration, and it fought the images
             // it was framing. Unselected thumbs separate by their own image
             // content and the 10px gutter.
-            border.color: Theme.primary
+            border.color: Theme.ember
             border.width: selected ? 2 : 0
             Behavior on border.width { NumberAnimation { duration: Theme.animFast } }
             scale: thumbMa.pressed ? 0.95 : (thumbMa.containsMouse ? 1.04 : 1.0)
@@ -147,14 +147,14 @@ ColumnLayout {
                 anchors.right: parent.right
                 anchors.margins: 6
                 width: 22; height: 22; radius: 11
-                color: Theme.primary
+                color: Theme.ember
                 opacity: thumb.selected ? 1 : 0
                 Behavior on opacity { NumberAnimation { duration: Theme.animFast } }
                 Text {
                     anchors.centerIn: parent
                     text: "󰄬"
                     font.family: Theme.fontIcon; font.pixelSize: 12
-                    color: Theme.colorOnPrimary
+                    color: Theme.smoke
                 }
             }
 

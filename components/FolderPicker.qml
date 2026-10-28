@@ -83,7 +83,7 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: 36
             radius: 12
-            color: Theme.surface0
+            color: Theme.ashHi
             Text {
                 anchors.fill: parent
                 anchors.leftMargin: 12
@@ -92,7 +92,7 @@ ColumnLayout {
                 elide: Text.ElideMiddle
                 font.family: Theme.fontMono
                 font.pixelSize: 11
-                color: Theme.subtext0
+                color: Theme.islandMuted
                 text: picker.path
             }
         }
@@ -103,7 +103,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: 168
         radius: 14
-        color: Theme.surface0
+        color: Theme.ashHi
 
         ListView {
             id: dirList
@@ -121,7 +121,7 @@ ColumnLayout {
                 width: dirList.width
                 height: 32
                 radius: 10
-                color: rowMa.containsMouse ? Qt.lighter(Theme.surface, 1.35) : "transparent"
+                color: rowMa.containsMouse ? Qt.lighter(Theme.ash, 1.35) : "transparent"
                 Behavior on color { ColorAnimation { duration: Theme.animFast } }
 
                 Row {
@@ -134,7 +134,7 @@ ColumnLayout {
                         text: "󰉋"
                         font.family: Theme.fontIcon
                         font.pixelSize: 13
-                        color: Theme.primary
+                        color: Theme.ember
                         anchors.verticalCenter: parent.verticalCenter
                     }
 
@@ -142,7 +142,7 @@ ColumnLayout {
                         text: row.fileName
                         font.family: Theme.fontFamily
                         font.pixelSize: 12
-                        color: Theme.text
+                        color: Theme.islandText
                         elide: Text.ElideRight
                         anchors.verticalCenter: parent.verticalCenter
                     }
@@ -166,7 +166,7 @@ ColumnLayout {
             text: "No subfolders here"
             font.family: Theme.fontFamily
             font.pixelSize: 12
-            color: Theme.subtext0
+            color: Theme.islandMuted
         }
     }
 

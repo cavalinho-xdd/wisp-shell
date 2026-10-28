@@ -52,7 +52,7 @@ ColumnLayout {
                 radius: 16
                 // Fill alone carries selection — an outline that only ever
                 // matches the fill it surrounds is decoration.
-                color: active ? Theme.primary : Theme.surface
+                color: active ? Theme.ember : Theme.ash
                 Behavior on color { ColorAnimation { duration: Theme.animFast } }
                 scale: modeMa.pressed ? 0.96 : 1.0
                 Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
@@ -64,14 +64,14 @@ ColumnLayout {
                         anchors.horizontalCenter: parent.horizontalCenter
                         text: modeChip.modelData.icon
                         font.family: Theme.fontIcon; font.pixelSize: 20
-                        color: modeChip.active ? Theme.colorOnPrimary : Theme.subtext0
+                        color: modeChip.active ? Theme.smoke : Theme.islandMuted
                     }
                     Text {
                         anchors.horizontalCenter: parent.horizontalCenter
                         font.family: Theme.fontFamily
                         text: modeChip.modelData.name
                         font.pixelSize: 12; font.bold: modeChip.active
-                        color: modeChip.active ? Theme.colorOnPrimary : Theme.text
+                        color: modeChip.active ? Theme.smoke : Theme.islandText
                     }
                 }
                 MouseArea {
@@ -91,7 +91,7 @@ ColumnLayout {
         Row {
             spacing: 6
             Repeater {
-                model: [ Theme.background, Theme.surface, Theme.primary, Theme.red, Theme.text ]
+                model: [ Theme.smoke, Theme.ash, Theme.ember, Theme.red, Theme.islandText ]
                 // The one hairline kept in this file, deliberately: these are
                 // colour swatches, and `background` is a near-black that would
                 // be invisible against the card without an edge. That is a
@@ -100,7 +100,7 @@ ColumnLayout {
                     required property var modelData
                     width: 26; height: 26; radius: 13
                     color: modelData
-                    border.color: Theme.outline
+                    border.color: Theme.islandMuted
                     border.width: 1
                 }
             }
@@ -115,7 +115,7 @@ ColumnLayout {
         text: "Palette style"
         font.pixelSize: 12
         font.bold: true
-        color: Theme.subtext0
+        color: Theme.islandMuted
         opacity: step.live ? 1.0 : 0.45
     }
 
@@ -148,8 +148,8 @@ ColumnLayout {
                 radius: 12
                 // Selection is a primary-tinted fill, not a ring around a
                 // neutral one — the chip becomes the accent instead of wearing it.
-                color: active ? Qt.alpha(Theme.primary, 0.22)
-                    : (schemeMa.containsMouse ? Theme.surface0 : Theme.surface)
+                color: active ? Qt.alpha(Theme.ember, 0.22)
+                    : (schemeMa.containsMouse ? Theme.ashHi : Theme.ash)
                 Behavior on color { ColorAnimation { duration: Theme.animFast } }
                 scale: schemeMa.pressed ? 0.96 : 1.0
                 Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
@@ -160,7 +160,7 @@ ColumnLayout {
                     text: schemeChip.modelData.name
                     font.pixelSize: 12
                     font.bold: schemeChip.active
-                    color: schemeChip.active ? Theme.primary : Theme.text
+                    color: schemeChip.active ? Theme.ember : Theme.islandText
                 }
                 MouseArea {
                     id: schemeMa

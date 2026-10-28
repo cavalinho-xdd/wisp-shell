@@ -24,7 +24,7 @@ RowLayout {
         font.family: Theme.fontFamily
         text: root.text
         font.pixelSize: 13
-        color: root.enabled ? Theme.text : Theme.subtext0
+        color: root.enabled ? Theme.islandText : Theme.islandMuted
         Layout.preferredWidth: root.labelWidth
     }
     EmberSlider {
@@ -38,7 +38,7 @@ RowLayout {
         font.features: { "tnum": 1 }
         text: root.value
         font.pixelSize: 13
-        color: Theme.text
+        color: Theme.islandText
         Layout.preferredWidth: 24
         horizontalAlignment: Text.AlignRight
     }

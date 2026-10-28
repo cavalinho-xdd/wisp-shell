@@ -113,7 +113,7 @@ ShellRoot {
                 return p ? "file://" + p.replace("file://", "") : "";
             }
 
-            Rectangle { anchors.fill: parent; color: Theme.background }
+            Rectangle { anchors.fill: parent; color: Theme.smoke }
             Image {
                 id: wp
                 anchors.fill: parent
@@ -140,7 +140,7 @@ ShellRoot {
             width: 780
             height: 580
             radius: 28
-            color: Theme.background
+            color: Theme.smoke
             // No border. The card already separates from the blurred wallpaper
             // behind it by fill + the 0.55 scrim; a 1px outline on top of that
             // is the "grey box around every card" tell and buys nothing here.
@@ -195,7 +195,7 @@ ShellRoot {
                                 width: active ? 28 : 8
                                 height: 8
                                 radius: 4
-                                color: active ? Theme.primary : (done ? Theme.subtext0 : Theme.surface0)
+                                color: active ? Theme.ember : (done ? Theme.islandMuted : Theme.ashHi)
                                 Behavior on width { NumberAnimation { duration: Theme.animSlow; easing.type: Theme.easeSpring } }
                                 Behavior on color { ColorAnimation { duration: Theme.animFast } }
                             }
@@ -207,7 +207,7 @@ ShellRoot {
                         font.family: Theme.fontFamily
                         text: "Step " + (root.step + 1) + " of " + root.steps.length
                         font.pixelSize: 11
-                        color: Theme.subtext0
+                        color: Theme.islandMuted
                     }
                 }
 
@@ -272,7 +272,7 @@ ShellRoot {
                         Layout.preferredWidth: nextRow.implicitWidth + 40
                         Layout.preferredHeight: 40
                         radius: 14
-                        color: nextMa.containsMouse ? Qt.lighter(Theme.primary, 1.1) : Theme.primary
+                        color: nextMa.containsMouse ? Qt.lighter(Theme.ember, 1.1) : Theme.ember
                         Behavior on color { ColorAnimation { duration: Theme.animFast } }
                         scale: nextMa.pressed ? 0.96 : 1.0
                         Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
@@ -284,14 +284,14 @@ ShellRoot {
                             Text {
                                 text: root.lastStep ? "󰄬" : "󰁔"
                                 font.family: Theme.fontIcon; font.pixelSize: 14
-                                color: Theme.colorOnPrimary
+                                color: Theme.smoke
                                 anchors.verticalCenter: parent.verticalCenter
                             }
                             Text {
                                 font.family: Theme.fontFamily
                                 text: root.lastStep ? "Finish" : (root.step === 0 ? "Let's go" : "Next")
                                 font.pixelSize: 13; font.bold: true
-                                color: Theme.colorOnPrimary
+                                color: Theme.smoke
                                 anchors.verticalCenter: parent.verticalCenter
                             }
                         }

@@ -80,15 +80,15 @@ ColumnLayout {
                 Layout.preferredHeight: 32
                 Layout.preferredWidth: allRow.implicitWidth + 24
                 radius: 12
-                color: active ? Theme.primary : Theme.surface0
+                color: active ? Theme.ember : Theme.ashHi
                 Behavior on color { ColorAnimation { duration: Theme.animFast } }
                 Row {
                     id: allRow
                     anchors.centerIn: parent
                     spacing: 6
-                    Text { text: "󰕮"; font.family: Theme.fontIcon; font.pixelSize: 12; color: allChip.active ? Theme.colorOnPrimary : Theme.subtext0; anchors.verticalCenter: parent.verticalCenter }
+                    Text { text: "󰕮"; font.family: Theme.fontIcon; font.pixelSize: 12; color: allChip.active ? Theme.smoke : Theme.islandMuted; anchors.verticalCenter: parent.verticalCenter }
                     Text {
-                        font.family: Theme.fontFamily; text: "All monitors"; font.pixelSize: 12; font.bold: allChip.active; color: allChip.active ? Theme.colorOnPrimary : Theme.text; anchors.verticalCenter: parent.verticalCenter }
+                        font.family: Theme.fontFamily; text: "All monitors"; font.pixelSize: 12; font.bold: allChip.active; color: allChip.active ? Theme.smoke : Theme.islandText; anchors.verticalCenter: parent.verticalCenter }
                 }
                 MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: Settings.conf.shell.pillMonitor = "" }
             }
@@ -102,15 +102,15 @@ ColumnLayout {
                     Layout.preferredHeight: 32
                     Layout.preferredWidth: monRow.implicitWidth + 24
                     radius: 12
-                    color: active ? Theme.primary : Theme.surface0
+                    color: active ? Theme.ember : Theme.ashHi
                     Behavior on color { ColorAnimation { duration: Theme.animFast } }
                     Row {
                         id: monRow
                         anchors.centerIn: parent
                         spacing: 6
-                        Text { text: "󰍹"; font.family: Theme.fontIcon; font.pixelSize: 12; color: monChip.active ? Theme.colorOnPrimary : Theme.subtext0; anchors.verticalCenter: parent.verticalCenter }
+                        Text { text: "󰍹"; font.family: Theme.fontIcon; font.pixelSize: 12; color: monChip.active ? Theme.smoke : Theme.islandMuted; anchors.verticalCenter: parent.verticalCenter }
                         Text {
-                            font.family: Theme.fontFamily; text: monChip.modelData.name; font.pixelSize: 12; font.bold: monChip.active; color: monChip.active ? Theme.colorOnPrimary : Theme.text; anchors.verticalCenter: parent.verticalCenter }
+                            font.family: Theme.fontFamily; text: monChip.modelData.name; font.pixelSize: 12; font.bold: monChip.active; color: monChip.active ? Theme.smoke : Theme.islandText; anchors.verticalCenter: parent.verticalCenter }
                     }
                     MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: Settings.conf.shell.pillMonitor = monChip.modelData.name }
                 }

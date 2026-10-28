@@ -35,14 +35,14 @@ ColumnLayout {
                 width: 180
                 height: 40
                 radius: 8
-                color: thumbMa.containsMouse ? Qt.lighter(Theme.surface0, 1.2) : Theme.surface0
+                color: thumbMa.containsMouse ? Qt.lighter(Theme.ashHi, 1.2) : Theme.ashHi
                 border.width: 1
                 border.color: Theme.surface1
 
                 Text {
                     anchors.centerIn: parent
                     text: fileName
-                    color: Theme.text
+                    color: Theme.islandText
                     font.family: Theme.fontFamily
                 }
 

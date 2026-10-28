@@ -23,7 +23,7 @@ RowLayout {
         Layout.fillWidth: true
         text: root.text
         font.pixelSize: 13
-        color: root.enabled ? Theme.text : Theme.subtext0
+        color: root.enabled ? Theme.islandText : Theme.islandMuted
     }
 
     Row {
@@ -37,7 +37,7 @@ RowLayout {
                 width: chipLabel.implicitWidth + 24
                 height: 30
                 radius: 10
-                color: active ? Theme.primary : Theme.surface0
+                color: active ? Theme.ember : Theme.ashHi
                 Behavior on color { ColorAnimation { duration: Theme.animFast } }
                 Accessible.role: Accessible.RadioButton
                 Accessible.name: modelData.label
@@ -49,7 +49,7 @@ RowLayout {
                     text: chip.modelData.label
                     font.pixelSize: 12
                     font.bold: chip.active
-                    color: chip.active ? Theme.background : Theme.text
+                    color: chip.active ? Theme.smoke : Theme.islandText
                 }
                 MouseArea {
                     anchors.fill: parent

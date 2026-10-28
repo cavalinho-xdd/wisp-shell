@@ -84,7 +84,7 @@ ColumnLayout {
         text: "System check"
         font.pixelSize: 15
         font.bold: true
-        color: Theme.text
+        color: Theme.islandText
     }
 
     // No container box — see WelcomeStepIntro. These are six rows under a
@@ -107,7 +107,7 @@ ColumnLayout {
                 // The row itself is the surface. Separation from the card comes
                 // from the +9.4 L* tonal step, and from row to row from the 4px
                 // gap — no outline needed at either level.
-                color: Theme.surface
+                color: Theme.ash
 
                 // Amber rather than red for anything non-required: a missing
                 // optional dependency is information, not an error, and
@@ -134,14 +134,14 @@ ColumnLayout {
                         text: checkRow.modelData.name
                         font.pixelSize: 12
                         font.bold: true
-                        color: Theme.text
+                        color: Theme.islandText
                     }
                     Text {
                         Layout.fillWidth: true
                         font.family: Theme.fontFamily
                         text: checkRow.modelData.desc
                         font.pixelSize: 11
-                        color: Theme.subtext0
+                        color: Theme.islandMuted
                         elide: Text.ElideRight
                     }
                 }
@@ -157,7 +157,7 @@ ColumnLayout {
         text: "Good to know"
         font.pixelSize: 15
         font.bold: true
-        color: Theme.text
+        color: Theme.islandText
     }
 
     RowLayout {
@@ -174,7 +174,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 56
                 radius: 14
-                color: Theme.surface
+                color: Theme.ash
 
                 Column {
                     anchors.centerIn: parent
@@ -185,14 +185,14 @@ ColumnLayout {
                         text: parent.parent.modelData.key
                         font.pixelSize: 13
                         font.bold: true
-                        color: Theme.primary
+                        color: Theme.ember
                     }
                     Text {
                         anchors.horizontalCenter: parent.horizontalCenter
                         font.family: Theme.fontFamily
                         text: parent.parent.modelData.desc
                         font.pixelSize: 11
-                        color: Theme.subtext0
+                        color: Theme.islandMuted
                     }
                 }
             }

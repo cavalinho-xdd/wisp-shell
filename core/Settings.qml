@@ -449,8 +449,6 @@ Singleton {
                 // Terminal-agnostic recolor via OSC escapes (apply_colors.sh
                 // "osc" fanout) — see Settings.terminalOscPath
                 property bool applyTerminalOSC: false
-                // Panel background alpha, 0.0-1.0 — see Theme.panelBackground
-                property real panelAlpha: 1.0
             }
         }
     }

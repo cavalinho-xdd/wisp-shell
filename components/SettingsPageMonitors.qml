@@ -105,14 +105,14 @@ CfgPage {
                 Layout.preferredHeight: 32
                 Layout.preferredWidth: selRow.implicitWidth + 24
                 radius: 12
-                color: active ? Qt.alpha(Theme.primary, 0.22) : Theme.surface
+                color: active ? Qt.alpha(Theme.ember, 0.22) : Theme.ash
                 Row {
                     id: selRow
                     anchors.centerIn: parent
                     spacing: 6
-                    Text { text: "󰹑"; font.family: Theme.fontIcon; font.pixelSize: 12; color: active ? Theme.primary : Theme.subtext0; anchors.verticalCenter: parent.verticalCenter }
+                    Text { text: "󰹑"; font.family: Theme.fontIcon; font.pixelSize: 12; color: active ? Theme.ember : Theme.islandMuted; anchors.verticalCenter: parent.verticalCenter }
                     Text {
-                        font.family: Theme.fontFamily; text: modelData.name; font.pixelSize: 12; font.bold: active; color: Theme.text; anchors.verticalCenter: parent.verticalCenter }
+                        font.family: Theme.fontFamily; text: modelData.name; font.pixelSize: 12; font.bold: active; color: Theme.islandText; anchors.verticalCenter: parent.verticalCenter }
                 }
                 MouseArea { anchors.fill: parent; onClicked: page.selMonitor = index }
             }
@@ -134,11 +134,11 @@ CfgPage {
                 Layout.preferredWidth: 240
                 Layout.preferredHeight: 155
                 radius: 14
-                color: Theme.surface0
+                color: Theme.ashHi
                 border.color: page.mon && (page.pendingRes !== page.mon.width + "x" + page.mon.height
                     || page.pendingRate !== Math.round(page.mon.refreshRate)
                     || page.pendingScale !== Math.round(page.mon.scale * 100))
-                    ? Theme.primary : Theme.outline
+                    ? Theme.ember : Theme.islandMuted
                 border.width: 2
                 Behavior on border.color { ColorAnimation { duration: Theme.animSlow } }
 
@@ -150,14 +150,14 @@ CfgPage {
                         text: "󰍹"
                         font.family: Theme.fontIcon
                         font.pixelSize: 34
-                        color: Theme.primary
+                        color: Theme.ember
                     }
                     Text {
                         font.family: Theme.fontFamily;
                         anchors.horizontalCenter: parent.horizontalCenter
                         text: page.mon ? page.mon.name : "…"
                         font.pixelSize: 14; font.bold: true
-                        color: Theme.text
+                        color: Theme.islandText
                     }
                     Text {
                         font.family: Theme.fontFamily;
@@ -165,7 +165,7 @@ CfgPage {
                         text: page.pendingRes + " @ " + page.pendingRate + "Hz"
                             + (page.pendingScale !== 100 ? "  ×" + (page.pendingScale / 100) : "")
                         font.pixelSize: 12
-                        color: Theme.subtext0
+                        color: Theme.islandMuted
                     }
                 }
             }
@@ -173,12 +173,12 @@ CfgPage {
             Rectangle {
                 Layout.alignment: Qt.AlignHCenter
                 width: 22; height: 16
-                color: Theme.surface0
+                color: Theme.ashHi
             }
             Rectangle {
                 Layout.alignment: Qt.AlignHCenter
                 width: 70; height: 6; radius: 3
-                color: Theme.surface0
+                color: Theme.ashHi
             }
         }
 
@@ -197,8 +197,8 @@ CfgPage {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 42
                     radius: 12
-                    color: active ? Theme.surface0 : (resMa.containsMouse ? Qt.alpha(Theme.surface0, 0.5) : Qt.alpha(Theme.surface0, 0.25))
-                    border.color: active ? Theme.primary : "transparent"
+                    color: active ? Theme.ashHi : (resMa.containsMouse ? Qt.alpha(Theme.ashHi, 0.5) : Qt.alpha(Theme.ashHi, 0.25))
+                    border.color: active ? Theme.ember : "transparent"
                     border.width: 1
                     Behavior on color { ColorAnimation { duration: Theme.animFast } }
                     scale: resMa.pressed ? 0.96 : 1.0
@@ -212,14 +212,14 @@ CfgPage {
                             font.family: Theme.fontFamily;
                             text: page.resLabel(modelData)
                             font.pixelSize: 13; font.bold: true
-                            color: active ? Theme.primary : Theme.text
+                            color: active ? Theme.ember : Theme.islandText
                         }
                         Item { Layout.fillWidth: true }
                         Text {
                             font.family: Theme.fontFamily;
                             text: modelData
                             font.pixelSize: 11
-                            color: Theme.subtext0
+                            color: Theme.islandMuted
                         }
                     }
 
@@ -262,15 +262,15 @@ CfgPage {
                 Layout.preferredHeight: 32
                 Layout.preferredWidth: allRow.implicitWidth + 24
                 radius: 12
-                color: active ? Theme.primary : Theme.surface0
+                color: active ? Theme.ember : Theme.ashHi
                 Behavior on color { ColorAnimation { duration: Theme.animFast } }
                 Row {
                     id: allRow
                     anchors.centerIn: parent
                     spacing: 6
-                    Text { text: "󰕮"; font.family: Theme.fontIcon; font.pixelSize: 12; color: allMonBtn.active ? Theme.background : Theme.subtext0; anchors.verticalCenter: parent.verticalCenter }
+                    Text { text: "󰕮"; font.family: Theme.fontIcon; font.pixelSize: 12; color: allMonBtn.active ? Theme.smoke : Theme.islandMuted; anchors.verticalCenter: parent.verticalCenter }
                     Text {
-                        font.family: Theme.fontFamily; text: "All monitors"; font.pixelSize: 12; font.bold: allMonBtn.active; color: allMonBtn.active ? Theme.background : Theme.text; anchors.verticalCenter: parent.verticalCenter }
+                        font.family: Theme.fontFamily; text: "All monitors"; font.pixelSize: 12; font.bold: allMonBtn.active; color: allMonBtn.active ? Theme.smoke : Theme.islandText; anchors.verticalCenter: parent.verticalCenter }
                 }
                 MouseArea { anchors.fill: parent; onClicked: Settings.conf.shell.pillMonitor = "" }
             }
@@ -283,15 +283,15 @@ CfgPage {
                     Layout.preferredHeight: 32
                     Layout.preferredWidth: monRow.implicitWidth + 24
                     radius: 12
-                    color: active ? Theme.primary : Theme.surface0
+                    color: active ? Theme.ember : Theme.ashHi
                     Behavior on color { ColorAnimation { duration: Theme.animFast } }
                     Row {
                         id: monRow
                         anchors.centerIn: parent
                         spacing: 6
-                        Text { text: "󰍹"; font.family: Theme.fontIcon; font.pixelSize: 12; color: monBtn.active ? Theme.background : Theme.subtext0; anchors.verticalCenter: parent.verticalCenter }
+                        Text { text: "󰍹"; font.family: Theme.fontIcon; font.pixelSize: 12; color: monBtn.active ? Theme.smoke : Theme.islandMuted; anchors.verticalCenter: parent.verticalCenter }
                         Text {
-                            font.family: Theme.fontFamily; text: modelData.name; font.pixelSize: 12; font.bold: monBtn.active; color: monBtn.active ? Theme.background : Theme.text; anchors.verticalCenter: parent.verticalCenter }
+                            font.family: Theme.fontFamily; text: modelData.name; font.pixelSize: 12; font.bold: monBtn.active; color: monBtn.active ? Theme.smoke : Theme.islandText; anchors.verticalCenter: parent.verticalCenter }
                     }
                     MouseArea { anchors.fill: parent; onClicked: Settings.conf.shell.pillMonitor = modelData.name }
                 }
@@ -316,7 +316,7 @@ CfgPage {
                     Layout.preferredWidth: rateText.implicitWidth + 22
                     Layout.preferredHeight: 30
                     radius: 15
-                    color: active ? Theme.primary : Theme.surface0
+                    color: active ? Theme.ember : Theme.ashHi
                     Behavior on color { ColorAnimation { duration: Theme.animFast } }
                     scale: rateMa.pressed ? 0.94 : 1.0
                     Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
@@ -327,7 +327,7 @@ CfgPage {
                         text: modelData
                         font.pixelSize: 12
                         font.bold: true
-                        color: active ? Theme.background : Theme.text
+                        color: active ? Theme.smoke : Theme.islandText
                     }
                     MouseArea {
                         id: rateMa
@@ -361,7 +361,7 @@ CfgPage {
         Layout.fillWidth: true
         Layout.preferredHeight: 44
         radius: 16
-        color: applyMonMa.containsMouse ? Qt.lighter(Theme.primary, 1.1) : Theme.primary
+        color: applyMonMa.containsMouse ? Qt.lighter(Theme.ember, 1.1) : Theme.ember
         Behavior on color { ColorAnimation { duration: Theme.animFast } }
         scale: applyMonMa.pressed ? 0.97 : 1.0
         Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
@@ -369,9 +369,9 @@ CfgPage {
         Row {
             anchors.centerIn: parent
             spacing: 8
-            Text { text: "󰸞"; font.family: Theme.fontIcon; font.pixelSize: 15; color: Theme.background; anchors.verticalCenter: parent.verticalCenter }
+            Text { text: "󰸞"; font.family: Theme.fontIcon; font.pixelSize: 15; color: Theme.smoke; anchors.verticalCenter: parent.verticalCenter }
             Text {
-                font.family: Theme.fontFamily; text: "Apply"; font.pixelSize: 14; font.bold: true; color: Theme.background; anchors.verticalCenter: parent.verticalCenter }
+                font.family: Theme.fontFamily; text: "Apply"; font.pixelSize: 14; font.bold: true; color: Theme.smoke; anchors.verticalCenter: parent.verticalCenter }
         }
 
         MouseArea {

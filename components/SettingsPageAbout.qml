@@ -61,7 +61,7 @@ Item {
                 width: open ? 300 : 232
                 height: open ? 48 : 42
                 radius: height / 2
-                color: Theme.surface0
+                color: Theme.ashHi
                 Behavior on width { NumberAnimation { duration: 420; easing.type: Easing.OutBack; easing.overshoot: 1.4 } }
                 Behavior on height { NumberAnimation { duration: 420; easing.type: Easing.OutBack; easing.overshoot: 1.4 } }
 
@@ -78,7 +78,7 @@ Item {
                             anchors.verticalCenter: parent.verticalCenter
                             width: index === 0 ? 18 : 6
                             height: 6; radius: 3
-                            color: index === 0 ? Theme.primary : Qt.alpha(Theme.text, 0.35)
+                            color: index === 0 ? Theme.ember : Qt.alpha(Theme.islandText, 0.35)
                         }
                     }
                 }
@@ -90,7 +90,7 @@ Item {
                     font.features: { "tnum": 1 }
                     font.pixelSize: 14
                     font.weight: Font.Medium
-                    color: Theme.text
+                    color: Theme.islandText
                 }
 
                 Row {
@@ -98,8 +98,8 @@ Item {
                     anchors.rightMargin: 16
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: 10
-                    Text { text: "󰕾"; font.family: Theme.fontIcon; font.pixelSize: 13; color: Theme.subtext0 }
-                    Text { text: "󰖩"; font.family: Theme.fontIcon; font.pixelSize: 13; color: Theme.subtext0 }
+                    Text { text: "󰕾"; font.family: Theme.fontIcon; font.pixelSize: 13; color: Theme.islandMuted }
+                    Text { text: "󰖩"; font.family: Theme.fontIcon; font.pixelSize: 13; color: Theme.islandMuted }
                 }
 
                 MouseArea { id: pillMa; anchors.fill: parent; anchors.margins: -12; hoverEnabled: true }
@@ -114,7 +114,7 @@ Item {
             font.pixelSize: 30
             font.bold: true
             font.letterSpacing: -0.5
-            color: Theme.text
+            color: Theme.islandText
         }
 
         Text {
@@ -123,7 +123,7 @@ Item {
             font.family: Theme.fontFamily
             text: "A dynamic-island desktop shell for Hyprland"
             font.pixelSize: 14
-            color: Theme.subtext0
+            color: Theme.islandMuted
         }
 
         // What it runs on: one strip, split by hairlines, label over value
@@ -133,7 +133,7 @@ Item {
             Layout.preferredWidth: 480
             Layout.preferredHeight: 66
             radius: 16
-            color: Qt.alpha(Theme.surface0, 0.5)
+            color: Qt.alpha(Theme.ashHi, 0.5)
 
             Row {
                 anchors.fill: parent
@@ -154,7 +154,7 @@ Item {
                             anchors.left: parent.left
                             anchors.verticalCenter: parent.verticalCenter
                             width: 1; height: 30
-                            color: Qt.alpha(Theme.text, 0.08)
+                            color: Qt.alpha(Theme.islandText, 0.08)
                         }
                         Column {
                             anchors.centerIn: parent
@@ -164,7 +164,7 @@ Item {
                                 text: modelData.lbl
                                 font.family: Theme.fontFamily
                                 font.pixelSize: 11
-                                color: Theme.subtext0
+                                color: Theme.islandMuted
                             }
                             Text {
                                 anchors.horizontalCenter: parent.horizontalCenter
@@ -173,7 +173,7 @@ Item {
                                 font.features: { "tnum": 1 }
                                 font.pixelSize: 13
                                 font.weight: Font.Medium
-                                color: Theme.text
+                                color: Theme.islandText
                             }
                         }
                     }
@@ -187,7 +187,7 @@ Item {
             font.family: Theme.fontFamily
             text: "Made by Jakub Muzik"
             font.pixelSize: 13
-            color: Theme.text
+            color: Theme.islandText
         }
 
         Text {
@@ -196,7 +196,7 @@ Item {
             font.family: Theme.fontFamily
             text: "Inspired by illogical-impulse, caelestia-dots & illyamiro"
             font.pixelSize: 12
-            color: Theme.subtext0
+            color: Theme.islandMuted
         }
 
         Rectangle {
@@ -205,7 +205,7 @@ Item {
             Layout.preferredWidth: ghRow.implicitWidth + 36
             Layout.preferredHeight: 36
             radius: 18
-            color: ghMa.containsMouse ? Qt.lighter(Theme.surface0, 1.25) : Theme.surface0
+            color: ghMa.containsMouse ? Qt.lighter(Theme.ashHi, 1.25) : Theme.ashHi
             Behavior on color { ColorAnimation { duration: Theme.animFast } }
             scale: ghMa.pressed ? 0.96 : 1.0
             Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
@@ -216,12 +216,12 @@ Item {
                 spacing: 8
                 Text {
                     text: "󰊤"
-                    font.family: Theme.fontIcon; font.pixelSize: 14; color: Theme.text
+                    font.family: Theme.fontIcon; font.pixelSize: 14; color: Theme.islandText
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 Text {
                     text: "cavalinho-xdd/wisp-shell"
-                    font.family: Theme.fontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.text
+                    font.family: Theme.fontFamily; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.islandText
                     anchors.verticalCenter: parent.verticalCenter
                 }
             }

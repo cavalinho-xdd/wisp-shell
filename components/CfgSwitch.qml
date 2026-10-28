@@ -36,7 +36,7 @@ Rectangle {
                 Layout.fillWidth: true
                 text: root.text
                 font.pixelSize: 13
-                color: root.enabled ? Theme.text : Theme.subtext0
+                color: root.enabled ? Theme.islandText : Theme.islandMuted
             }
             EmberSwitch {
                 checked: root.checked
@@ -51,7 +51,7 @@ Rectangle {
             text: root.hint
             Layout.rightMargin: 56
             font.pixelSize: 12
-            color: Theme.subtext0
+            color: Theme.islandMuted
             wrapMode: Text.WordWrap
             visible: root.hint !== ""
         }

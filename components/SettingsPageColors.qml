@@ -3,7 +3,7 @@ import QtQuick.Layouts
 import Quickshell
 import "../core"
 
-// Wallpaper & Colors — Material You palette from the current wallpaper via
+// Wallpaper & Colors — the ember accent from the current wallpaper via
 // matugen (scripts/apply_colors.sh writes colors.json, Theme.qml watches it).
 // Runtime + project-local only: the user's matugen config is never executed.
 CfgPage {
@@ -34,7 +34,7 @@ CfgPage {
     }
 
     CfgNotice {
-        text: "Colors are generated from your wallpaper with matugen into a local colors.json — your own matugen config and dotfiles are never touched. Turning this off returns to the built-in Catppuccin palette."
+        text: "Colors are generated from your wallpaper with matugen into a local colors.json — your own matugen config and dotfiles are never touched. The shell takes one colour from it, the ember; turning this off keeps the default blue ember."
     }
 
     CfgSection {
@@ -99,19 +99,6 @@ CfgPage {
         }
     }
 
-    CfgSection {
-        title: "Panel"
-        icon: "󰽙"
-
-        CfgSlider {
-            icon: "󰗇"
-            text: "Transparency"
-            value: Math.round(Settings.conf.colors.panelAlpha * 100)
-            maxValue: 100
-            onEdited: v => Settings.conf.colors.panelAlpha = v / 100
-        }
-    }
-
     // ── Wallpaper folder ──
     // Was hardcoded to one Czech-localized path (~/Obrázky/Wallpapers) — the
     // fullscreen picker (wallpaper.qml) now reads Settings.wallpaperFolder,
@@ -129,7 +116,7 @@ CfgPage {
                 Layout.preferredHeight: 40
                 radius: 12
                 // Tonal step alone reads as an inset field (DESIGN.md §16)
-                color: Theme.surface0
+                color: Theme.ashHi
                 Text {
                     anchors.fill: parent
                     anchors.leftMargin: 12
@@ -138,7 +125,7 @@ CfgPage {
                     elide: Text.ElideMiddle
                     font.family: Theme.fontMono
                     font.pixelSize: 12
-                    color: Theme.subtext0
+                    color: Theme.islandMuted
                     text: Settings.wallpaperFolder
                 }
             }
@@ -177,7 +164,7 @@ CfgPage {
             Layout.preferredWidth: 96
             Layout.preferredHeight: 60
             radius: 12
-            color: Theme.surface0
+            color: Theme.ashHi
             clip: true
             Image {
                 anchors.fill: parent
@@ -192,23 +179,23 @@ CfgPage {
             spacing: 8
             Repeater {
                 model: [
-                    { c: Theme.background, n: "bg" },
-                    { c: Theme.surface, n: "surface" },
-                    { c: Theme.surface0, n: "surface0" },
-                    { c: Theme.primary, n: "primary" },
+                    { c: Theme.smoke, n: "bg" },
+                    { c: Theme.ash, n: "surface" },
+                    { c: Theme.ashHi, n: "surface0" },
+                    { c: Theme.ember, n: "primary" },
                     { c: Theme.red, n: "error" },
-                    { c: Theme.text, n: "text" }
+                    { c: Theme.islandText, n: "text" }
                 ]
                 delegate: Column {
                     spacing: 4
-                    // One of only two Theme.outline borders left in the shell,
+                    // One of only two Theme.islandMuted borders left in the shell,
                     // kept for the same reason as the wizard's: these are colour
                     // swatches and `background` is a near-black that would be
                     // invisible without an edge. Functional, not decorative.
                     Rectangle {
                         width: 34; height: 34; radius: 17
                         color: modelData.c
-                        border.color: Theme.outline
+                        border.color: Theme.islandMuted
                         border.width: 1
                     }
                     Text {
@@ -216,7 +203,7 @@ CfgPage {
                         anchors.horizontalCenter: parent.horizontalCenter
                         text: modelData.n
                         font.pixelSize: 9
-                        color: Theme.subtext0
+                        color: Theme.islandMuted
                     }
                 }
             }
@@ -243,7 +230,7 @@ CfgPage {
                     Layout.preferredWidth: modeRow.implicitWidth + 28
                     Layout.preferredHeight: 34
                     radius: 12
-                    color: active ? Theme.primary : Theme.surface0
+                    color: active ? Theme.ember : Theme.ashHi
                     Behavior on color { ColorAnimation { duration: Theme.animFast } }
                     scale: modeMa.pressed ? 0.95 : 1.0
                     Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
@@ -251,9 +238,9 @@ CfgPage {
                         id: modeRow
                         anchors.centerIn: parent
                         spacing: 7
-                        Text { text: modelData.icon; font.family: Theme.fontIcon; font.pixelSize: 13; color: active ? Theme.colorOnPrimary : Theme.subtext0; anchors.verticalCenter: parent.verticalCenter }
+                        Text { text: modelData.icon; font.family: Theme.fontIcon; font.pixelSize: 13; color: active ? Theme.smoke : Theme.islandMuted; anchors.verticalCenter: parent.verticalCenter }
                         Text {
-                            font.family: Theme.fontFamily; text: modelData.name; font.pixelSize: 12; font.bold: active; color: active ? Theme.colorOnPrimary : Theme.text; anchors.verticalCenter: parent.verticalCenter }
+                            font.family: Theme.fontFamily; text: modelData.name; font.pixelSize: 12; font.bold: active; color: active ? Theme.smoke : Theme.islandText; anchors.verticalCenter: parent.verticalCenter }
                     }
                     MouseArea {
                         id: modeMa
@@ -289,8 +276,8 @@ CfgPage {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 36
                     radius: 12
-                    color: active ? Theme.surface0 : (schemeMa.containsMouse ? Qt.alpha(Theme.surface0, 0.5) : Qt.alpha(Theme.surface0, 0.25))
-                    border.color: active ? Theme.primary : "transparent"
+                    color: active ? Theme.ashHi : (schemeMa.containsMouse ? Qt.alpha(Theme.ashHi, 0.5) : Qt.alpha(Theme.ashHi, 0.25))
+                    border.color: active ? Theme.ember : "transparent"
                     border.width: 1
                     Behavior on color { ColorAnimation { duration: Theme.animFast } }
                     scale: schemeMa.pressed ? 0.96 : 1.0
@@ -301,7 +288,7 @@ CfgPage {
                         text: modelData.name
                         font.pixelSize: 12
                         font.bold: active
-                        color: active ? Theme.primary : Theme.text
+                        color: active ? Theme.ember : Theme.islandText
                     }
                     MouseArea {
                         id: schemeMa
@@ -321,7 +308,7 @@ CfgPage {
         radius: 16
         enabled: page.live
         opacity: page.live ? 1.0 : 0.45
-        color: regenMa.containsMouse ? Qt.lighter(Theme.primary, 1.1) : Theme.primary
+        color: regenMa.containsMouse ? Qt.lighter(Theme.ember, 1.1) : Theme.ember
         Behavior on color { ColorAnimation { duration: Theme.animFast } }
         Behavior on opacity { NumberAnimation { duration: Theme.animSlow } }
         scale: regenMa.pressed ? 0.97 : 1.0
@@ -330,9 +317,9 @@ CfgPage {
         Row {
             anchors.centerIn: parent
             spacing: 8
-            Text { text: "󰑐"; font.family: Theme.fontIcon; font.pixelSize: 15; color: Theme.colorOnPrimary; anchors.verticalCenter: parent.verticalCenter }
+            Text { text: "󰑐"; font.family: Theme.fontIcon; font.pixelSize: 15; color: Theme.smoke; anchors.verticalCenter: parent.verticalCenter }
             Text {
-                font.family: Theme.fontFamily; text: "Regenerate from current wallpaper"; font.pixelSize: 14; font.bold: true; color: Theme.colorOnPrimary; anchors.verticalCenter: parent.verticalCenter }
+                font.family: Theme.fontFamily; text: "Regenerate from current wallpaper"; font.pixelSize: 14; font.bold: true; color: Theme.smoke; anchors.verticalCenter: parent.verticalCenter }
         }
 
         MouseArea {

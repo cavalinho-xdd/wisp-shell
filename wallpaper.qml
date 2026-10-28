@@ -125,11 +125,11 @@ ShellRoot {
                         
                         Rectangle {
                             anchors.fill: parent
-                            color: Theme.background
+                            color: Theme.smoke
                             // Ring only on the focused card — semantic state.
                             // The idle outline every card wore framed the images
                             // it was meant to show off (DESIGN.md §16).
-                            border.color: Theme.primary
+                            border.color: Theme.ember
                             border.width: isCurrent ? 3 : 0
                             Behavior on border.color { ColorAnimation { duration: 200 } }
                         }

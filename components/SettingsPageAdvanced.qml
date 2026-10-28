@@ -17,8 +17,8 @@ CfgPage {
         Layout.preferredHeight: 40
         radius: 14
         color: btnMa.containsMouse
-            ? (btn.danger ? Qt.alpha(Theme.red, 0.15) : Theme.surface0)
-            : Theme.surface
+            ? (btn.danger ? Qt.alpha(Theme.red, 0.15) : Theme.ashHi)
+            : Theme.ash
         // Danger keeps its outline — that is semantic. Ordinary buttons are
         // borderless, matching components/ActionButton.qml (DESIGN.md §16).
         border.color: Theme.red
@@ -33,14 +33,14 @@ CfgPage {
             Text {
                 text: btn.icon
                 font.family: Theme.fontIcon; font.pixelSize: 14
-                color: btn.danger ? Theme.red : Theme.text
+                color: btn.danger ? Theme.red : Theme.islandText
                 anchors.verticalCenter: parent.verticalCenter
             }
             Text {
                 font.family: Theme.fontFamily;
                 text: btn.text
                 font.pixelSize: 13; font.bold: true
-                color: btn.danger ? Theme.red : Theme.text
+                color: btn.danger ? Theme.red : Theme.islandText
                 anchors.verticalCenter: parent.verticalCenter
             }
         }

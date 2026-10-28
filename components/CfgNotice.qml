@@ -16,6 +16,6 @@ Text {
     font.family: Theme.fontFamily
     font.pixelSize: 12
     lineHeight: 1.25
-    color: Theme.subtext0
+    color: Theme.islandMuted
     wrapMode: Text.WordWrap
 }

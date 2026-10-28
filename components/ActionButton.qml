@@ -17,8 +17,8 @@ Rectangle {
     // reaction. The outline this used to carry was the "grey box around
     // everything" tell, and it made a row of these look like a row of cards
     // rather than a row of controls. Hover steps up the tonal ramp instead.
-    color: mouse.pressed ? Theme.surface0
-        : (mouse.containsMouse ? Qt.lighter(Theme.surface, 1.35) : Theme.surface)
+    color: mouse.pressed ? Theme.ashHi
+        : (mouse.containsMouse ? Qt.lighter(Theme.ash, 1.35) : Theme.ash)
     Behavior on color { ColorAnimation { duration: Theme.animFast } }
 
     scale: mouse.pressed ? 0.96 : 1.0
@@ -33,7 +33,7 @@ Rectangle {
             visible: root.icon !== ""
             font.family: Theme.fontIcon
             font.pixelSize: 13
-            color: Theme.primary
+            color: Theme.ember
             anchors.verticalCenter: parent.verticalCenter
         }
         Text {
@@ -41,7 +41,7 @@ Rectangle {
             text: root.text
             font.pixelSize: 12
             font.bold: true
-            color: Theme.text
+            color: Theme.islandText
             anchors.verticalCenter: parent.verticalCenter
         }
     }
