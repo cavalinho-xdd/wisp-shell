@@ -164,17 +164,24 @@ Item {
                 spacing: Theme.spaceSm
 
                 Text {
+                    // Volume 0 is as silent as mute, so it shows the same glyph.
+                    readonly property bool silent: Audio.muted || Math.round(Audio.volume * 100) === 0
                     anchors.verticalCenter: parent.verticalCenter
                     width: Theme.spaceLg
                     horizontalAlignment: Text.AlignHCenter
-                    text: Audio.muted ? "󰖁" : "󰕾"
-                    color: Audio.muted ? Theme.islandMuted : Theme.islandText
+                    text: silent ? "󰖁" : "󰕾"
+                    color: muteMouse.containsMouse ? Theme.ember : (silent ? Theme.islandMuted : Theme.islandText)
+                    Behavior on color { ColorAnimation { duration: Theme.motionFast } }
                     font.family: Theme.fontIcon
                     font.pixelSize: Theme.textTitle
+                    Accessible.role: Accessible.Button
+                    Accessible.name: Audio.muted ? "Unmute" : "Mute"
 
                     MouseArea {
+                        id: muteMouse
                         anchors.fill: parent
                         anchors.margins: -Theme.spaceXs
+                        hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onClicked: Audio.toggleMute()
                     }
@@ -255,7 +262,7 @@ Item {
             // The list sits quietly on the card: a fill barely lighter than it.
             EmberSurface {
                 width: column.width
-                implicitHeight: Theme.spaceSm * 2 + headerRow.implicitHeight + Theme.spaceXs + Theme.notifRow * Theme.ccNotifRows
+                implicitHeight: Theme.spaceSm * 2 + headerRow.implicitHeight + Theme.spaceXs + notifList.height
                 radius: Theme.radiusTile
                 base: Theme.panel
 
@@ -316,7 +323,9 @@ Item {
                     x: Theme.spaceXs
                     y: headerRow.y + headerRow.height + Theme.spaceXs
                     width: parent.width - Theme.spaceXs * 2
-                    height: Theme.notifRow * Theme.ccNotifRows
+                    // Grows with the rows up to the cap, then scrolls; empty keeps one row for "Nothing new".
+                    height: Math.max(Theme.notifRow, Math.min(contentHeight, Theme.notifRow * Theme.ccNotifRows))
+                    Behavior on height { NumberAnimation { duration: Theme.motionQuick; easing.type: Easing.OutCubic } }
                     clip: true
                     boundsBehavior: Flickable.StopAtBounds
                     model: notifModel
@@ -373,6 +382,7 @@ Item {
                 // Tray icons; the count is index-based because modelData
                 // would resolve to the screen inside the per-screen Variants.
                 Row {
+                    id: trayRow
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: Theme.spaceXs / 2
                     Repeater {
@@ -380,10 +390,30 @@ Item {
                         TrayIcon {
                             required property int index
                             trayItem: SystemTray.items.values[index]
+                            readonly property string hint: trayItem.tooltipTitle || trayItem.title || trayItem.id
+                            // Leaving one icon must not wipe the name the next one just set.
+                            onContainsMouseChanged: {
+                                if (containsMouse) trayHint.text = hint;
+                                else if (trayHint.text === hint) trayHint.text = "";
+                            }
                         }
                     }
                 }
+                // Names the hovered tray icon; icons alone rarely say whose they are.
+                Text {
+                    id: trayHint
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: trayRow.width + Theme.spaceSm
+                    width: footerButtons.x - x - Theme.spaceSm
+                    elide: Text.ElideRight
+                    opacity: text !== "" ? 1 : 0
+                    Behavior on opacity { NumberAnimation { duration: Theme.motionFast } }
+                    color: Theme.islandMuted
+                    font.family: Theme.fontFamily
+                    font.pixelSize: Theme.textCaption
+                }
                 Row {
+                    id: footerButtons
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: Theme.spaceXs / 2

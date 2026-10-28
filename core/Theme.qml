@@ -203,6 +203,8 @@ Singleton {
     readonly property int notifIcon: 30
     // Notification rows visible at once in the list; more scroll.
     readonly property int ccNotifRows: 3
+    // Body lines an expanded notification row shows before eliding.
+    readonly property int notifBodyLines: 6
     // Workspaces in the left island.
     readonly property int workspaceDot: 8
     readonly property int workspaceActiveWidth: 24

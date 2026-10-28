@@ -5,7 +5,8 @@ import "../../core"
 
 // One notification in the control centre list: app icon, summary, body and
 // how long ago. Live ones carry an ember dot. Click runs the default action,
-// the cross (or Delete) dismisses it.
+// the cross (or Delete) dismisses it, the chevron (or Space) shows the whole
+// body when one line cannot hold it.
 Item {
     id: row
 
@@ -18,8 +19,12 @@ Item {
     readonly property bool live: !!rec && rec.live
     readonly property string image: rec ? (rec.image || "") : ""
     readonly property string appIcon: rec ? (rec.appIcon || "") : ""
+    readonly property string body: rec ? (rec.body || "") : ""
+    // Measured on the unwrapped text, so it does not depend on the row's own width.
+    readonly property bool canExpand: bodyText.implicitWidth > side.x - textCol.x - Theme.spaceXs || body.indexOf("\n") >= 0
+    property bool expanded: false
 
-    implicitHeight: Theme.notifRow
+    implicitHeight: Math.max(Theme.notifRow, textCol.implicitHeight + Theme.spaceSm * 2)
 
     Accessible.role: Accessible.Button
     Accessible.name: rec ? (rec.summary || rec.appName) : ""
@@ -27,6 +32,7 @@ Item {
     activeFocusOnTab: true
     Keys.onReturnPressed: row.activated()
     Keys.onDeletePressed: row.dismissed()
+    Keys.onSpacePressed: if (row.canExpand) row.expanded = !row.expanded
 
     Rectangle {
         anchors.fill: parent
@@ -39,7 +45,8 @@ Item {
     ClippingRectangle {
         id: icon
         x: Theme.spaceSm
-        anchors.verticalCenter: parent.verticalCenter
+        // Icon and side stay level with the first line when the row grows.
+        y: (Theme.notifRow - height) / 2
         width: Theme.notifIcon
         height: width
         radius: Theme.spaceSm
@@ -71,9 +78,10 @@ Item {
     }
 
     Column {
+        id: textCol
         anchors.verticalCenter: parent.verticalCenter
         x: icon.x + icon.width + Theme.spaceSm
-        width: side.x - x - Theme.spaceXs
+        width: (row.canExpand ? expandButton.x : side.x) - x - Theme.spaceXs
 
         Text {
             width: parent.width
@@ -86,22 +94,34 @@ Item {
             font.weight: row.live ? Font.DemiBold : Font.Medium
         }
         Text {
+            id: bodyText
             width: parent.width
             visible: text !== ""
-            text: row.rec ? (row.rec.body || "") : ""
+            text: row.body
             elide: Text.ElideRight
             textFormat: Text.PlainText
-            maximumLineCount: 1
+            wrapMode: row.expanded ? Text.Wrap : Text.NoWrap
+            maximumLineCount: row.expanded ? Theme.notifBodyLines : 1
             color: Theme.islandMuted
             font.family: Theme.fontFamily
             font.pixelSize: Theme.textCaption
         }
     }
 
+    EmberButton {
+        id: expandButton
+        x: side.x - width
+        y: (Theme.notifRow - height) / 2
+        visible: row.canExpand
+        icon: row.expanded ? "󰅃" : "󰅀"
+        label: row.expanded ? "Show less" : "Show more"
+        onClicked: row.expanded = !row.expanded
+    }
+
     // Time ago, or the cross while the row is under the pointer.
     Item {
         id: side
-        anchors.verticalCenter: parent.verticalCenter
+        y: (Theme.notifRow - height) / 2
         x: parent.width - width - Theme.spaceSm
         width: Theme.controlSize - Theme.spaceXs
         height: width
@@ -122,7 +142,7 @@ Item {
             radius: width / 2
             color: Theme.ember
             visible: row.live
-            anchors.horizontalCenterOffset: -parent.width / 2 - Theme.spaceXs
+            anchors.horizontalCenterOffset: -parent.width / 2 - Theme.spaceXs - (row.canExpand ? expandButton.width : 0)
         }
         EmberButton {
             anchors.centerIn: parent
