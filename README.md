@@ -1,6 +1,6 @@
 <div align="center">
   <h1>Wisp Shell</h1>
-  <p>A floating, expanding pill-based desktop shell for Hyprland, built on Quickshell.</p>
+  <p>A desktop shell of small glowing islands for Hyprland, built on Quickshell.</p>
   <a href="#installation">Installation</a> •
   <a href="#the-dynamic-island">Dynamic Island</a> •
   <a href="#what-works-out-of-the-box-vs-what-needs-setup">Manual Setup</a> •
@@ -9,7 +9,7 @@
 
 <br>
 
-Wisp Shell replaces the traditional desktop bar with a single floating pill: collapsed it's a slim status strip, click it and it expands into a full dashboard (media, widgets, performance). It ships its own settings app, first-run wizard, launcher, lock screen and wallpaper picker — all separate Quickshell entry points sharing one `core/`/`components/` tree.
+Wisp Shell replaces the traditional desktop bar with three islands at the top edge — workspaces, activity and status — lit by one colour from your wallpaper, the ember. Each island opens its own thing: media or system load in the centre, a control centre on the right. It ships its own settings app, first-run wizard, lock screen and wallpaper picker — all separate Quickshell entry points sharing one `core/`/`components/` tree.
 
 This repo is the shell itself: QML + the scripts it shells out to, plus the `wisp` CLI and `./setup` installer. It has no build system and no bundled Hyprland config — that half lives in [wisp-dots](https://github.com/cavalinho-xdd/wisp-dots), which pulls this repo in as a dependency and wires up the Hyprland side (autostart, keybinds, window rules) automatically. You can also run this repo standalone against your own Hyprland config; see [Manual / standalone installation](#manual--standalone-installation).
 
@@ -68,7 +68,7 @@ Run `wisp doctor` any time to check what's missing.
 | `xdg-user-dirs` | Locale-correct default wallpaper folder |
 | `wl-clipboard`, `cliphist` | Copy actions, clipboard history |
 | `grim`, `slurp` | Screenshot tooling |
-| `matugen` | Wallpaper-derived Material You color scheme (`matugen-bin` also satisfies it) |
+| `matugen` | The ember colour from the wallpaper (`matugen-bin` also satisfies it) |
 | `awww` | Wallpaper daemon (`swww`/`hyprpaper` also work, detected as fallbacks) |
 | `libnotify` | Sending Wisp's own desktop notifications |
 | `xdg-utils` | Opening files and folders |
@@ -81,17 +81,17 @@ Run `wisp doctor` any time to check what's missing.
 | `ttf-mona-sans`, `otf-monaspace`, `noto-fonts` | UI and monospace text |
 | `ttf-jetbrains-mono-nerd` | Icon glyphs — without a Nerd Font every icon is a box |
 
-Run `./setup deps` to (re-)install just this list, or `wisp doctor` to see what's actually present on your machine right now, including optional-only items like `nvidia-smi` (GPU ring) and `qalc` (launcher calculator).
+Run `./setup deps` to (re-)install just this list, or `wisp doctor` to see what's actually present on your machine right now, including optional-only items like `nvidia-smi` (GPU reading) and `qalc` (launcher calculator).
 
 ## The Dynamic Island
-The collapsed pill has one content lane that arbitrates between everything competing for it (`core/Island.qml`), highest priority first:
+The centre island has one content lane that arbitrates between everything competing for it (`core/Island.qml`), highest priority first:
 
 1. **Notification flash** — any incoming notification, 5s (8s if critical).
 2. **Running game** — Steam/Heroic/gamemode session (`core/Games.qml` + `scripts/game_watch.sh`): shows the game's cover art and a live session timer the moment it launches, no configuration needed. An achievement unlock swaps the strip's own face for a few seconds, including while the game is fullscreen.
 3. **osu!** — live PP/combo/accuracy while osu!lazer is running (`core/Osu.qml` + `scripts/osu_connect.js`, via [tosu](https://github.com/KotRikD/tosu)'s local websocket API).
 4. **Media** — whatever's playing via MPRIS, lingers 15s after pause so you can resume from the bar.
 5. **Discord voice** — you're in a voice call (`core/Discord.qml`, detected purely from a Pipewire audio-capture node — no Discord API involved), with mute/deafen/leave buttons that send Discord's own keyboard shortcuts to its window.
-6. **None** — the plain collapsed pill (clock, workspaces, tray).
+6. **None** — the plain centre island (the ember and the clock).
 
 Each of these degrades independently and silently: no Steam running, no osu!lazer, no active call, no media player — the lane simply never activates, nothing errors, nothing polls harder than it needs to.
 
@@ -140,9 +140,9 @@ This only works against a Hyprland config written in Lua against the `hl.*` API 
 
 ## Architecture
 - `core/` — singleton services: `Settings` (config + Hyprland file writes), `Theme` (fonts/colors), `Island` (dynamic-island arbitration), `Audio`/`Battery`/`Notifs`/`Osd` (hardware/system state), `Discord`/`Games`/`Osu` (the three island integrations above), `Paths` (where every file lives), `FirstRun`, `EventStore`, `AppUsage`.
-- `components/` — UI: `ExpandedDashboard.qml` (the 4-tab dashboard), `CollapsedBar.qml` + the `Island*Strip.qml` components (the collapsed pill's content lane), `Settings*`/`Welcome*` (the settings app and first-run wizard pages including `WelcomeStepSddm`), `BluetoothView`, `WifiView`, `CalendarCard`, `PolkitDialog`.
+- `components/` — UI: `ember/` (the islands and everything they open), `Settings*`/`Cfg*` (the settings app), `Welcome*` (the first-run wizard), `LockContent`, `OsdPopup`, `PolkitDialog`.
 - `scripts/` — everything shelled out to: Hyprland config writers (`apply_hypr_look.py`, `apply_hypr_keybind.py`, `write_custom_keybinds.py`, `write_custom_windowrules.py`), `game_watch.sh`/`osu_connect.js` (the two island data feeds), `apply_colors.sh` (Matugen), `weather.sh`, `sysmon_snapshot.sh`, `idle_restore.sh`, `idle_takeover.sh`, `set_sddm.sh`.
-- Entry points (`shell.qml`, `settings.qml`, `launcher.qml`, `lock.qml`, `wallpaper.qml`, `welcome.qml`) are separate processes sharing `core/`/`components/` but nothing at runtime.
+- Entry points (`shell.qml`, `settings.qml`, `lock.qml`, `wallpaper.qml`, `welcome.qml`) are separate processes sharing `core/`/`components/` but nothing at runtime.
 
 ## Troubleshooting
 - **Nothing launches on login.** Confirm the autostart line actually ran: `wisp status`. If it says stopped, check `wisp logs`, and confirm `~/.local/bin` is really on the PATH Hyprland's exec environment sees — `./setup install`/wisp-dots' installer both add an `environment.d` entry for this, but it only takes effect for a compositor session started *after* that file existed (log out/in, or reboot, once after first install).
