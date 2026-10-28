@@ -1,19 +1,15 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import "../core"
 
-// Welcome wizard step 2 — the matugen palette settings, mirroring
-// SettingsPageColors.qml's own controls (same Settings.conf.colors fields,
-// same Settings.applyColors() call), just laid out for a one-screen pass
-// instead of a scrolling settings page.
-ColumnLayout {
+// Welcome wizard: the ember's colour from the wallpaper. Same
+// Settings.conf.colors fields and Settings.applyColors() call as
+// SettingsPageColors.qml; the preview shows the ember as it changes.
+CfgPage {
     id: step
-    // Sized against the StackLayout explicitly — see WelcomeStepIntro for why
-    // Layout.fillWidth cannot be used here.
-    Layout.preferredWidth: parent.width
-    Layout.preferredHeight: parent.height
-    spacing: 12
 
+    property string wallpaper: ""
     readonly property bool live: Settings.conf.colors.dynamicEnabled
 
     // matugen takes ~150 ms per run; debounce chip mashing exactly as the
@@ -21,165 +17,90 @@ ColumnLayout {
     Timer { id: regenTimer; interval: 250; onTriggered: Settings.applyColors("") }
     function queueRegen() { if (step.live) regenTimer.restart(); }
 
-    CfgSwitch {
-        icon: "󰏘"
-        text: "Color the shell from your wallpaper"
-        hint: "Generates a Material You palette with matugen. Off = built-in Catppuccin."
-        checked: Settings.conf.colors.dynamicEnabled
-        onToggled: value => {
-            Settings.conf.colors.dynamicEnabled = value;
-            if (value) Settings.applyColors("");
+    WelcomeIslandsPreview {
+        Layout.fillWidth: true
+        wallpaper: step.wallpaper
+        highlight: 1
+    }
+
+    CfgSection {
+        title: "Ember"
+
+        CfgSwitch {
+            text: "Take the ember from your wallpaper"
+            hint: "The one colour in Wisp. Off keeps the default blue."
+            checked: Settings.conf.colors.dynamicEnabled
+            onToggled: value => {
+                Settings.conf.colors.dynamicEnabled = value;
+                if (value) Settings.applyColors("");
+            }
+        }
+        CfgChoice {
+            enabled: step.live
+            text: "Mode"
+            value: Settings.conf.colors.mode
+            options: [{ value: "dark", label: "Dark" }, { value: "light", label: "Light" }]
+            onEdited: v => { Settings.conf.colors.mode = v; step.queueRegen(); }
         }
     }
 
-    // ── Mode ──
-    RowLayout {
-        Layout.fillWidth: true
-        Layout.leftMargin: 12
-        spacing: 8
+    CfgSection {
+        title: "Palette style"
         enabled: step.live
-        opacity: step.live ? 1.0 : 0.45
-        Behavior on opacity { NumberAnimation { duration: Theme.animSlow } }
+        opacity: enabled ? 1 : 0.5
 
-        Repeater {
-            model: [ { id: "dark", name: "Dark", icon: "󰖔" }, { id: "light", name: "Light", icon: "󰖨" } ]
-            delegate: Rectangle {
-                id: modeChip
-                required property var modelData
-                readonly property bool active: Settings.conf.colors.mode === modelData.id
-                Layout.preferredWidth: 120
-                Layout.preferredHeight: 62
-                radius: 16
-                // Fill alone carries selection — an outline that only ever
-                // matches the fill it surrounds is decoration.
-                color: active ? Theme.ember : Theme.ash
-                Behavior on color { ColorAnimation { duration: Theme.animFast } }
-                scale: modeMa.pressed ? 0.96 : 1.0
-                Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
+        Flow {
+            Layout.fillWidth: true
+            Layout.leftMargin: Theme.spaceSm
+            Layout.rightMargin: Theme.spaceSm
+            Layout.topMargin: Theme.spaceXs
+            Layout.bottomMargin: Theme.spaceSm
+            spacing: Theme.spaceXs
 
-                Column {
-                    anchors.centerIn: parent
-                    spacing: 4
-                    Text {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        text: modeChip.modelData.icon
-                        font.family: Theme.fontIcon; font.pixelSize: 20
-                        color: modeChip.active ? Theme.smoke : Theme.islandMuted
-                    }
-                    Text {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        font.family: Theme.fontFamily
-                        text: modeChip.modelData.name
-                        font.pixelSize: 12; font.bold: modeChip.active
-                        color: modeChip.active ? Theme.smoke : Theme.islandText
-                    }
-                }
-                MouseArea {
-                    id: modeMa
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: { Settings.conf.colors.mode = modeChip.modelData.id; step.queueRegen() }
-                }
-            }
-        }
-
-        Item { Layout.fillWidth: true }
-
-        // Live palette preview — bound straight to Theme, so it animates
-        // through the 600 ms ColorAnimations when a regen lands.
-        Row {
-            spacing: 6
             Repeater {
-                model: [ Theme.smoke, Theme.ash, Theme.ember, Theme.red, Theme.islandText ]
-                // The one hairline kept in this file, deliberately: these are
-                // colour swatches, and `background` is a near-black that would
-                // be invisible against the card without an edge. That is a
-                // functional outline on a swatch, not decoration around a card.
+                model: [
+                    { id: "tonal-spot", name: "Tonal Spot" },
+                    { id: "vibrant", name: "Vibrant" },
+                    { id: "expressive", name: "Expressive" },
+                    { id: "fruit-salad", name: "Fruit Salad" },
+                    { id: "rainbow", name: "Rainbow" },
+                    { id: "content", name: "Content" },
+                    { id: "fidelity", name: "Fidelity" },
+                    { id: "neutral", name: "Neutral" },
+                    { id: "monochrome", name: "Monochrome" }
+                ]
                 delegate: Rectangle {
+                    id: chip
                     required property var modelData
-                    width: 26; height: 26; radius: 13
-                    color: modelData
-                    border.color: Theme.islandMuted
-                    border.width: 1
+                    readonly property bool active: Settings.conf.colors.scheme === modelData.id
+                    width: chipText.implicitWidth + 2 * Theme.spaceMd
+                    height: Theme.controlSize - Theme.spaceXs
+                    radius: height / 2
+                    color: active ? Qt.tint(Theme.ashHi, Qt.alpha(Theme.ember, 0.22))
+                         : chipMa.containsMouse ? Theme.hover : Theme.ashHi
+                    Behavior on color { ColorAnimation { duration: Theme.motionFast } }
+                    Accessible.role: Accessible.RadioButton
+                    Accessible.name: modelData.name
+                    Accessible.checked: active
+
+                    Text {
+                        id: chipText
+                        anchors.centerIn: parent
+                        text: chip.modelData.name
+                        font.family: Theme.fontFamily
+                        font.pixelSize: Theme.textCaption
+                        font.weight: chip.active ? Font.DemiBold : Font.Normal
+                        color: chip.active ? Theme.ember : Theme.islandText
+                    }
+                    MouseArea {
+                        id: chipMa
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: { Settings.conf.colors.scheme = chip.modelData.id; step.queueRegen(); }
+                    }
                 }
             }
         }
     }
-
-    // ── Scheme ──
-    Text {
-        Layout.leftMargin: 12
-        Layout.topMargin: 4
-        font.family: Theme.fontFamily
-        text: "Palette style"
-        font.pixelSize: 12
-        font.bold: true
-        color: Theme.islandMuted
-        opacity: step.live ? 1.0 : 0.45
-    }
-
-    GridLayout {
-        Layout.fillWidth: true
-        Layout.leftMargin: 12
-        Layout.rightMargin: 12
-        columns: 3
-        rowSpacing: 8
-        columnSpacing: 8
-        enabled: step.live
-        opacity: step.live ? 1.0 : 0.45
-        Behavior on opacity { NumberAnimation { duration: Theme.animSlow } }
-
-        Repeater {
-            model: [
-                { id: "tonal-spot", name: "Tonal Spot" },
-                { id: "vibrant", name: "Vibrant" },
-                { id: "expressive", name: "Expressive" },
-                { id: "fruit-salad", name: "Fruit Salad" },
-                { id: "content", name: "Content" },
-                { id: "monochrome", name: "Monochrome" }
-            ]
-            delegate: Rectangle {
-                id: schemeChip
-                required property var modelData
-                readonly property bool active: Settings.conf.colors.scheme === modelData.id
-                Layout.fillWidth: true
-                Layout.preferredHeight: 34
-                radius: 12
-                // Selection is a primary-tinted fill, not a ring around a
-                // neutral one — the chip becomes the accent instead of wearing it.
-                color: active ? Qt.alpha(Theme.ember, 0.22)
-                    : (schemeMa.containsMouse ? Theme.ashHi : Theme.ash)
-                Behavior on color { ColorAnimation { duration: Theme.animFast } }
-                scale: schemeMa.pressed ? 0.96 : 1.0
-                Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
-
-                Text {
-                    anchors.centerIn: parent
-                    font.family: Theme.fontFamily
-                    text: schemeChip.modelData.name
-                    font.pixelSize: 12
-                    font.bold: schemeChip.active
-                    color: schemeChip.active ? Theme.ember : Theme.islandText
-                }
-                MouseArea {
-                    id: schemeMa
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: { Settings.conf.colors.scheme = schemeChip.modelData.id; step.queueRegen() }
-                }
-            }
-        }
-    }
-
-    CfgSlider {
-        icon: "󰗇"
-        text: "Transparency"
-        value: Math.round(Settings.conf.colors.panelAlpha * 100)
-        maxValue: 100
-        onEdited: v => Settings.conf.colors.panelAlpha = v / 100
-    }
-
-    Item { Layout.fillHeight: true }
 }

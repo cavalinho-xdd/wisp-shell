@@ -10,37 +10,39 @@ Rectangle {
     property string text: ""
     signal clicked()
 
-    implicitWidth: row.implicitWidth + 28
-    implicitHeight: 36
-    radius: 12
+    implicitWidth: row.implicitWidth + 2 * Theme.spaceMd
+    implicitHeight: Theme.controlSize
+    radius: height / 2
     // Borderless: a button reads as a button from its fill and its hover
     // reaction. The outline this used to carry was the "grey box around
     // everything" tell, and it made a row of these look like a row of cards
     // rather than a row of controls. Hover steps up the tonal ramp instead.
-    color: mouse.pressed ? Theme.ashHi
-        : (mouse.containsMouse ? Qt.lighter(Theme.ash, 1.35) : Theme.ash)
-    Behavior on color { ColorAnimation { duration: Theme.animFast } }
+    color: mouse.containsMouse ? Theme.hover : Theme.ashHi
+    Behavior on color { ColorAnimation { duration: Theme.motionFast } }
 
-    scale: mouse.pressed ? 0.96 : 1.0
-    Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
+    scale: mouse.pressed ? Theme.pressScale : 1.0
+    Behavior on scale { NumberAnimation { duration: Theme.motionFast; easing.type: Easing.OutCubic } }
+    Accessible.role: Accessible.Button
+    Accessible.name: text
+    Accessible.onPressAction: root.clicked()
 
     Row {
         id: row
         anchors.centerIn: parent
-        spacing: 7
+        spacing: Theme.spaceXs
         Text {
             text: root.icon
             visible: root.icon !== ""
             font.family: Theme.fontIcon
-            font.pixelSize: 13
-            color: Theme.ember
+            font.pixelSize: Theme.textCaption
+            color: Theme.islandMuted
             anchors.verticalCenter: parent.verticalCenter
         }
         Text {
             font.family: Theme.fontFamily;
             text: root.text
-            font.pixelSize: 12
-            font.bold: true
+            font.pixelSize: Theme.textCaption
+            font.weight: Font.Medium
             color: Theme.islandText
             anchors.verticalCenter: parent.verticalCenter
         }
@@ -50,6 +52,7 @@ Rectangle {
         id: mouse
         anchors.fill: parent
         hoverEnabled: true
+        cursorShape: Qt.PointingHandCursor
         onClicked: root.clicked()
     }
 }

@@ -10,9 +10,12 @@ ColumnLayout {
     Layout.preferredHeight: parent.height
     spacing: 12
 
+    CfgNotice {
+        text: "Pick a theme for the login screen. Applying it asks for your password."
+    }
+
     CfgSection {
-        title: "SDDM Theme"
-        icon: "󰍜"
+        title: "SDDM theme"
 
         FolderListModel {
             id: sddmModel
@@ -33,17 +36,17 @@ ColumnLayout {
 
             delegate: Rectangle {
                 width: 180
-                height: 40
-                radius: 8
-                color: thumbMa.containsMouse ? Qt.lighter(Theme.ashHi, 1.2) : Theme.ashHi
-                border.width: 1
-                border.color: Theme.surface1
+                height: Theme.controlSize
+                radius: height / 2
+                color: thumbMa.containsMouse ? Theme.hover : Theme.ashHi
+                Behavior on color { ColorAnimation { duration: Theme.motionFast } }
 
                 Text {
                     anchors.centerIn: parent
                     text: fileName
                     color: Theme.islandText
                     font.family: Theme.fontFamily
+                    font.pixelSize: Theme.textCaption
                 }
 
                 MouseArea {

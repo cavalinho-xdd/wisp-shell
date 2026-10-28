@@ -341,7 +341,6 @@ Singleton {
             property var customWindowRules: []
 
             property JsonObject shell: JsonObject {
-                property int workspaceCount: 5
                 property bool clock12h: true
                 // Empty = show the islands and OSD on every connected
                 // monitor (Multi-Monitor Support, plan.md); a monitor's `.name`

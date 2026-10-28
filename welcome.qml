@@ -8,6 +8,7 @@ import Quickshell.Wayland
 import Quickshell.Hyprland
 import "core"
 import "components"
+import "components/ember"
 
 // First-run setup wizard (6th entry point): `qs -p welcome.qml`.
 // Launched automatically once by core/FirstRun.qml the first time wisp starts
@@ -18,21 +19,15 @@ import "components"
 // focus) rather than ii-dots' (one long scrolling ApplicationWindow of settings
 // sections). The wizard reads as an event rather than as "the settings app
 // again", which is the whole point of a first-run flow — and wisp already owns
-// every piece it needs: lock.qml's blurred-wallpaper backdrop, launcher.qml's
+// every piece it needs: lock.qml's blurred-wallpaper backdrop, an
 // exclusive-focus overlay, and the settings app's Cfg* controls, which are
 // reused verbatim here so a setting can never drift between the two surfaces.
+// Drawn as an open Ember island: smoke card, ember-lit, workspace-dot steps.
 ShellRoot {
     id: root
 
     property int step: 0
-    readonly property var steps: [
-        { icon: "󰄛", title: "Welcome" },
-        { icon: "󰸌", title: "Appearance" },
-        { icon: "󰸉", title: "Wallpaper" },
-        { icon: "󰍜", title: "SDDM Theme" },
-        { icon: "󰍜", title: "Shell" },
-        { icon: "󰄬", title: "Ready" }
-    ]
+    readonly property var steps: ["Welcome", "Colour", "Wallpaper", "Islands", "Tour", "Login screen", "Ready"]
     readonly property bool lastStep: step === steps.length - 1
 
     // Staggered entry (scrim, then card) — the same gate pattern iNiR uses, so
@@ -82,6 +77,17 @@ ShellRoot {
         return match.length > 0 ? match[0] : null;
     }
 
+    // Current wallpaper, for the scrim and the island previews in the steps.
+    property string iiWallpaper: ""
+    FileView {
+        path: Quickshell.env("HOME") + "/.local/state/quickshell/user/generated/wallpaper/path.txt"
+        onLoaded: root.iiWallpaper = text().trim()
+    }
+    readonly property string wallpaper: {
+        const p = Theme.dynWallpaper || Settings.conf.colors.lastWallpaper || iiWallpaper;
+        return p ? "file://" + p.replace("file://", "") : "";
+    }
+
     PanelWindow {
         id: win
         screen: root.targetScreen
@@ -103,21 +109,11 @@ ShellRoot {
             opacity: root.scrimReady ? 1 : 0
             Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
 
-            property string iiWallpaper: ""
-            FileView {
-                path: Quickshell.env("HOME") + "/.local/state/quickshell/user/generated/wallpaper/path.txt"
-                onLoaded: scrim.iiWallpaper = text().trim()
-            }
-            readonly property string wallpaperPath: {
-                const p = Theme.dynWallpaper || Settings.conf.colors.lastWallpaper || iiWallpaper;
-                return p ? "file://" + p.replace("file://", "") : "";
-            }
-
             Rectangle { anchors.fill: parent; color: Theme.smoke }
             Image {
                 id: wp
                 anchors.fill: parent
-                source: scrim.wallpaperPath
+                source: root.wallpaper
                 fillMode: Image.PreserveAspectCrop
                 visible: false
                 asynchronous: true
@@ -134,26 +130,43 @@ ShellRoot {
         }
 
         // ── Card ──
-        Rectangle {
+        // An open island: one real shadow under it, the ember's glow round
+        // it, a crescent of light on the top edge and the ember lighting it
+        // from the step dots. No outline.
+        Item {
             id: card
             anchors.centerIn: parent
-            width: 780
-            height: 580
-            radius: 28
-            color: Theme.smoke
-            // No border. The card already separates from the blurred wallpaper
-            // behind it by fill + the 0.55 scrim; a 1px outline on top of that
-            // is the "grey box around every card" tell and buys nothing here.
-            // Everything inside separates by tonal step instead (background →
-            // surface is a +9.4 L* shift, well past the 3–5% the separation
-            // ladder asks for). See DESIGN.md finding A1.
-            clip: true
+            width: 820
+            height: 640
 
             opacity: root.cardReady ? 1 : 0
-            scale: root.cardReady ? 1 : 0.94
-            Behavior on opacity { NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
-            Behavior on scale {
-                NumberAnimation { duration: 420; easing.type: Easing.OutBack; easing.overshoot: 1.1 }
+            scale: root.cardReady ? 1 : Theme.kindleScale
+            Behavior on opacity { NumberAnimation { duration: Theme.motionKindle; easing.type: Easing.BezierSpline; easing.bezierCurve: Theme.curveKindle } }
+            Behavior on scale { SpringAnimation { spring: Theme.springMorph; damping: Theme.dampingMorph } }
+
+            RectangularShadow {
+                anchors.fill: parent
+                anchors.topMargin: Theme.cardShadowOffset
+                radius: Theme.radiusIslandOpen
+                blur: Theme.cardShadowBlur
+                color: Theme.cardShadow
+            }
+            RectangularShadow {
+                anchors.fill: parent
+                radius: Theme.radiusIslandOpen
+                blur: Theme.glowBlurOpen * Theme.glow
+                color: Qt.alpha(Theme.ember, Theme.glowAlphaOpen * Theme.glow)
+            }
+            EmberSurface {
+                anchors.fill: parent
+                radius: Theme.radiusIslandOpen
+                base: Theme.islandFillOpen
+                topLight: true
+                edge: Theme.edgeLightOpen
+                lit: true
+                lightX: width / 2
+                lightY: Theme.spaceLg
+                lightRadius: width * 0.5
             }
 
             // Keyboard: Escape skips, arrows/Enter drive the wizard. Focus is
@@ -170,44 +183,64 @@ ShellRoot {
 
             ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: 28
-                spacing: 16
+                anchors.margins: Theme.radiusIslandOpen
+                spacing: Theme.spaceMd
 
-                // ── Header: step pips + title ──
+                // ── Header: step dots + title ──
+                // The dots are the workspaces island's: the current step
+                // stretched and glowing, done steps lit dimly.
                 ColumnLayout {
                     // preferredWidth, not fillWidth — fillWidth is silently
-                    // ignored on a ColumnLayout nested in a ColumnLayout, which
-                    // left this header collapsed to the width of the pip row and
-                    // flush left. See the long note in WelcomeStepIntro.qml.
+                    // ignored on a ColumnLayout nested in a ColumnLayout.
                     Layout.preferredWidth: parent.width
-                    spacing: 10
+                    spacing: Theme.spaceSm
 
                     Row {
                         Layout.alignment: Qt.AlignHCenter
-                        spacing: 8
+                        spacing: Theme.workspaceGap
                         Repeater {
                             model: root.steps.length
-                            delegate: Rectangle {
+                            delegate: Item {
+                                id: pip
                                 required property int index
                                 readonly property bool done: index < root.step
                                 readonly property bool active: index === root.step
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: active ? 28 : 8
-                                height: 8
-                                radius: 4
-                                color: active ? Theme.ember : (done ? Theme.islandMuted : Theme.ashHi)
-                                Behavior on width { NumberAnimation { duration: Theme.animSlow; easing.type: Theme.easeSpring } }
-                                Behavior on color { ColorAnimation { duration: Theme.animFast } }
+                                width: active ? Theme.workspaceActiveWidth : Theme.workspaceDot
+                                height: Theme.workspaceDot
+                                Behavior on width { SpringAnimation { spring: Theme.springQuick; damping: Theme.dampingQuick } }
+
+                                RectangularShadow {
+                                    anchors.fill: parent
+                                    radius: height / 2
+                                    blur: Theme.glowBlur * 0.5 * Theme.glow
+                                    color: Theme.ember
+                                    opacity: pip.active ? 1 : 0
+                                    Behavior on opacity { NumberAnimation { duration: Theme.motionFast } }
+                                }
+                                Rectangle {
+                                    anchors.fill: parent
+                                    radius: height / 2
+                                    color: pip.active ? Theme.ember : (pip.done ? Qt.alpha(Theme.ember, 0.45) : Theme.ashHi)
+                                    Behavior on color { ColorAnimation { duration: Theme.motionFast } }
+                                }
+                                MouseArea {
+                                    anchors.fill: parent
+                                    anchors.margins: -Theme.spaceXs / 2
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: root.step = pip.index
+                                }
                             }
                         }
                     }
 
                     Text {
                         Layout.alignment: Qt.AlignHCenter
+                        text: root.steps[root.step]
                         font.family: Theme.fontFamily
-                        text: "Step " + (root.step + 1) + " of " + root.steps.length
-                        font.pixelSize: 11
-                        color: Theme.islandMuted
+                        font.pixelSize: Theme.textTitle
+                        font.weight: Font.DemiBold
+                        color: Theme.islandText
+                        visible: root.step > 0
                     }
                 }
 
@@ -226,22 +259,23 @@ ShellRoot {
                         // dashboard's tab crossfade (x offset by travel direction).
                         property int prev: 0
                         onCurrentIndexChanged: {
-                            stepShift.x = currentIndex > prev ? 36 : -36;
+                            stepShift.x = (currentIndex > prev ? 1 : -1) * (Theme.reduceMotion ? 0 : Theme.spaceLg * 2);
                             prev = currentIndex;
                             stepIn.restart();
                         }
                         transform: Translate { id: stepShift }
                         ParallelAnimation {
                             id: stepIn
-                            NumberAnimation { target: stepShift; property: "x"; to: 0; duration: 380; easing.type: Easing.OutQuint }
-                            NumberAnimation { target: stepStack; property: "opacity"; from: 0; to: 1; duration: 260 }
+                            NumberAnimation { target: stepShift; property: "x"; to: 0; duration: Theme.motionKindle; easing.type: Easing.BezierSpline; easing.bezierCurve: Theme.curveKindle }
+                            NumberAnimation { target: stepStack; property: "opacity"; from: 0; to: 1; duration: Theme.motionKindle; easing.type: Easing.BezierSpline; easing.bezierCurve: Theme.curveKindle }
                         }
 
                         WelcomeStepIntro {}
-                        WelcomeStepAppearance {}
+                        WelcomeStepAppearance { wallpaper: root.wallpaper }
                         WelcomeStepWallpaper {}
+                        WelcomeStepIslands { wallpaper: root.wallpaper }
+                        WelcomeStepTour { wallpaper: root.wallpaper }
                         WelcomeStepSddm {}
-                        WelcomeStepShell {}
                         WelcomeStepReady { onOpenSettings: root.finish() }
                     }
                 }
@@ -249,13 +283,28 @@ ShellRoot {
                 // ── Footer nav ──
                 RowLayout {
                     Layout.fillWidth: true
-                    spacing: 12
+                    spacing: Theme.spaceSm
 
-                    ActionButton {
+                    // Quiet on purpose: leaving is always possible, never the
+                    // thing the card asks you to do.
+                    Text {
                         visible: !root.lastStep
-                        icon: "󰅖"
                         text: "Skip setup"
-                        onClicked: root.finish()
+                        font.family: Theme.fontFamily
+                        font.pixelSize: Theme.textCaption
+                        color: skipMa.containsMouse ? Theme.islandText : Theme.islandMuted
+                        Behavior on color { ColorAnimation { duration: Theme.motionFast } }
+                        Accessible.role: Accessible.Button
+                        Accessible.name: text
+                        Accessible.onPressAction: root.finish()
+                        MouseArea {
+                            id: skipMa
+                            anchors.fill: parent
+                            anchors.margins: -Theme.spaceXs
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: root.finish()
+                        }
                     }
 
                     Item { Layout.fillWidth: true }
@@ -267,35 +316,51 @@ ShellRoot {
                         onClicked: root.back()
                     }
 
-                    // Primary action — filled, unlike the outlined ActionButtons
-                    Rectangle {
-                        Layout.preferredWidth: nextRow.implicitWidth + 40
-                        Layout.preferredHeight: 40
-                        radius: 14
-                        color: nextMa.containsMouse ? Qt.lighter(Theme.ember, 1.1) : Theme.ember
-                        Behavior on color { ColorAnimation { duration: Theme.animFast } }
-                        scale: nextMa.pressed ? 0.96 : 1.0
-                        Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
+                    // Primary action: the ember itself, glowing.
+                    Item {
+                        id: nextBtn
+                        Layout.preferredWidth: nextRow.implicitWidth + 2 * Theme.spaceLg
+                        Layout.preferredHeight: Theme.controlSize + Theme.spaceXs / 2
+                        scale: nextMa.pressed ? Theme.pressScale : 1
+                        Behavior on scale { NumberAnimation { duration: Theme.motionFast; easing.type: Easing.OutCubic } }
+                        Accessible.role: Accessible.Button
+                        Accessible.name: nextLabel.text
+                        Accessible.onPressAction: root.next()
 
+                        RectangularShadow {
+                            anchors.fill: parent
+                            radius: height / 2
+                            blur: Theme.glowBlur * Theme.glow * (nextMa.containsMouse ? 1.4 : 1)
+                            color: Qt.alpha(Theme.ember, 0.45)
+                            Behavior on blur { NumberAnimation { duration: Theme.motionFast } }
+                        }
+                        Rectangle {
+                            anchors.fill: parent
+                            radius: height / 2
+                            color: nextMa.containsMouse ? Qt.lighter(Theme.ember, 1.08) : Theme.ember
+                            Behavior on color { ColorAnimation { duration: Theme.motionFast } }
+                        }
                         Row {
                             id: nextRow
                             anchors.centerIn: parent
-                            spacing: 8
+                            spacing: Theme.spaceXs
                             Text {
-                                text: root.lastStep ? "󰄬" : "󰁔"
-                                font.family: Theme.fontIcon; font.pixelSize: 14
-                                color: Theme.smoke
+                                id: nextLabel
                                 anchors.verticalCenter: parent.verticalCenter
+                                text: root.lastStep ? "Finish" : (root.step === 0 ? "Let's go" : "Next")
+                                font.family: Theme.fontFamily
+                                font.pixelSize: Theme.textBody
+                                font.weight: Font.DemiBold
+                                color: Theme.smoke
                             }
                             Text {
-                                font.family: Theme.fontFamily
-                                text: root.lastStep ? "Finish" : (root.step === 0 ? "Let's go" : "Next")
-                                font.pixelSize: 13; font.bold: true
-                                color: Theme.smoke
                                 anchors.verticalCenter: parent.verticalCenter
+                                text: root.lastStep ? "󰄬" : "󰁔"
+                                font.family: Theme.fontIcon
+                                font.pixelSize: Theme.textBody
+                                color: Theme.smoke
                             }
                         }
-
                         MouseArea {
                             id: nextMa
                             anchors.fill: parent

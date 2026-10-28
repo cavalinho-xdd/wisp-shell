@@ -4,7 +4,7 @@ import Quickshell
 import Quickshell.Io
 import "../core"
 
-// Welcome wizard step 5 — system check + what to press next.
+// Welcome wizard, last step — system check + where to go next.
 //
 // The check is the concrete answer to plan.md's Scaling Notes "No first-run
 // experience" bullet ("detect GPU vendor, confirm the Nerd Font resolved").
@@ -63,38 +63,24 @@ ColumnLayout {
         { ok: step.iconFontOk && step.textFontOk, name: "Fonts", need: "required",
           desc: step.iconFontOk ? "Text and Nerd Font icons resolved" : "No Nerd Font found — icons will render as boxes" },
         { ok: step.have("python3"), name: "python3", need: "required",
-          desc: "Settings > Look & Feel and Keybinds edit your real Hyprland config through this" },
+          desc: "Settings > Hyprland and Keybinds edit your real Hyprland config through this" },
         { ok: step.have("matugen") && step.have("jq"), name: "matugen + jq", need: "colors",
-          desc: "Wallpaper-derived Material You palette" },
+          desc: "The ember colour from your wallpaper" },
         { ok: step.have("awww") || step.have("swww") || step.have("hyprpaper"), name: "awww / swww / hyprpaper", need: "wallpaper",
           desc: "Setting the wallpaper from the picker" },
         { ok: step.have("nvidia-smi") && step.have("bc"), name: "nvidia-smi + bc", need: "optional",
-          desc: "GPU ring on the Performance tab (Nvidia only)" },
+          desc: "GPU reading in the system view (Nvidia only)" },
         { ok: step.have("qalc") && step.have("wl-copy"), name: "qalc + wl-copy", need: "optional",
           desc: "Launcher calculator and copy actions" },
         { ok: step.have("node"), name: "node", need: "optional",
-          desc: "Live osu! island lane (osu!lazer + tosu)" },
+          desc: "Live osu! activity (osu!lazer + tosu)" },
         { ok: step.have("curl"), name: "curl", need: "optional",
-          desc: "Weather card, Steam cover art and achievement popups" }
+          desc: "Weather, Steam cover art and achievement popups" }
     ]
 
-    Text {
-        Layout.leftMargin: 4
-        font.family: Theme.fontFamily
-        text: "System check"
-        font.pixelSize: 15
-        font.bold: true
-        color: Theme.islandText
-    }
-
-    // No container box — see WelcomeStepIntro. These are six rows under a
-    // heading; proximity already groups them. Each row instead carries its own
-    // tonal fill, which is what actually needs separating (one row from the
-    // next), rather than an outline around the whole set.
-    ColumnLayout {
+    CfgSection {
         id: checkCol
-        Layout.fillWidth: true
-        spacing: 4
+        title: "System check"
 
         Repeater {
             model: step.rows
@@ -103,11 +89,7 @@ ColumnLayout {
                 required property var modelData
                 Layout.fillWidth: true
                 Layout.preferredHeight: 34
-                radius: 10
-                // The row itself is the surface. Separation from the card comes
-                // from the +9.4 L* tonal step, and from row to row from the 4px
-                // gap — no outline needed at either level.
-                color: Theme.ash
+                color: "transparent"
 
                 // Amber rather than red for anything non-required: a missing
                 // optional dependency is information, not an error, and
@@ -129,18 +111,18 @@ ColumnLayout {
                         color: checkRow.tint
                     }
                     Text {
-                        Layout.preferredWidth: 132
+                        Layout.preferredWidth: 170
                         font.family: Theme.fontFamily
                         text: checkRow.modelData.name
-                        font.pixelSize: 12
-                        font.bold: true
+                        font.pixelSize: Theme.textCaption
+                        font.weight: Font.Medium
                         color: Theme.islandText
                     }
                     Text {
                         Layout.fillWidth: true
                         font.family: Theme.fontFamily
                         text: checkRow.modelData.desc
-                        font.pixelSize: 11
+                        font.pixelSize: Theme.textCaption
                         color: Theme.islandMuted
                         elide: Text.ElideRight
                     }
@@ -149,53 +131,17 @@ ColumnLayout {
         }
     }
 
-    // ── Keybind tips ──
-    Text {
-        Layout.leftMargin: 4
-        Layout.topMargin: 2
-        font.family: Theme.fontFamily
-        text: "Good to know"
-        font.pixelSize: 15
-        font.bold: true
-        color: Theme.islandText
-    }
-
     RowLayout {
         Layout.fillWidth: true
-        spacing: 10
+        spacing: Theme.spaceSm
 
-        Repeater {
-            model: [
-                { key: "Super + Space", desc: "App launcher" },
-                { key: "Click the pill", desc: "Open the dashboard" }
-            ]
-            delegate: Rectangle {
-                required property var modelData
-                Layout.fillWidth: true
-                Layout.preferredHeight: 56
-                radius: 14
-                color: Theme.ash
-
-                Column {
-                    anchors.centerIn: parent
-                    spacing: 3
-                    Text {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        font.family: Theme.fontMono
-                        text: parent.parent.modelData.key
-                        font.pixelSize: 13
-                        font.bold: true
-                        color: Theme.ember
-                    }
-                    Text {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        font.family: Theme.fontFamily
-                        text: parent.parent.modelData.desc
-                        font.pixelSize: 11
-                        color: Theme.islandMuted
-                    }
-                }
-            }
+        Text {
+            Layout.fillWidth: true
+            text: "Everything from this wizard, and more, is in Settings (Super + I)."
+            font.family: Theme.fontFamily
+            font.pixelSize: Theme.textCaption
+            color: Theme.islandMuted
+            wrapMode: Text.WordWrap
         }
 
         ActionButton {

@@ -85,13 +85,6 @@ CfgPage {
             Layout.fillHeight: true
             title: "Bar"
 
-            CfgSpin {
-                text: "Workspace dots"
-                value: Settings.conf.shell.workspaceCount
-                from: 1
-                to: 10
-                onEdited: v => Settings.conf.shell.workspaceCount = v
-            }
             CfgSwitch {
                 text: "12-hour clock"
                 checked: Settings.conf.shell.clock12h
