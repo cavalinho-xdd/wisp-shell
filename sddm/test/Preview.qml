@@ -19,6 +19,11 @@ Item {
         running: main.status === Loader.Ready
         onTriggered: {
             const m = main.item;
+            // Test mode has no daemon: it can do nothing and has no layouts.
+            if (String(config.previewCan) === "true") {
+                m.powerIsland.canSuspend = m.powerIsland.canReboot = m.powerIsland.canPowerOff = true;
+                m.layoutText = "cs";
+            }
             switch (String(config.preview)) {
             case "typing": m.password = "wisp-ember"; break;
             case "caps": m.password = "wisp"; m.capsLock = true; break;
@@ -34,6 +39,7 @@ Item {
             case "leaving": m.password = "wisp"; m.login(); m.loginSucceeded(); break;
             case "menu": m.sessionMenuOpen = true; break;
             case "ask": m.powerAsk("powerOff"); break;
+            case "info": console.log("PREVIEW can", sddm.canSuspend, sddm.canReboot, sddm.canPowerOff, "layouts", keyboard ? keyboard.layouts.length : "none", "layout", m.layoutText); break;
             }
         }
     }

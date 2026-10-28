@@ -25,6 +25,17 @@ Rectangle {
     property bool needsPassword: users.needsPassword
     property string status: ""
     property bool busy: false
+    property bool sessionMenuOpen: false
+    property alias powerIsland: power
+    property string layoutText: {
+        if (!keyboard || !keyboard.layouts || keyboard.layouts.length === 0) return "";
+        const l = keyboard.layouts[keyboard.currentLayout];
+        return l ? l.shortName : "";
+    }
+
+    function powerAsk(key) {
+        power.ask(key);
+    }
 
     // A user without a password logs in with an empty field.
     function login() {
@@ -237,6 +248,11 @@ Rectangle {
                     tokens: tokens
                     caps: root.capsLock
                     onAccepted: root.login()
+                    onEscapePressed: {
+                        if (root.sessionMenuOpen) root.sessionMenuOpen = false;
+                        else if (power.asking !== "") power.cancel();
+                        else field.text = "";
+                    }
                     onStepUser: delta => root.userIndex = (root.userIndex + delta + users.count) % Math.max(1, users.count)
                 }
             }
@@ -258,6 +274,147 @@ Rectangle {
                     Behavior on color { ColorAnimation { duration: 250 } }
                 }
             }
+        }
+
+        // A click anywhere else closes the session menu.
+        MouseArea {
+            anchors.fill: parent
+            enabled: root.sessionMenuOpen
+            onClicked: root.sessionMenuOpen = false
+        }
+
+        // ── Top edge: session · date and layout · power ──
+        Island {
+            id: sessionIsland
+            tokens: tokens
+            transformOrigin: Item.TopLeft
+            x: tokens.islandMargin
+            y: tokens.islandMargin
+            spacing: 9
+            opacity: root.lit ? 1 : 0
+            Behavior on opacity { NumberAnimation { duration: 500; easing.type: Easing.BezierSpline; easing.bezierCurve: tokens.curveKindle } }
+            Accessible.role: Accessible.ButtonMenu
+            Accessible.name: "Sezení: " + sessions.currentName
+
+            Icon {
+                anchors.verticalCenter: parent.verticalCenter
+                color: tokens.ember
+                path: "M5.5 4h13A2.5 2.5 0 0 1 21 6.5v8a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 14.5v-8A2.5 2.5 0 0 1 5.5 4zM9 21h6"
+            }
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: sessions.currentName
+                font.family: tokens.fontFamily
+                font.pixelSize: 13
+                font.weight: Font.Medium
+                font.letterSpacing: 0.065
+                color: tokens.text
+            }
+            Icon {
+                anchors.verticalCenter: parent.verticalCenter
+                size: 13
+                color: tokens.muted
+                path: "m6 9 6 6 6-6"
+                rotation: root.sessionMenuOpen ? 180 : 0
+                Behavior on rotation { SpringAnimation { spring: 4; damping: 0.35; epsilon: 0.5 } }
+            }
+
+            MouseArea {
+                parent: sessionIsland
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onPressedChanged: sessionIsland.pressed = pressed
+                onClicked: root.sessionMenuOpen = !root.sessionMenuOpen
+            }
+        }
+
+        SessionMenu {
+            id: sessions
+            tokens: tokens
+            x: tokens.islandMargin
+            y: tokens.islandMargin + tokens.islandHeight + 8
+            model: sessionModel
+            currentIndex: root.sessionIndex
+            open: root.sessionMenuOpen
+            onPicked: index => {
+                root.sessionIndex = index;
+                root.sessionMenuOpen = false;
+            }
+        }
+
+        Island {
+            id: dateIsland
+            tokens: tokens
+            transformOrigin: Item.Top
+            x: (frame.width - width) / 2
+            y: tokens.islandMargin
+            opacity: root.lit ? 1 : 0
+            Behavior on opacity { NumberAnimation { duration: 500; easing.type: Easing.BezierSpline; easing.bezierCurve: tokens.curveKindle } }
+
+            Text {
+                id: shortDate
+                anchors.verticalCenter: parent.verticalCenter
+                text: Qt.formatDate(clockTick.now, "d. M. yyyy")
+                font.family: tokens.fontMono
+                font.pixelSize: 12
+                font.letterSpacing: 0.12
+                color: tokens.muted
+                Timer {
+                    id: clockTick
+                    property date now: new Date()
+                    interval: 60000
+                    running: true
+                    repeat: true
+                    onTriggered: now = new Date()
+                }
+            }
+            Rectangle {
+                visible: root.layoutText !== ""
+                anchors.verticalCenter: parent.verticalCenter
+                width: 3
+                height: 3
+                radius: 1.5
+                color: tokens.muted
+                opacity: 0.5
+            }
+            // The keyboard layout; a click cycles it. Hidden without layouts.
+            Rectangle {
+                visible: root.layoutText !== ""
+                anchors.verticalCenter: parent.verticalCenter
+                width: layoutLabel.implicitWidth + 18
+                height: layoutLabel.implicitHeight + 8
+                radius: 8
+                color: layoutHit.containsMouse ? tokens.ashHi : "transparent"
+                Behavior on color { ColorAnimation { duration: tokens.motionFast } }
+                Accessible.role: Accessible.Button
+                Accessible.name: "Rozložení klávesnice " + root.layoutText
+                Text {
+                    id: layoutLabel
+                    anchors.centerIn: parent
+                    text: root.layoutText
+                    font.family: tokens.fontMono
+                    font.pixelSize: 12
+                    color: layoutHit.containsMouse ? tokens.text : tokens.muted
+                }
+                MouseArea {
+                    id: layoutHit
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onPressedChanged: dateIsland.pressed = pressed
+                    onClicked: keyboard.currentLayout = (keyboard.currentLayout + 1) % keyboard.layouts.length
+                }
+            }
+        }
+
+        PowerIsland {
+            id: power
+            tokens: tokens
+            x: frame.width - width - tokens.islandMargin
+            y: tokens.islandMargin
+            transformOrigin: Item.TopRight
+            opacity: root.lit ? 1 : 0
+            Behavior on opacity { NumberAnimation { duration: 500; easing.type: Easing.BezierSpline; easing.bezierCurve: tokens.curveKindle } }
         }
     }
 }

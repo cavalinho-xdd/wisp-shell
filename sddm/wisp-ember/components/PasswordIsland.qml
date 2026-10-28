@@ -14,6 +14,8 @@ Item {
     signal accepted()
     // ←/→ while the field is empty pick another user.
     signal stepUser(int delta)
+    // Esc: the owner closes what is open, or clears the field.
+    signal escapePressed()
 
     readonly property real heat: Math.min(1, text.length / 10)
     readonly property color light: failed ? tokens.red : tokens.ember
@@ -59,7 +61,7 @@ Item {
         onActiveFocusChanged: if (!activeFocus) forceActiveFocus()
         onAccepted: field.accepted()
         onTextChanged: if (text.length > 0) field.failed = false
-        Keys.onEscapePressed: text = ""
+        Keys.onEscapePressed: field.escapePressed()
         Keys.onLeftPressed: event => {
             if (text.length === 0) field.stepUser(-1);
             else event.accepted = false;
