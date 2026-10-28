@@ -47,6 +47,18 @@ if [[ -z "$IMG" || "$IMG" == "-" ]]; then
     STATE="${XDG_STATE_HOME:-$HOME/.local/state}/quickshell/user/generated/wallpaper/path.txt"
     [[ -f "$STATE" ]] && IMG="$(head -1 "$STATE")"
 fi
+# Then whatever the wallpaper daemon shows. Retried: at login the shell can
+# start before awww-daemon has restored its image.
+if [[ ! -f "$IMG" ]]; then
+    for _ in 1 2 3 4 5; do
+        for d in awww swww; do
+            command -v "$d" >/dev/null 2>&1 || continue
+            IMG="$("$d" query 2>/dev/null | sed -n 's/.*image: //p' | head -1 || true)"
+            [[ -f "$IMG" ]] && break 2
+        done
+        sleep 2
+    done
+fi
 [[ -f "$IMG" ]] || { echo "no wallpaper image found" >&2; exit 1; }
 
 CFG="$(mktemp)"

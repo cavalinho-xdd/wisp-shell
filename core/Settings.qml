@@ -155,13 +155,28 @@ Singleton {
     // wallpaper; Theme.qml watches that file. The user's own matugen config
     // (has sudo post_hooks) is never executed — the script uses an empty one.
 
-    function applyColors(img) {
+    function colorsCommand(img) {
         const script = Paths.shell("scripts/apply_colors.sh");
         let fanout = [];
         if (adapter.colors.applyTerminal) fanout.push("kitty");
         if (adapter.colors.applyTerminalOSC) fanout.push("osc");
-        Quickshell.execDetached(["bash", script, img || adapter.colors.lastWallpaper || "-",
-            adapter.colors.scheme, adapter.colors.mode, fanout.join(",")]);
+        return ["bash", script, img || adapter.colors.lastWallpaper || "-",
+            adapter.colors.scheme, adapter.colors.mode, fanout.join(",")];
+    }
+
+    function applyColors(img) {
+        Quickshell.execDetached(colorsCommand(img));
+    }
+
+    // Fresh install: no colors.json yet, and colours were only ever generated
+    // on a wallpaper change. Generate once at startup so the shell follows the
+    // current wallpaper from the first login instead of the ember fallback.
+    property bool colorsSeeded: false
+    function seedColors() {
+        if (colorsSeeded || !adapter.colors.dynamicEnabled) return;
+        colorsSeeded = true;
+        Quickshell.execDetached(["sh", "-c", '[ -f "$1" ] || { shift; exec "$@"; }', "sh",
+            Paths.colorsFile].concat(colorsCommand("")));
     }
 
     // ── Material hook ──
@@ -290,6 +305,7 @@ Singleton {
             // onLoaded fires again on every reload of the watched file; only the
             // first load runs the hook, later changes come via onMaterialChanged.
             if (!root.materialApplied) { root.materialApplied = true; root.applyMaterial(); }
+            root.seedColors();
         }
         onLoadFailed: error => {
             if (error == FileViewError.FileNotFound) {
@@ -302,6 +318,7 @@ Singleton {
                 // has to wait for (gating on it is what stops the welcome
                 // wizard firing off the pre-load default value on every start).
                 root.ready = true;
+                root.seedColors();
             }
         }
 
@@ -423,7 +440,7 @@ Singleton {
             }
 
             property JsonObject colors: JsonObject {
-                property bool dynamicEnabled: false
+                property bool dynamicEnabled: true
                 property string scheme: "tonal-spot"
                 property string mode: "dark"
                 property string lastWallpaper: ""
