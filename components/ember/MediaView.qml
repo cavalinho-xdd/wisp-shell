@@ -177,8 +177,24 @@ Item {
                     id: progress
                     width: parent.width
                     height: Theme.progressHeight
-                    readonly property real ratio: root.player && root.player.length > 0
+                    // While dragging, the bar follows the finger; the player
+                    // only seeks on release, so it never stutters mid-drag.
+                    readonly property real ratio: seek.pressed ? seek.ratio
+                        : root.player && root.player.length > 0
                         ? Math.min(1, root.player.position / root.player.length) : 0
+
+                    MouseArea {
+                        id: seek
+                        readonly property real ratio: Math.max(0, Math.min(1, mouseX / width))
+                        // Taller than the 4 px bar, so it is easy to grab.
+                        anchors.fill: parent
+                        anchors.topMargin: -Theme.spaceSm
+                        anchors.bottomMargin: -Theme.spaceSm
+                        enabled: !!root.player && root.player.canSeek && root.player.positionSupported
+                        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                        preventStealing: true
+                        onReleased: root.player.position = ratio * root.player.length
+                    }
 
                     Rectangle {
                         anchors.fill: parent
