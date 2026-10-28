@@ -5,8 +5,7 @@ import "../../core"
 
 // What the launcher island searches and runs: apps ranked by name match and
 // frecency, plus the prefixes `=` calculator (qalc), `?` web and `$` shell.
-// The ranking is the old pill launcher's (components/IslandLauncher.qml); that
-// copy goes away when the islands replace the pill.
+// The ranking comes from the old pill launcher, which this replaced.
 Item {
     id: root
 

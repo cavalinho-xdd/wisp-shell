@@ -7,7 +7,7 @@ import "../../core"
 // One status-notifier icon in the control centre footer. Left click
 // activates, right click (or a menu-only item) opens its menu. Only
 // `anchor.item` is set on the menu anchor, never `anchor.window`: setting
-// the window unsets the item and crashes Quickshell (see TrayItem.qml).
+// the window unsets the item and crashes Quickshell (caught live in the old pill tray).
 MouseArea {
     id: root
 

@@ -7,7 +7,7 @@ import Quickshell.Io
 // project-local app_usage.json (same FileView pattern as EventStore):
 //   { "usage": { "<desktop id>": { "count": 12, "last": 1753700000000 } } }
 //
-// recordLaunch() is called by launcher.qml on every launch;
+// recordLaunch() is called by the launcher island on every launch;
 // frecencyBoost() feeds the result ranking there.
 Singleton {
     id: store
@@ -25,7 +25,7 @@ Singleton {
 
     // ── YOUR CODE HERE (learning mode) ──────────────────────────────
     // Returns a score bonus added on top of the text-match score in
-    // launcher.qml (tiers there: 100 prefix / 80 word / 60 substring /
+    // LauncherSearch.qml (tiers there: 100 prefix / 80 word / 60 substring /
     // 40 keyword / 30 genericName / 20 comment / -1 no match).
     //
     // Design decision this shapes: how fast does a frequently-used app

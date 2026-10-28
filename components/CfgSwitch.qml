@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import "../core"
+import "ember"
 
 // Full-width clickable row: label (and hint), switch on the right.
 // Modeled on ii-dots ConfigSwitch — the whole row toggles.
@@ -37,8 +38,9 @@ Rectangle {
                 font.pixelSize: 13
                 color: root.enabled ? Theme.text : Theme.subtext0
             }
-            ToggleSwitch {
+            EmberSwitch {
                 checked: root.checked
+                label: root.text
                 onToggled: value => root.toggled(value)
             }
         }

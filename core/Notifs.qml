@@ -11,9 +11,9 @@ import "notif_rules.js" as Rules
 // history alike, so the dashboard card and the island read one source.
 // Decision logic (DND, app rules, pruning, redaction) lives in notif_rules.js.
 //
-// The DBus server must live here, not in NotificationCard: the card only
-// exists while the dashboard is on the StackView, so a server inside it would
-// deregister every time the pill collapses — exactly when the island flash
+// The DBus server must live here, not in a view: a view only
+// exists while its island is open, so a server inside it would
+// deregister every time the island closes — exactly when the island flash
 // needs notifications most. Only reference this singleton from the shell
 // process: loading it anywhere else (settings.qml) would start a second server.
 //

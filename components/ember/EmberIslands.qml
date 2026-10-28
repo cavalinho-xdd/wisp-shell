@@ -7,8 +7,7 @@ import "../../core"
 import "layout.js" as IslandLayout
 
 // The Ember UI for one screen (ADR 0002): three islands at the top edge plus
-// a click catcher that closes the open one. shell.qml loads it instead of the
-// pill while Settings.conf.shell.ember is on.
+// a click catcher that closes the open one. shell.qml makes one per screen.
 Scope {
     id: root
 

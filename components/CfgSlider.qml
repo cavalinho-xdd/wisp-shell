@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import "../core"
+import "ember"
 
 // Label + slider + value readout row for the settings pages.
 RowLayout {
@@ -26,10 +27,11 @@ RowLayout {
         color: root.enabled ? Theme.text : Theme.subtext0
         Layout.preferredWidth: root.labelWidth
     }
-    Slider {
+    EmberSlider {
         Layout.fillWidth: true
+        label: root.text
         value: root.maxValue > 0 ? root.value / root.maxValue : 0
-        onMoved: function(v) { root.edited(Math.round(v * root.maxValue)) }
+        onMoved: v => root.edited(Math.round(v * root.maxValue))
     }
     Text {
         font.family: Theme.fontFamily

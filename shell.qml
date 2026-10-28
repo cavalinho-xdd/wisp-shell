@@ -21,10 +21,6 @@ ShellRoot {
     // since that block now instantiates once per monitor and would otherwise
     // re-inject the same hyprctl layer_rule/keybind N times.
     Component.onCompleted: {
-        // Hyprland >= 0.55 uses the lua parser; `hyprctl keyword` is a no-op there.
-        // Namespace is an RE2 regex, so anchor it or `wisp-catcher` matches too.
-        Quickshell.execDetached(["hyprctl", "eval",
-            'hl.layer_rule({ match = { namespace = "^wisp$" }, animation = "fade" })'])
         // Touching the singleton instantiates it; it re-injects saved overrides
         // itself once settings.json finishes loading (see Settings.onLoaded).
         void Settings.ready
@@ -129,7 +125,7 @@ ShellRoot {
     }
 
     // Settings.conf.shell.pillMonitor restricts the whole per-monitor surface
-    // group (pill + click-catcher + OSD) to one named output instead of every
+    // group (islands + OSD) to one named output instead of every
     // connected screen — falls back to "all monitors" if the saved name isn't
     // currently connected (e.g. an external monitor unplugged), so a stale
     // setting can never silently zero out every shell surface with no visible
@@ -140,12 +136,10 @@ ShellRoot {
         return match.length > 0 ? match : Quickshell.screens;
     }
 
-    // One pill + click-catcher pair per connected monitor (Quickshell.screens,
-    // filtered by pillScreens above), recreated on hotplug since Variants
-    // tracks the model live. Each instance owns fully independent expand/
-    // collapse state — media/notification content (core/Island.qml) stays a
-    // single global singleton, so the *content* is the same everywhere, only
-    // open/closed is per-monitor local.
+    // Islands + OSD per connected monitor (Quickshell.screens, filtered by
+    // pillScreens above), recreated on hotplug since Variants tracks the model
+    // live. Each screen opens and closes its own islands; the content
+    // (core/Island.qml) is one global singleton.
     Variants {
         model: pillScreens
 
@@ -154,44 +148,8 @@ ShellRoot {
                 id: screenRoot
                 required property var modelData
 
-                property PanelWindow clickCatcher: PanelWindow {
-                    screen: screenRoot.modelData
-                    anchors {
-                        top: true; bottom: true; left: true; right: true
-                    }
-                    color: "transparent"
-                    visible: screenRoot.pill.isExpanded && !Settings.conf.shell.ember
-                    exclusionMode: ExclusionMode.Ignore
-                    WlrLayershell.namespace: "wisp-catcher"
-
-                    MouseArea {
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        onClicked: {
-                            // Background catcher clicked -> collapse the dashboard.
-                            // pop(null) and replace() are both StackView transition-
-                            // triggering ops (QQuickStackView, libQt6QuickTemplates2) —
-                            // firing both synchronously in the same tick, while a
-                            // subview is pushed, raced the first transition's own
-                            // setup against the second and reproduced a SIGSEGV in
-                            // QQuickTransitionManager::complete()/derefWindow (4/4
-                            // crash reports today, ~/.cache/quickshell/crashes/,
-                            // identical stacktrace each time). pop(null) is only
-                            // meaningful when a subview is actually pushed (depth>1);
-                            // deferring the replace to the next tick via Qt.callLater
-                            // lets that pop's transition settle before StackView is
-                            // asked to do anything else.
-                            screenRoot.pill.isExpanded = false
-                            if (screenRoot.pill.dashboardStackRef.depth > 1) {
-                                screenRoot.pill.dashboardStackRef.pop(null)
-                            }
-                        }
-                    }
-                }
-
-                // Volume/mic OSD — its own tiny surface per monitor, deliberately
-                // separate from the pill so it never interacts with the pill's
-                // collapsed/media/expanded width state machine. Purely reactive
+                // Volume/mic OSD — its own tiny surface per monitor, separate
+                // from the islands so it never takes part in their morphs. Purely reactive
                 // (core/Osd.qml watches core/Audio.qml), no keybind wiring needed.
                 property PanelWindow osd: PanelWindow {
                     screen: screenRoot.modelData
@@ -199,9 +157,8 @@ ShellRoot {
                     // Suppressed during fullscreen on THIS monitor — without this, an
                     // OSD popup from adjusting volume mid-video would draw an
                     // input-eating 220x64 dead zone over the fullscreen surface's own
-                    // controls (same class of bug the pill's own fullscreenOverride
-                    // exists to prevent, see below). Unlike the pill, OSD has no
-                    // fade/mask choreography to preserve, so just not mapping the
+                    // controls. The OSD has no fade/mask choreography to
+                    // preserve, so just not mapping the
                     // surface at all is the simplest correct fix — no separate mask
                     // needed. Per-monitor, not Hyprland.focusedWorkspace (compositor-
                     // global — would wrongly suppress OSD on every monitor just
@@ -223,229 +180,8 @@ ShellRoot {
                     OsdPopup {}
                 }
 
-                // Wisp Ember islands (ADR 0002): built beside the pill and
-                // shown instead of it while the setting is on. Not created at
-                // all while it is off.
-                property LazyLoader ember: LazyLoader {
-                    active: Settings.conf.shell.ember
-                    EmberIslands { screen: screenRoot.modelData }
-                }
-
-                property PanelWindow pill: PanelWindow {
-                    id: floatingPill
-                    screen: screenRoot.modelData
-                    visible: !Settings.conf.shell.ember
-
-                    property alias dashboardStackRef: dashboardStack
-
-                    WlrLayershell.layer: WlrLayer.Overlay
-                    // Keyboard reaches TextInputs (calendar event entry) only while expanded;
-                    // collapsed pill must never steal focus from apps.
-                    WlrLayershell.keyboardFocus: ShellState.launcherActive ? WlrKeyboardFocus.Exclusive : (isExpanded ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None)
-
-                    anchors {
-                        top: true
-                    }
-                    margins {
-                        top: 12
-                    }
-
-                    
-                    property bool isExpanded: false
-
-                    Connections {
-                        target: ShellState
-                        function onLauncherActiveChanged() {
-                            if (ShellState.launcherActive) {
-                                floatingPill.isExpanded = false;
-                            }
-                        }
-                    }
-// Which dashboard tab to land on when expanding (media island jumps to Media)
-                    property int expandTab: 0
-
-                    // Fullscreen apps (games, video players) take full precedence over the
-                    // pill — hides it entirely and, via the empty mask below, releases its
-                    // input region so clicks/keys reach the fullscreen window underneath
-                    // instead of hitting an invisible-but-still-there layer-shell surface.
-                    // Per-monitor: uses THIS screen's own Hyprland monitor/workspace, not
-                    // Hyprland.focusedWorkspace (compositor-global — would wrongly hide the
-                    // pill on every monitor just because a DIFFERENT monitor's focused
-                    // workspace went fullscreen). HyprlandMonitor.activeWorkspace and
-                    // HyprlandWorkspace.hasFullscreen are both live IPC-driven bindable
-                    // properties (verified in ~/coding/quickshell/src/wayland/hyprland/ipc/{monitor,workspace}.hpp),
-                    // Hyprland.monitorFor(screen) is the documented screen->monitor lookup
-                    // (ipc/qml.hpp).
-                    readonly property var hyprMonitor: Hyprland.monitorFor(screenRoot.modelData)
-                    readonly property bool fullscreenOverride: !!hyprMonitor && !!hyprMonitor.activeWorkspace && hyprMonitor.activeWorkspace.hasFullscreen
-
-                    // Fixed at max size on purpose: animating the actual wl_surface (implicitWidth/Height)
-                    // causes a compositor-side resize each frame, which flashes an uninitialized grey
-                    // backing-store rect for the newly-exposed region until the buffer catches up.
-                    // Only `container` below animates now; the mask keeps clicks off the invisible margin.
-                    implicitWidth: 750
-                    implicitHeight: 650
-
-                    color: "transparent"
-
-                    // Reserves space for the collapsed pill such that the gap below it
-                    // matches the 12px top margin exactly. Hyprland adds its own gaps_out (10)
-                    // to the reserved area (margin 12 + exclusiveZone). To get a 12px bottom gap:
-                    // 12 (margin) + 50 (exclusiveZone) + 10 (gaps_out) = 72px reserved total.
-                    // 72 - 60 (pill bottom) = 12px gap.
-                    // exclusiveZone is independent of implicitHeight/anchored-edge size
-                    // (that's what ExclusionMode.Auto would use, and it would reserve the
-                    // full 550px expanded height, which is wrong), so expand/collapse and
-                    // the media-island width bump never resize the reserved zone.
-                    exclusionMode: ExclusionMode.Normal
-                    exclusiveZone: 50
-
-                    WlrLayershell.namespace: "wisp"
-
-                    // Input hit-test region: with the surface now fixed at max size, this is what
-                    // keeps clicks confined to the visually-shrunk pill instead of the whole surface.
-                    // While a fullscreen window owns the workspace, swap to the empty region so this
-                    // layer-shell surface stops eating clicks entirely (an invisible container would
-                    // otherwise still block input to whatever's fullscreen underneath it).
-                    mask: fullscreenOverride ? emptyRegion : containerRegion
-                    Region { id: emptyRegion }
-                    Region { id: containerRegion; item: container }
-
-                    // Inner container for the actual visual pill. Sized/animated independently of
-                    // the (now fixed) window surface, anchored to where the pill visually grows from.
-                    Rectangle {
-                        id: container
-                        anchors.top: parent.top
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        width: (ShellState.launcherActive || floatingPill.isExpanded) ? 750 : Math.min(750, collapsedView.implicitWidth)
-                        height: ShellState.launcherActive ? 600 : (floatingPill.isExpanded ? 550 : 48)
-
-                        // Damped enough to settle with one small overshoot instead of wobbling
-                        Behavior on width { SpringAnimation { spring: 5.0; damping: 0.55; mass: 1.0 } }
-                        Behavior on height { SpringAnimation { spring: 5.0; damping: 0.55; mass: 1.0 } }
-
-                        color: Theme.panelBackground
-                        // Collapsed: full capsule (half of 48). Open: a softer 32 so the
-                        // big panel doesn't read as a stretched pill.
-                        radius: (ShellState.launcherActive || floatingPill.isExpanded) ? 32 : 24
-                        Behavior on radius { NumberAnimation { duration: Theme.animSlow; easing.type: Easing.OutCubic } }
-                        // No outline. The pill is the shell's signature object and
-                        // the most-seen surface in it; a grey hairline around it was
-                        // the "box around everything" tell at its most visible.
-                        // Separation from the desktop comes from the fill plus the
-                        // compositor-level shadow Hyprland draws around the layer
-                        // surface (DESIGN.md, Elevation & Depth).
-                        clip: true
-
-                        // Fullscreen apps take full precedence — fade out entirely rather
-                        // than sit drawn-but-unclickable over the fullscreen content.
-                        //
-                        // One deliberate exception: an achievement unlock (core/Games.qml)
-                        // fades the collapsed pill back in for the few seconds the flash
-                        // lasts. Games are the main reason a workspace is fullscreen at
-                        // all, so a lane that hides exactly while you play would never be
-                        // seen. Only the *visual* suppression is lifted — `mask` above
-                        // stays on emptyRegion while fullscreenOverride holds, so the
-                        // surface still takes no input and clicks continue to reach the
-                        // game underneath. Collapsed only: the expanded dashboard has no
-                        // business appearing over a fullscreen window unprompted.
-                        readonly property bool achievementPeek: floatingPill.fullscreenOverride
-                            && Games.flashing && !floatingPill.isExpanded
-                        opacity: (floatingPill.fullscreenOverride && !achievementPeek) ? 0 : 1
-                        Behavior on opacity { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
-
-                        // Hover invite: collapsed pill swells slightly, hinting it opens
-                        transformOrigin: Item.Top
-                        scale: !floatingPill.isExpanded && !ShellState.launcherActive && bgMouse.containsMouse ? 1.04 : 1.0
-                        Behavior on scale { NumberAnimation { duration: Theme.animFast; easing.type: Theme.easeSpring } }
-
-                        
-
-                        // Background click handler. Sits BEHIND widgets.
-                        MouseArea {
-                            id: bgMouse
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            onClicked: {
-                                if (ShellState.launcherActive) {
-                                    ShellState.launcherActive = false;
-                                    return;
-                                }
-                                if (dashboardStack.depth > 1) return;
-
-                                if (!floatingPill.isExpanded) {
-                                    floatingPill.expandTab = 0;
-                                    floatingPill.isExpanded = true;
-                                }
-                            }
-                        }
-
-                        // Inner content
-                        Item {
-                            anchors.fill: parent
-
-                            CollapsedBar {
-                                id: collapsedView
-                                anchors.fill: parent
-                                visible: !floatingPill.isExpanded && !ShellState.launcherActive
-                                opacity: (floatingPill.isExpanded || ShellState.launcherActive) ? 0 : 1
-                                Behavior on opacity { NumberAnimation { duration: 150 } }
-
-                                onExpandMedia: {
-                                    floatingPill.expandTab = 2; // Media tab
-                                    floatingPill.isExpanded = true;
-                                }
-                                onExpandNotifs: {
-                                    Island.dismissFlash();
-                                    floatingPill.expandTab = 0; // Dashboard tab
-                                    floatingPill.isExpanded = true;
-                                }
-                            }
-
-                            IslandLauncher {
-                                id: islandLauncher
-                                anchors.fill: parent
-                                visible: ShellState.launcherActive
-                                opacity: ShellState.launcherActive ? 1 : 0
-                                Behavior on opacity { NumberAnimation { duration: 150 } }
-                                onDismiss: ShellState.launcherActive = false
-                            }
-
-                            StackView {
-                                id: dashboardStack
-                                anchors.fill: parent
-                                visible: floatingPill.isExpanded && !ShellState.launcherActive
-                                opacity: (floatingPill.isExpanded && !ShellState.launcherActive) ? 1 : 0
-                                Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutQuad } }
-
-                                initialItem: ExpandedDashboard {
-                                    stack: dashboardStack
-                                    currentTab: floatingPill.expandTab
-                                }
-
-                                // Subview enter: rises up into place
-                                pushEnter: Transition {
-                                    NumberAnimation { property: "opacity"; from: 0; to: 1; duration: Theme.animSlow }
-                                    NumberAnimation { property: "y"; from: 40; to: 0; duration: 420; easing.type: Easing.OutQuint }
-                                }
-                                pushExit: Transition {
-                                    NumberAnimation { property: "opacity"; from: 1; to: 0; duration: Theme.animFast }
-                                    NumberAnimation { property: "scale"; from: 1; to: 0.96; duration: Theme.animFast }
-                                }
-                                // Subview leave: dashboard scales back up, subview drops away
-                                popEnter: Transition {
-                                    NumberAnimation { property: "opacity"; from: 0; to: 1; duration: Theme.animSlow }
-                                    NumberAnimation { property: "scale"; from: 0.96; to: 1; duration: 420; easing.type: Easing.OutQuint }
-                                }
-                                popExit: Transition {
-                                    NumberAnimation { property: "opacity"; from: 1; to: 0; duration: Theme.animFast }
-                                    NumberAnimation { property: "y"; from: 0; to: 40; duration: Theme.animFast; easing.type: Easing.InQuad }
-                                }
-                            }
-                        }
-                    } // close container Rectangle
+                property EmberIslands islands: EmberIslands { screen: screenRoot.modelData }
             }
         }
     }
-}
 }

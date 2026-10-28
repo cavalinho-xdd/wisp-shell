@@ -3,7 +3,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 
-// Persistent per-day events/todos for CalendarCard.qml.
+// Persistent per-day events/todos for the calendar view (components/ember/CalendarView.qml).
 // Stored in events.json next to shell.qml (same philosophy as the planned
 // settings.json — never touch user dotfiles). Shape:
 //   { "days": { "2026-07-27": [ { "text": "dentist", "done": false } ] } }

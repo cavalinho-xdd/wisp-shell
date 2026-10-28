@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Weather feed for WeatherCard.qml — open-meteo.com, no API key required.
+# Weather feed for the weather view — open-meteo.com, no API key required.
 # Location is auto-detected via ip-api.com and cached for 24 h.
 #
 #   --json     print cached JSON immediately; refresh in background if stale

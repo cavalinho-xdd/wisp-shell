@@ -343,15 +343,12 @@ Singleton {
             property JsonObject shell: JsonObject {
                 property int workspaceCount: 5
                 property bool clock12h: true
-                // Empty = show the pill/click-catcher/OSD trio on every connected
+                // Empty = show the islands and OSD on every connected
                 // monitor (Multi-Monitor Support, plan.md); a monitor's `.name`
                 // (e.g. "DP-1") restricts that whole per-monitor surface group to
                 // just that one screen. Matches iNiR's "restrict to primary
                 // monitor" settings pattern.
                 property string pillMonitor: ""
-                // Wisp Ember islands instead of the pill (ADR 0002). Off until
-                // the islands can replace it; removed in M9.
-                property bool ember: false
                 // Strength of the ember glow around and inside the islands:
                 // "soft" | "medium" | "strong" (Theme.glow, D3).
                 property string glow: "medium"

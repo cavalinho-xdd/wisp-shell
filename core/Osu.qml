@@ -7,7 +7,7 @@ import Quickshell.Io
 // websocket client against tosu's local v2 API (127.0.0.1:24050). tosu
 // pushes one JSON message per game tick; the script re-emits a trimmed
 // subset as one JSON line per stdout write, parsed here like
-// PerformanceCard.qml parses sysmon_snapshot.sh, except this Process runs
+// PerformanceView parses sysmon_snapshot.sh, except this Process runs
 // unconditionally (cheap, event-driven) rather than gated on tab visibility
 // — Island needs `active` even while the dashboard is collapsed.
 Singleton {

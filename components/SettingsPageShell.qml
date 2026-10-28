@@ -31,16 +31,8 @@ CfgPage {
         spacing: Theme.spaceSm
 
         CfgTile {
-            icon: "󰈸"
-            text: "Ember islands"
-            hint: checked ? "On · preview" : "Off · classic pill"
-            checked: Settings.conf.shell.ember
-            onToggled: value => Settings.conf.shell.ember = value
-        }
-        CfgTile {
             icon: "󰜺"
             text: "Reduce motion"
-            enabled: Settings.conf.shell.ember
             checked: Settings.conf.shell.reduceMotion
             onToggled: value => Settings.conf.shell.reduceMotion = value
         }
@@ -56,7 +48,6 @@ CfgPage {
         CfgSection {
             Layout.columnSpan: 2
             title: "Islands"
-            enabled: Settings.conf.shell.ember
 
             CfgChoice {
                 text: "Material"
@@ -87,12 +78,6 @@ CfgPage {
                     { value: "quarters", label: "Quarters" }
                 ]
                 onEdited: v => Settings.conf.shell.emberLayout = v
-            }
-            CfgNotice {
-                Layout.topMargin: Theme.spaceXs
-                Layout.bottomMargin: Theme.spaceXs
-                visible: !Settings.conf.shell.ember
-                text: "Turn on Ember islands above to change these."
             }
         }
 

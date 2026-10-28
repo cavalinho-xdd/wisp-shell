@@ -1,8 +1,8 @@
 import QtQuick
 import "../core"
 
-// Icon + text label pill button — the settings-app counterpart to IconButton
-// (which is icon-only). Sized to its content so it drops straight into a
+// Icon + text label button for the settings app and the welcome wizard.
+// Sized to its content so it drops straight into a
 // RowLayout without extra Layout.preferredWidth bookkeeping at call sites.
 Rectangle {
     id: root
