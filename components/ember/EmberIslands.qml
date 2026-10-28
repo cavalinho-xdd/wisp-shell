@@ -63,6 +63,12 @@ Scope {
             Notifs.records = Array.from({ length: n }, (_, i) => ({ key: "fake" + i, appName: apps[i % 5][0], appIcon: "", desktopEntry: "", summary: apps[i % 5][1], body: apps[i % 5][2],
                 image: "", urgency: 1, time: Date.now() - i * 240000, live: i < 2, transient: false, expiresAt: 0, redacted: false }));
         }
+        // Fake Discord call behind media, for checking the bubble; the
+        // next real call or player change puts the true state back.
+        function fakeCall(on: bool): void {
+            Discord.inVoice = on;
+            Island.mediaActive = on;
+        }
         // Same step as the mouse wheel over the left island: 1 next, -1 previous.
         function workspace(delta: int): void { workspaces.step(delta); }
         // Fake notification for checking the flare (the real server can be
@@ -118,6 +124,7 @@ Scope {
             Region { item: left }
             Region { item: center }
             Region { item: right }
+            Region { item: bubble.visible ? bubble : null }
         }
 
         // Glass materials blur the desktop behind the islands, in their
@@ -129,6 +136,7 @@ Scope {
             Region { item: left; radius: left.cornerRadius }
             Region { item: center; radius: center.cornerRadius }
             Region { item: right; radius: right.cornerRadius }
+            Region { item: bubble.visible ? bubble : null; radius: bubble.cornerRadius }
         }
 
         Item {
@@ -144,7 +152,8 @@ Scope {
             // the islands are going (target widths), so neighbours start to
             // step aside the moment one opens.
             readonly property var slots: IslandLayout.place(Settings.conf.shell.emberLayout, bar.width,
-                [left.targetWidth, center.targetWidth, right.targetWidth], center.open ? 1 : (right.open ? 2 : -1), Theme.islandMargin, Theme.islandGap)
+                // The bubble counts as part of the centre island, so the pair stays centred together.
+                [left.targetWidth, center.targetWidth + (bubble.shown ? Theme.islandHeight + Theme.islandGap : 0), right.targetWidth], center.open ? 1 : (right.open ? 2 : -1), Theme.islandMargin, Theme.islandGap)
 
             // A dropped island picks the layout whose spot for it is nearest
             // to where it would have coasted to (decelerating at 0.998 per
@@ -223,8 +232,30 @@ Scope {
                     function onFlashNotifChanged() { if (Island.flashNotif && !controller.anyOpen && !root.fullscreen) center.flare(); }
                 }
 
+                // Collapsed only: the wheel sets the volume, a middle click
+                // plays or pauses whatever owns the island.
+                property real wheelSum: 0
+                WheelHandler {
+                    enabled: !center.open
+                    acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+                    onWheel: event => {
+                        center.wheelSum += event.angleDelta.y;
+                        const notches = Math.trunc(center.wheelSum / 120);
+                        if (notches !== 0) {
+                            center.wheelSum -= notches * 120;
+                            Audio.setVolume(Audio.volume + notches * 0.05);
+                        }
+                    }
+                }
+                TapHandler {
+                    enabled: !center.open
+                    acceptedButtons: Qt.MiddleButton
+                    onTapped: if (Island.player && Island.player.canTogglePlaying) Island.player.togglePlaying()
+                }
+
                 ActivityCollapsed {
                     id: activity
+                    peek: center.hovered && !center.open
                     running: !root.fullscreen
                     opacity: center.open ? 0 : 1
                     visible: opacity > 0
@@ -254,6 +285,30 @@ Scope {
                     id: media
                     lit: center.mediaOpen && media.hasPlayer
                     enabled: center.mediaOpen && media.hasPlayer
+                }
+            }
+
+            // The second lasting activity (a Discord call behind media) in its
+            // own small island beside the centre one, like iOS. A click
+            // toggles the mute in Discord.
+            EmberIsland {
+                id: bubble
+                readonly property bool shown: Island.secondary === "discord" && !center.open && !root.fullscreen
+                x: center.x + center.width + Theme.islandGap
+                y: center.y
+                collapsedWidth: Theme.islandHeight
+                dimmed: controller.anyOpen
+                opacity: !shown ? 0 : (dimmed ? Theme.dimOpacity : 1)
+                visible: opacity > 0
+                onClicked: Discord.toggleMute()
+                Accessible.name: (Discord.selfMuted || Discord.micMuted ? "Unmute" : "Mute") + " in Discord call"
+
+                Text {
+                    anchors.centerIn: parent
+                    text: Discord.selfMuted || Discord.micMuted ? "󰍭" : "󰙯"
+                    color: Discord.selfMuted || Discord.micMuted ? Theme.red : Theme.blurple
+                    font.family: Theme.fontIcon
+                    font.pixelSize: Theme.textMono
                 }
             }
 

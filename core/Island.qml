@@ -162,6 +162,11 @@ Singleton {
         : mediaActive ? "media"
         : Discord.inVoice ? "discord" : "none"
 
+    // Lasting activities the Ember centre island shows, most important
+    // first: the first sits in the island, the second in a bubble beside it.
+    readonly property var activities: [mediaActive ? "media" : "", Discord.inVoice ? "discord" : ""].filter(a => a !== "")
+    readonly property string secondary: activities.length > 1 ? activities[1] : ""
+
     // ── Transient: notification flash ──
     property var flashNotif: null
 

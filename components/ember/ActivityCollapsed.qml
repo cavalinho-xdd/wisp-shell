@@ -8,12 +8,15 @@ Item {
     id: root
 
     property bool running: true
+    // Pointer over the island: show a little more (the date, the artist).
+    property bool peek: false
     // Centre of the ember, for the island's inner light.
     readonly property point emberCentre: Qt.point(row.x + dot.x + dot.width / 2, height / 2)
 
     readonly property var player: Island.mediaActive ? Island.player : null
-    // In a voice call and nothing more important to show (Island lanes).
-    readonly property bool voice: Island.current === "discord"
+    // In a voice call and nothing more important to show; a call behind
+    // media gets the bubble beside the island instead (Island.activities).
+    readonly property bool voice: Island.activities[0] === "discord"
 
     implicitWidth: row.implicitWidth + Theme.spaceMd * 2
     implicitHeight: Theme.islandHeight
@@ -47,11 +50,32 @@ Item {
 
         Text {
             anchors.verticalCenter: parent.verticalCenter
+            visible: root.peek && !root.player && !root.voice
+            text: clock.date.toLocaleDateString(Qt.locale(), "ddd d. M.")
+            color: Theme.islandMuted
+            font.family: Theme.fontFamily
+            font.pixelSize: Theme.textCaption
+        }
+
+        Text {
+            anchors.verticalCenter: parent.verticalCenter
             visible: !!root.player
             width: Math.min(implicitWidth, Theme.trackMaxWidth)
             text: root.player ? (root.player.trackTitle || root.player.identity || "") : ""
             elide: Text.ElideRight
             color: Theme.islandMuted
+            font.family: Theme.fontFamily
+            font.pixelSize: Theme.textCaption
+        }
+
+        Text {
+            anchors.verticalCenter: parent.verticalCenter
+            visible: root.peek && !!root.player && text !== ""
+            width: Math.min(implicitWidth, Theme.trackMaxWidth)
+            text: root.player ? (root.player.trackArtist || "") : ""
+            elide: Text.ElideRight
+            color: Theme.islandMuted
+            opacity: 0.7
             font.family: Theme.fontFamily
             font.pixelSize: Theme.textCaption
         }
