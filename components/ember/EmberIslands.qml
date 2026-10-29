@@ -118,6 +118,12 @@ Scope {
         // Input only on the islands; nothing at all over a fullscreen window.
         mask: root.fullscreen ? emptyRegion : islandsRegion
         Region { id: emptyRegion }
+
+        // Coffee mode: one inhibitor per screen is harmless, any one keeps the session awake.
+        IdleInhibitor {
+            window: window
+            enabled: QuickToggles.coffee
+        }
         Region {
             id: islandsRegion
             Region { item: left }

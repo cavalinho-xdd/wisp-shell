@@ -1,9 +1,10 @@
 import QtQuick
 import Quickshell
 import Quickshell.Services.SystemTray
+import Quickshell.Services.UPower
 import "../../core"
 
-// Open right island: today's date, the four switches, volume and, where the
+// Open right island: today's date, the eight switches, volume and, where the
 // machine has a backlight, brightness. Notifications, power and the Wi-Fi /
 // Bluetooth / sound views come in the next steps of M7.
 Item {
@@ -148,6 +149,42 @@ Item {
                     subtitle: QuickToggles.gameMode ? "On" : "Off"
                     checked: QuickToggles.gameMode
                     onClicked: QuickToggles.toggleGameMode()
+                }
+                EmberTile {
+                    readonly property int profile: PowerProfiles.profile
+                    width: root.tileWidth
+                    icon: profile === PowerProfile.PowerSaver ? "󰌪" : (profile === PowerProfile.Performance ? "󱐋" : "󰗑")
+                    title: "Power"
+                    subtitle: profile === PowerProfile.PowerSaver ? "Saver" : (profile === PowerProfile.Performance ? "Performance" : "Balanced")
+                    // Lit whenever the machine is off the default balance.
+                    checked: profile !== PowerProfile.Balanced
+                    onClicked: QuickToggles.cyclePowerProfile()
+                }
+                EmberTile {
+                    width: root.tileWidth
+                    icon: "󰅶"
+                    title: "Stay awake"
+                    subtitle: QuickToggles.coffee ? "On" : "Off"
+                    checked: QuickToggles.coffee
+                    onClicked: QuickToggles.toggleCoffee()
+                }
+                EmberTile {
+                    width: root.tileWidth
+                    icon: "󰖔"
+                    title: "Night light"
+                    subtitle: QuickToggles.nightLight ? "On" : "Off"
+                    checked: QuickToggles.nightLight
+                    onClicked: QuickToggles.toggleNightLight()
+                }
+                EmberTile {
+                    width: root.tileWidth
+                    icon: Audio.micMuted ? "󰍭" : "󰍬"
+                    title: "Microphone"
+                    subtitle: !Audio.source ? "None" : (Audio.micMuted ? "Muted" : "On")
+                    checked: !!Audio.source && !Audio.micMuted
+                    hasMore: true
+                    onClicked: Audio.toggleMicMute()
+                    onMoreClicked: root.showView("sound")
                 }
             }
         }
